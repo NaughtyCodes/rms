@@ -5,8 +5,13 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const dbDir = path.resolve(__dirname, '../../data');
-if (!fs.existsSync(dbDir)) fs.mkdirSync(dbDir, { recursive: true });
+const dbDir = process.env.VERCEL
+    ? '/tmp'
+    : path.resolve(__dirname, '../../data');
+
+if (!process.env.VERCEL && !fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
 
 const dbPath = process.env.DB_PATH
     ? path.resolve(process.env.DB_PATH)
