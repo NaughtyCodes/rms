@@ -1,0 +1,183 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Inventory</h1>
+        <p class="page-subtitle">{{ total }} products in stock</p>
+    </div>
+    <div class="flex gap-12">
+        <button class="btn btn-secondary" (click)="openAddCatModal()">+ Category</button>
+        <button class="btn btn-primary" (click)="openAddModal()">+ Add Product</button>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search products..." [(ngModel)]="search" (keyup.enter)="onSearch()"
+            (input)="onSearch()">
+    </div>
+    <select class="form-select" [(ngModel)]="selectedCategory" (change)="onSearch()" style="width: 200px;">
+        <option value="">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+    </select>
+</div>
+
+<!-- Products Table -->
+<div class="table-wrapper" *ngIf="!loading && products.length">
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Barcode</th>
+                <th class="text-right">Cost (₹)</th>
+                <th class="text-right">Price (₹)</th>
+                <th class="text-right">Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let p of products">
+                <td class="fw-600">{{ p.name }}</td>
+                <td>{{ p.category_name || '—' }}</td>
+                <td class="text-muted">{{ p.barcode || '—' }}</td>
+                <td class="text-right">{{ p.cost_price | number:'1.2-2' }}</td>
+                <td class="text-right fw-600">{{ p.selling_price | number:'1.2-2' }}</td>
+                <td class="text-right">{{ p.quantity }} {{ p.unit }}</td>
+                <td>
+                    <span class="badge" [class.badge-danger]="isLowStock(p)" [class.badge-success]="!isLowStock(p)">
+                        {{ isLowStock(p) ? 'Low Stock' : 'In Stock' }}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-secondary btn-sm" (click)="openEditModal(p)"
+                        style="margin-right:6px;">✏️</button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteProduct(p)">🗑️</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="!loading && !products.length" class="empty-state">
+    <div class="empty-icon">📦</div>
+    <div class="empty-text">No products found. Add your first product!</div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="showModal = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">{{ editMode ? 'Edit Product' : 'Add Product' }}</h2>
+            <button class="modal-close" (click)="showModal = false">×</button>
+        </div>
+
+        <div class="form-group mb-16">
+            <label class="form-label">Product Name *</label>
+            <input class="form-input" [(ngModel)]="form.name" placeholder="e.g. Basmati Rice 1kg">
+        </div>
+        <div class="grid-2 mb-16">
+            <div class="form-group">
+                <label class="form-label">Barcode</label>
+                <input class="form-input" [(ngModel)]="form.barcode" placeholder="Optional">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-select" [(ngModel)]="form.category_id">
+                    <option [ngValue]="null">None</option>
+                    <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid-2 mb-16">
+            <div class="form-group">
+                <label class="form-label">Cost Price (₹)</label>
+                <input class="form-input" type="number" [(ngModel)]="form.cost_price">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Selling Price (₹)</label>
+                <input class="form-input" type="number" [(ngModel)]="form.selling_price">
+            </div>
+        </div>
+        <div class="grid-2 mb-16">
+            <div class="form-group">
+                <label class="form-label">Quantity</label>
+                <input class="form-input" type="number" [(ngModel)]="form.quantity">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Low Stock Threshold</label>
+                <input class="form-input" type="number" [(ngModel)]="form.low_stock_threshold">
+            </div>
+        </div>
+        <div class="form-group mb-16">
+            <label class="form-label">Unit</label>
+            <select class="form-select" [(ngModel)]="form.unit">
+                <option value="pcs">Pieces</option>
+                <option value="kg">Kilograms</option>
+                <option value="ltr">Liters</option>
+                <option value="pack">Packs</option>
+            </select>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+            <button class="btn btn-primary" (click)="saveProduct()" [disabled]="saving || !form.name">
+                {{ saving ? 'Saving...' : (editMode ? 'Update' : 'Add Product') }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" *ngIf="showCatModal" (click)="showCatModal = false">
+    <div class="modal" (click)="$event.stopPropagation()" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2 class="modal-title">Manage Categories</h2>
+            <button class="modal-close" (click)="showCatModal = false">×</button>
+        </div>
+
+        <div class="grid-2 mb-16">
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input class="form-input" [(ngModel)]="catForm.name" placeholder="Category name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <input class="form-input" [(ngModel)]="catForm.description" placeholder="Optional">
+            </div>
+        </div>
+        <button class="btn btn-primary btn-sm mb-16" (click)="saveCategory()" [disabled]="!catForm.name">
+            {{ catEditMode ? 'Update' : 'Add Category' }}
+        </button>
+
+        <div class="table-wrapper" *ngIf="categories.length">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of categories">
+                        <td class="fw-600">{{ c.name }}</td>
+                        <td class="text-muted">{{ c.description || '—' }}</td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" (click)="editCategory(c)"
+                                style="margin-right:6px;">✏️</button>
+                            <button class="btn btn-danger btn-sm" (click)="deleteCategory(c)">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" *ngIf="toast.show" [class.toast-success]="toast.type==='success'"
+    [class.toast-error]="toast.type==='error'">
+    {{ toast.message }}
+</div>

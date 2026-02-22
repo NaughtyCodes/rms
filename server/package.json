@@ -1,0 +1,22 @@
+{
+    "name": "shop-billing-server",
+    "version": "1.0.0",
+    "description": "Backend API for Shop Inventory and Billing",
+    "main": "src/app.js",
+    "type": "module",
+    "scripts": {
+        "start": "node src/app.js",
+        "dev": "node --watch src/app.js",
+        "seed": "node src/db/seed.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "better-sqlite3": "^11.0.0",
+        "cors": "^2.8.5",
+        "csv-parser": "^3.2.0",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.0",
+        "jsonwebtoken": "^9.0.2",
+        "multer": "^2.0.2"
+    }
+}

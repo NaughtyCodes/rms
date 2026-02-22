@@ -1,0 +1,191 @@
+<div *ngIf="!showReceipt">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">🧾 New Bill</h1>
+            <p class="page-subtitle">Point of Sale</p>
+        </div>
+    </div>
+
+    <div class="billing-layout">
+        <!-- LEFT: Product search + cart -->
+        <div class="billing-left">
+            <!-- Search -->
+            <div class="search-bar mb-16" style="max-width: 100%;">
+                <span class="search-icon">🔍</span>
+                <input type="text" [(ngModel)]="search" (input)="onSearch()"
+                    placeholder="Search product by name or barcode..." autofocus>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="suggestions" *ngIf="filteredProducts.length">
+                <div class="suggestion-item" *ngFor="let p of filteredProducts" (click)="addToCart(p)">
+                    <div>
+                        <span class="fw-600">{{ p.name }}</span>
+                        <span class="text-muted" style="margin-left: 8px; font-size: 12px;">Stock: {{ p.quantity
+                            }}</span>
+                    </div>
+                    <span class="fw-600">₹{{ p.selling_price | number:'1.2-2' }}</span>
+                </div>
+            </div>
+
+            <!-- Cart Table -->
+            <div class="table-wrapper mt-16" *ngIf="cart.length">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th class="text-right">Price</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-right">Disc ₹</th>
+                            <th class="text-right">Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of cart; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td class="fw-600">{{ item.product.name }}</td>
+                            <td class="text-right">{{ item.product.selling_price | number:'1.2-2' }}</td>
+                            <td class="text-center">
+                                <div class="qty-control">
+                                    <button class="qty-btn" (click)="updateQuantity(item, -1)">−</button>
+                                    <span class="qty-val">{{ item.quantity }}</span>
+                                    <button class="qty-btn" (click)="updateQuantity(item, 1)">+</button>
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <input type="number" class="form-input"
+                                    style="width:70px;padding:4px 8px;text-align:right;" [(ngModel)]="item.discount"
+                                    (ngModelChange)="recalcLine(item)" min="0">
+                            </td>
+                            <td class="text-right fw-600">₹{{ item.lineTotal | number:'1.2-2' }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm btn-icon" (click)="removeFromCart(i)">×</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div *ngIf="!cart.length" class="empty-state" style="padding:40px;">
+                <div class="empty-icon">🛒</div>
+                <div class="empty-text">Search and add products to the cart</div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Bill summary -->
+        <div class="billing-right">
+            <div class="card">
+                <h3 class="card-title mb-16">Bill Summary</h3>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span class="fw-600">₹{{ subtotal | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Discount ₹</span>
+                    <input type="number" class="form-input" style="width:90px;padding:4px 8px;text-align:right;"
+                        [(ngModel)]="billDiscount" min="0">
+                </div>
+
+                <div class="summary-row" *ngIf="settings?.tax_mode !== 'product' && settings?.tax_mode !== 'category'">
+                    <span>Tax %</span>
+                    <input type="number" class="form-input" style="width:70px;padding:4px 8px;text-align:right;"
+                        [(ngModel)]="taxPercent" min="0">
+                </div>
+
+                <div class="summary-row" *ngIf="taxAmount > 0">
+                    <span>Tax Amount</span>
+                    <span>₹{{ taxAmount | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Grand Total</span>
+                    <span>₹{{ grandTotal | number:'1.2-2' }}</span>
+                </div>
+
+                <div class="form-group mt-16">
+                    <label class="form-label">Payment Mode</label>
+                    <select class="form-select" [(ngModel)]="paymentMode">
+                        <option value="cash">💵 Cash</option>
+                        <option value="upi">📱 UPI</option>
+                        <option value="card">💳 Card</option>
+                    </select>
+                </div>
+
+                <div class="grid-2 mt-16">
+                    <div class="form-group">
+                        <label class="form-label">Customer</label>
+                        <input class="form-input" [(ngModel)]="customerName" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input class="form-input" [(ngModel)]="customerPhone" placeholder="Optional">
+                    </div>
+                </div>
+
+                <button class="btn btn-success btn-lg mt-24" style="width:100%;" (click)="createBill()"
+                    [disabled]="processing || !cart.length">
+                    {{ processing ? 'Processing...' : '✅ Create Bill (F4)' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Receipt View -->
+<div *ngIf="showReceipt && lastInvoice" class="receipt-wrapper">
+    <div class="receipt" id="receipt" [class.compact]="settings?.bill_layout === 'compact'">
+        <div class="receipt-header">
+            <h2>{{ settings?.shop_name || 'ShopBill Pro' }}</h2>
+            <p>{{ settings?.shop_address }}</p>
+            <p *ngIf="settings?.shop_description">{{ settings?.shop_description }}</p>
+            <p style="margin-top: 8px; font-weight: 500;">Tax Invoice</p>
+        </div>
+        <div class="receipt-meta">
+            <div>Invoice: <strong>{{ lastInvoice.invoice_number }}</strong></div>
+            <div>Date: {{ lastInvoice.created_at || 'Just now' }}</div>
+            <div *ngIf="lastInvoice.customer_name">Customer: {{ lastInvoice.customer_name }}</div>
+        </div>
+        <table class="receipt-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of lastInvoice.items">
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.unit_price }}</td>
+                    <td>₹{{ item.line_total }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="receipt-totals">
+            <div class="summary-row"><span>Subtotal</span><span>₹{{ lastInvoice.subtotal }}</span></div>
+            <div class="summary-row" *ngIf="lastInvoice.discount"><span>Discount</span><span>-₹{{ lastInvoice.discount
+                    }}</span></div>
+            <div class="summary-row" *ngIf="lastInvoice.tax_amount"><span>Tax</span><span>₹{{ lastInvoice.tax_amount
+                    }}</span></div>
+            <div class="summary-total"><span>Total</span><span>₹{{ lastInvoice.total }}</span></div>
+            <div class="receipt-payment">Paid via {{ lastInvoice.payment_mode | titlecase }}</div>
+        </div>
+        <div class="receipt-footer">Thank you for shopping with us!</div>
+    </div>
+    <div class="receipt-actions">
+        <button class="btn btn-primary" (click)="printReceipt()">🖨️ Print Receipt</button>
+        <button class="btn btn-success" (click)="newBill()">🧾 New Bill</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" *ngIf="toast.show" [class.toast-success]="toast.type==='success'"
+    [class.toast-error]="toast.type==='error'">
+    {{ toast.message }}
+</div>

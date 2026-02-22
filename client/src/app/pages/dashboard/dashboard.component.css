@@ -1,0 +1,57 @@
+.pay-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+}
+
+.pay-row:last-child {
+    border-bottom: none;
+}
+
+.pay-mode {
+    flex: 1;
+    text-transform: capitalize;
+}
+
+.pay-count {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.pay-amount {
+    min-width: 80px;
+    text-align: right;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    background: var(--bg-hover);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.action-btn:hover {
+    background: var(--accent-bg);
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.action-icon {
+    font-size: 28px;
+}

@@ -1,0 +1,47 @@
+<div class="app-layout" [class.collapsed]="sidebarCollapsed">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon">🏪</span>
+            <span class="brand-text" *ngIf="!sidebarCollapsed">ShopBill Pro</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="active" class="nav-item">
+                <span class="nav-icon">{{ item.icon }}</span>
+                <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info" *ngIf="!sidebarCollapsed">
+                <div class="user-avatar">{{ (auth.getUser()?.fullName || 'U')[0] }}</div>
+                <div class="user-details">
+                    <span class="user-name">{{ auth.getUser()?.fullName || auth.getUser()?.username }}</span>
+                    <span class="user-role">{{ auth.getUser()?.role | titlecase }}</span>
+                </div>
+            </div>
+            <button class="btn btn-danger btn-sm" (click)="auth.logout()" style="width: 100%;">
+                <span>🚪</span>
+                <span *ngIf="!sidebarCollapsed">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main-area">
+        <header class="top-header">
+            <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+            <div class="header-right">
+                <button class="toggle-btn" (click)="toggleTheme()" title="Toggle Theme">
+                    <span *ngIf="(settingsService.settings$ | async)?.theme === 'dark'">☀️</span>
+                    <span *ngIf="(settingsService.settings$ | async)?.theme === 'light'">🌙</span>
+                </button>
+                <span class="datetime">{{ today | date:'medium' }}</span>
+            </div>
+        </header>
+        <main class="content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</div>

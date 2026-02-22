@@ -1,0 +1,86 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Today's overview at a glance</p>
+    </div>
+</div>
+
+<div *ngIf="loading" class="text-center text-muted" style="padding: 60px;">Loading...</div>
+
+<div *ngIf="!loading && data">
+    <!-- KPI Cards -->
+    <div class="kpi-grid mb-16">
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: var(--accent-bg); color: var(--accent);">💰</div>
+            <div class="kpi-info">
+                <div class="kpi-label">Today's Revenue</div>
+                <div class="kpi-value">₹{{ data.today.total_revenue | number:'1.0-0' }}</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: var(--success-bg); color: var(--success);">🧾</div>
+            <div class="kpi-info">
+                <div class="kpi-label">Bills Created</div>
+                <div class="kpi-value">{{ data.today.total_bills }}</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: var(--info-bg); color: var(--info);">📦</div>
+            <div class="kpi-info">
+                <div class="kpi-label">Items Sold</div>
+                <div class="kpi-value">{{ data.today.items_sold }}</div>
+            </div>
+        </div>
+        <div class="kpi-card" [style.borderColor]="data.low_stock_count > 0 ? 'var(--warning)' : ''">
+            <div class="kpi-icon" style="background: var(--warning-bg); color: var(--warning);">⚠️</div>
+            <div class="kpi-info">
+                <div class="kpi-label">Low Stock Items</div>
+                <div class="kpi-value">{{ data.low_stock_count }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="grid-2">
+        <!-- Payment Split -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Payment Split (Today)</h3>
+            </div>
+            <div class="payment-bars">
+                <div class="pay-row" *ngFor="let p of data.payment_split">
+                    <span class="pay-mode">{{ p.payment_mode | titlecase }}</span>
+                    <span class="pay-count">{{ p.count }} bills</span>
+                    <span class="pay-amount fw-600">₹{{ p.amount | number:'1.0-0' }}</span>
+                </div>
+                <div *ngIf="!data.payment_split?.length" class="text-muted" style="padding: 20px; text-align:center;">No
+                    sales yet today</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="quick-actions">
+                <a routerLink="/billing" class="action-btn">
+                    <span class="action-icon">🧾</span>
+                    <span>New Bill</span>
+                </a>
+                <a routerLink="/inventory" class="action-btn">
+                    <span class="action-icon">📦</span>
+                    <span>Add Product</span>
+                </a>
+                <a routerLink="/reports" class="action-btn">
+                    <span class="action-icon">📈</span>
+                    <span>View Reports</span>
+                </a>
+                <a routerLink="/invoices" class="action-btn">
+                    <span class="action-icon">📋</span>
+                    <span>Invoice History</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

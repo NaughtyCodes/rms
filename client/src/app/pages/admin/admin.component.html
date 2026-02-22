@@ -1,0 +1,94 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Admin Configuration</h1>
+        <p class="page-subtitle">Configure shop settings, themes, and manage data.</p>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Settings Form -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Shop Settings</h2>
+        </div>
+
+        <form (ngSubmit)="saveSettings()" class="flex-col gap-12">
+            <div class="form-group">
+                <label class="form-label">Shop Name</label>
+                <input type="text" class="form-input" [(ngModel)]="settings.shop_name" name="shop_name" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shop Address</label>
+                <textarea class="form-input" [(ngModel)]="settings.shop_address" name="shop_address"
+                    rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shop Description</label>
+                <textarea class="form-input" [(ngModel)]="settings.shop_description" name="shop_description"
+                    rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Theme Preference</label>
+                <select class="form-select" [(ngModel)]="settings.theme" name="theme">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Tax Configuration</label>
+                <select class="form-select" [(ngModel)]="settings.tax_mode" name="tax_mode">
+                    <option value="product">Product Wise</option>
+                    <option value="category">Category Wise</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bill Print Layout</label>
+                <select class="form-select" [(ngModel)]="settings.bill_layout" name="bill_layout">
+                    <option value="standard">Standard Format</option>
+                    <option value="compact">Compact Format</option>
+                </select>
+            </div>
+
+            <div class="mt-8 flex items-center justify-between">
+                <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    <span *ngIf="isSaving">Saving...</span>
+                    <span *ngIf="!isSaving">Save Settings</span>
+                </button>
+                <span class="text-success fw-600" *ngIf="message">{{ message }}</span>
+            </div>
+        </form>
+    </div>
+
+    <!-- Data Management -->
+    <div class="flex-col gap-16">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Import Inventory (CSV)</h2>
+            </div>
+            <p class="text-muted mb-16" style="font-size: 13px;">
+                Upload a CSV file to bulk import or update products. Required columns: name, barcode, category_id,
+                cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate.
+            </p>
+
+            <div class="form-group">
+                <input type="file" class="form-input" accept=".csv" (change)="onFileSelected($event)" #fileInput>
+            </div>
+
+            <div class="mt-16 flex items-center justify-between">
+                <button type="button" class="btn btn-primary" [disabled]="!selectedFile || isUploading"
+                    (click)="uploadInventory()">
+                    <span *ngIf="isUploading">Importing...</span>
+                    <span *ngIf="!isUploading">Import CSV</span>
+                </button>
+                <span
+                    [ngClass]="{'text-success': uploadMessage.includes('Successfully'), 'text-danger': !uploadMessage.includes('Successfully')}"
+                    class="fw-600" *ngIf="uploadMessage">{{ uploadMessage }}</span>
+            </div>
+        </div>
+    </div>
+</div>

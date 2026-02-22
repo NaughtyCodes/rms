@@ -1,0 +1,241 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">📈 Reports</h1>
+        <p class="page-subtitle">Sales analytics and inventory reports</p>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs mb-16">
+    <button class="tab" [class.active]="activeTab==='daily'" (click)="switchTab('daily')">📅 Daily</button>
+    <button class="tab" [class.active]="activeTab==='monthly'" (click)="switchTab('monthly')">📆 Monthly</button>
+    <button class="tab" [class.active]="activeTab==='top'" (click)="switchTab('top')">🏆 Top Products</button>
+    <button class="tab" [class.active]="activeTab==='stock'" (click)="switchTab('stock')">📦 Stock Value</button>
+</div>
+
+<div *ngIf="loading" class="text-center text-muted" style="padding: 40px;">Loading report...</div>
+
+<!-- Daily Report -->
+<div *ngIf="activeTab==='daily' && !loading">
+    <div class="toolbar mb-16">
+        <input type="date" class="form-input" [(ngModel)]="dailyDate" (change)="loadDaily()">
+    </div>
+
+    <div *ngIf="dailyData">
+        <div class="kpi-grid mb-16">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--accent-bg); color: var(--accent);">💰</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Revenue</div>
+                    <div class="kpi-value">₹{{ dailyData.summary.revenue | number:'1.0-0' }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--success-bg); color: var(--success);">🧾</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Bills</div>
+                    <div class="kpi-value">{{ dailyData.summary.total_bills }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--warning-bg); color: var(--warning);">🏷️</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Discount Given</div>
+                    <div class="kpi-value">₹{{ dailyData.summary.discount | number:'1.0-0' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hourly Breakdown -->
+        <div class="card mb-16" *ngIf="dailyData.hourly?.length">
+            <h3 class="card-title mb-16">Hourly Breakdown</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hour</th>
+                            <th class="text-right">Bills</th>
+                            <th class="text-right">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let h of dailyData.hourly">
+                            <td>{{ h.hour }}:00</td>
+                            <td class="text-right">{{ h.bills }}</td>
+                            <td class="text-right fw-600">₹{{ h.revenue | number:'1.0-0' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top Items -->
+        <div class="card" *ngIf="dailyData.top_items?.length">
+            <h3 class="card-title mb-16">Top Selling Items</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th class="text-right">Qty Sold</th>
+                            <th class="text-right">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of dailyData.top_items; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td class="fw-600">{{ item.product_name }}</td>
+                            <td class="text-right">{{ item.qty }}</td>
+                            <td class="text-right fw-600">₹{{ item.revenue | number:'1.0-0' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Report -->
+<div *ngIf="activeTab==='monthly' && !loading">
+    <div class="toolbar mb-16">
+        <select class="form-select" [(ngModel)]="monthlyMonth" (change)="loadMonthly()">
+            <option *ngFor="let m of months" [value]="m.val">{{ m.name }}</option>
+        </select>
+        <select class="form-select" [(ngModel)]="monthlyYear" (change)="loadMonthly()">
+            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+        </select>
+    </div>
+
+    <div *ngIf="monthlyData">
+        <div class="kpi-grid mb-16">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--accent-bg); color: var(--accent);">💰</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Monthly Revenue</div>
+                    <div class="kpi-value">₹{{ monthlyData.summary.revenue | number:'1.0-0' }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--success-bg); color: var(--success);">🧾</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Total Bills</div>
+                    <div class="kpi-value">{{ monthlyData.summary.total_bills }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" *ngIf="monthlyData.daily?.length">
+            <h3 class="card-title mb-16">Daily Breakdown</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th class="text-right">Bills</th>
+                            <th class="text-right">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let d of monthlyData.daily">
+                            <td>{{ d.date }}</td>
+                            <td class="text-right">{{ d.bills }}</td>
+                            <td class="text-right fw-600">₹{{ d.revenue | number:'1.0-0' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Products -->
+<div *ngIf="activeTab==='top' && !loading">
+    <div class="toolbar mb-16">
+        <select class="form-select" [(ngModel)]="topDays" (change)="loadTopProducts()">
+            <option [ngValue]="7">Last 7 days</option>
+            <option [ngValue]="30">Last 30 days</option>
+            <option [ngValue]="90">Last 90 days</option>
+        </select>
+    </div>
+
+    <div class="card" *ngIf="topProducts.length">
+        <h3 class="card-title mb-16">🏆 Top Selling Products</h3>
+        <div class="top-list">
+            <div class="top-item" *ngFor="let p of topProducts; let i = index">
+                <span class="top-rank">{{ i + 1 }}</span>
+                <div class="top-info">
+                    <div class="fw-600">{{ p.product_name }}</div>
+                    <div class="top-bar-wrapper">
+                        <div class="top-bar" [style.width.%]="(p.total_qty / getMaxQty()) * 100"></div>
+                    </div>
+                </div>
+                <div class="top-stats">
+                    <div class="fw-600">{{ p.total_qty }} sold</div>
+                    <div class="text-muted" style="font-size:12px;">₹{{ p.total_revenue | number:'1.0-0' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!topProducts.length" class="empty-state">
+        <div class="empty-icon">🏆</div>
+        <div class="empty-text">No sales data for this period</div>
+    </div>
+</div>
+
+<!-- Stock Valuation -->
+<div *ngIf="activeTab==='stock' && !loading">
+    <div *ngIf="stockData">
+        <div class="kpi-grid mb-16">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--info-bg); color: var(--info);">📦</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Total Items</div>
+                    <div class="kpi-value">{{ stockData.totals.total_items | number }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--warning-bg); color: var(--warning);">💵</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Cost Value</div>
+                    <div class="kpi-value">₹{{ stockData.totals.cost_value | number:'1.0-0' }}</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: var(--success-bg); color: var(--success);">💰</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Retail Value</div>
+                    <div class="kpi-value">₹{{ stockData.totals.retail_value | number:'1.0-0' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th class="text-right">Qty</th>
+                        <th class="text-right">Cost Price</th>
+                        <th class="text-right">Sell Price</th>
+                        <th class="text-right">Cost Value</th>
+                        <th class="text-right">Retail Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of stockData.products">
+                        <td class="fw-600">{{ p.name }}</td>
+                        <td>{{ p.category_name || '—' }}</td>
+                        <td class="text-right">{{ p.quantity }}</td>
+                        <td class="text-right">₹{{ p.cost_price | number:'1.2-2' }}</td>
+                        <td class="text-right">₹{{ p.selling_price | number:'1.2-2' }}</td>
+                        <td class="text-right">₹{{ p.cost_value | number:'1.0-0' }}</td>
+                        <td class="text-right fw-600">₹{{ p.retail_value | number:'1.0-0' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

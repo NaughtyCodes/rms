@@ -1,0 +1,91 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">📋 Invoices</h1>
+        <p class="page-subtitle">{{ total }} invoices found | Revenue: ₹{{ getTotalRevenue() | number:'1.0-0' }}</p>
+    </div>
+    <div class="flex gap-12 items-center">
+        <input type="date" class="form-input" [(ngModel)]="dateFilter" (change)="loadInvoices()">
+    </div>
+</div>
+
+<div class="table-wrapper" *ngIf="!loading && invoices.length">
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Date</th>
+                <th>Cashier</th>
+                <th>Payment</th>
+                <th class="text-right">Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let inv of invoices">
+                <td class="fw-600">{{ inv.invoice_number }}</td>
+                <td>{{ inv.created_at | date:'short' }}</td>
+                <td>{{ inv.cashier }}</td>
+                <td><span class="badge badge-info">{{ inv.payment_mode | titlecase }}</span></td>
+                <td class="text-right fw-600">₹{{ inv.total | number:'1.2-2' }}</td>
+                <td><button class="btn btn-secondary btn-sm" (click)="viewInvoice(inv)">View</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div *ngIf="!loading && !invoices.length" class="empty-state">
+    <div class="empty-icon">📋</div>
+    <div class="empty-text">No invoices for this date</div>
+</div>
+
+<!-- Invoice Detail Modal -->
+<div class="modal-overlay" *ngIf="selectedInvoice" (click)="closeDetail()">
+    <div class="modal" (click)="$event.stopPropagation()" style="max-width: 560px;">
+        <div class="modal-header">
+            <h2 class="modal-title">{{ selectedInvoice.invoice_number }}</h2>
+            <button class="modal-close" (click)="closeDetail()">×</button>
+        </div>
+
+        <div class="grid-2 mb-16" style="font-size:13px;">
+            <div><span class="text-muted">Date:</span> {{ selectedInvoice.created_at | date:'medium' }}</div>
+            <div><span class="text-muted">Cashier:</span> {{ selectedInvoice.cashier }}</div>
+            <div><span class="text-muted">Payment:</span> {{ selectedInvoice.payment_mode | titlecase }}</div>
+            <div *ngIf="selectedInvoice.customer_name"><span class="text-muted">Customer:</span> {{
+                selectedInvoice.customer_name }}</div>
+        </div>
+
+        <div class="table-wrapper mb-16">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th class="text-right">Price</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of selectedInvoice.items">
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td class="text-right">₹{{ item.unit_price | number:'1.2-2' }}</td>
+                        <td class="text-right fw-600">₹{{ item.line_total | number:'1.2-2' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="font-size:14px;">
+            <div class="summary-row"><span>Subtotal</span><span>₹{{ selectedInvoice.subtotal | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row" *ngIf="selectedInvoice.discount"><span>Discount</span><span>-₹{{
+                    selectedInvoice.discount | number:'1.2-2' }}</span></div>
+            <div class="summary-row" *ngIf="selectedInvoice.tax_amount"><span>Tax ({{ selectedInvoice.tax_percent
+                    }}%)</span><span>₹{{ selectedInvoice.tax_amount | number:'1.2-2' }}</span></div>
+            <div
+                style="display:flex; justify-content:space-between; font-size:20px; font-weight:700; padding-top:12px; border-top: 2px solid var(--accent); color: var(--accent); margin-top: 8px;">
+                <span>Total</span><span>₹{{ selectedInvoice.total | number:'1.2-2' }}</span>
+            </div>
+        </div>
+    </div>
+</div>
