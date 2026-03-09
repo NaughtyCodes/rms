@@ -64,6 +64,26 @@ export class InventoryService {
         return this.http.delete(`/api/products/${id}`);
     }
 
+    // --- NEW: Batch & Running Inventory Methods ---
+    
+    getProductBatches(productId: number): Observable<any[]> {
+        return this.http.get<any[]>(`/api/inventory/batches/${productId}`);
+    }
+
+    addStock(data: { product_id: number; batch_number: string; quantity: number; cost_price?: number; expiry_date?: string; meta_data?: any }): Observable<any> {
+        return this.http.post('/api/inventory/stock-in', data);
+    }
+
+    recordDamage(data: { product_id: number; batch_id?: number | null; quantity: number; reason: string }): Observable<any> {
+        return this.http.post('/api/inventory/damage', data);
+    }
+
+    getTransactionLogs(): Observable<any[]> {
+        return this.http.get<any[]>('/api/inventory/transactions');
+    }
+
+    // --- End NEW ---
+
     getLowStock(): Observable<Product[]> {
         return this.http.get<Product[]>('/api/products/low-stock');
     }

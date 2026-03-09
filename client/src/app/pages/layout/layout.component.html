@@ -7,10 +7,22 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="active" class="nav-item">
-                <span class="nav-icon">{{ item.icon }}</span>
-                <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
-            </a>
+            <ng-container *ngFor="let item of navItems">
+                <a [routerLink]="item.path" routerLinkActive="active" 
+                   [routerLinkActiveOptions]="item.children ? {exact: true} : {exact: false}" 
+                   class="nav-item">
+                    <span class="nav-icon">{{ item.icon }}</span>
+                    <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
+                </a>
+                
+                <!-- Nested Children Items -->
+                <div class="nav-children" *ngIf="item.children && !sidebarCollapsed">
+                    <a *ngFor="let child of item.children" [routerLink]="child.path" routerLinkActive="active" class="nav-item child-item">
+                        <span class="nav-icon">{{ child.icon }}</span>
+                        <span class="nav-label">{{ child.label }}</span>
+                    </a>
+                </div>
+            </ng-container>
         </nav>
 
         <div class="sidebar-footer">

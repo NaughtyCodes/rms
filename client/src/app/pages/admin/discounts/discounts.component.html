@@ -1,0 +1,82 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Discount Management</h1>
+        <p class="page-subtitle">Apply flat or percentage discounts to specific products.</p>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Select Product & View Active Discount -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Select Product</h2>
+        </div>
+        
+        <div class="p-16">
+            <div class="form-group mb-16">
+                <label class="form-label">Product</label>
+                <select class="form-select" [(ngModel)]="selectedProductId" (change)="onProductSelect()">
+                    <option [ngValue]="null">-- Select a Product --</option>
+                    <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }} ({{ p.barcode }})</option>
+                </select>
+            </div>
+
+            <div *ngIf="isLoading" class="text-muted text-center mt-16">Loading...</div>
+
+            <div *ngIf="selectedProductId && !isLoading">
+                <div class="alert alert-info mt-16" *ngIf="activeDiscount">
+                    <div class="fw-600 mb-4">Currently Active Discount</div>
+                    <div>Type: <strong>{{ activeDiscount.discount_type | titlecase }}</strong></div>
+                    <div>Value: <strong>{{ activeDiscount.discount_value }}{{ activeDiscount.discount_type === 'percentage' ? '%' : ' OFF' }}</strong></div>
+                    <div *ngIf="activeDiscount.start_date">Valid From: {{ activeDiscount.start_date | date }}</div>
+                    <div *ngIf="activeDiscount.end_date">Valid Until: {{ activeDiscount.end_date | date }}</div>
+                    
+                    <button class="btn btn-danger btn-sm mt-12" (click)="removeDiscount()">Remove Discount</button>
+                </div>
+
+                <div class="alert alert-warning mt-16" *ngIf="!activeDiscount">
+                    No active discount for this product.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apply New Discount Form -->
+    <div class="card" *ngIf="selectedProductId">
+        <div class="card-header">
+            <h2 class="card-title">Apply New Discount</h2>
+        </div>
+
+        <form (ngSubmit)="applyDiscount()" class="flex-col gap-12 p-16">
+            <div class="form-group">
+                <label class="form-label">Discount Type</label>
+                <select class="form-select" [(ngModel)]="newDiscount.discount_type" name="type">
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="flat">Flat Amount</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Discount Value</label>
+                <input type="number" class="form-input" [(ngModel)]="newDiscount.discount_value" name="value" required min="0" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Start Date (Optional)</label>
+                <input type="datetime-local" class="form-input" [(ngModel)]="newDiscount.start_date" name="start_date">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">End Date (Optional)</label>
+                <input type="datetime-local" class="form-input" [(ngModel)]="newDiscount.end_date" name="end_date">
+            </div>
+
+            <div class="mt-8 flex items-center justify-between">
+                <button type="submit" class="btn btn-primary" [disabled]="isLoading || newDiscount.discount_value! <= 0">
+                    Apply Discount
+                </button>
+                <span class="text-success fw-600" *ngIf="message">{{ message }}</span>
+            </div>
+        </form>
+    </div>
+</div>

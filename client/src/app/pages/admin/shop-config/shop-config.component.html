@@ -1,0 +1,125 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🏪 Shop Configuration</h1>
+        <p class="page-subtitle">Manage your shop details, appearance, and tax settings.</p>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Shop Details Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Shop Details</h2>
+        </div>
+
+        <form (ngSubmit)="saveSettings()" class="flex-col gap-12">
+            <div class="form-group">
+                <label class="form-label">Shop Name *</label>
+                <input type="text" class="form-input" [(ngModel)]="settings.shop_name" name="shop_name" required
+                    placeholder="e.g. My Grocery Store">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shop Address</label>
+                <textarea class="form-input" [(ngModel)]="settings.shop_address" name="shop_address" rows="2"
+                    placeholder="Full address including city, pincode"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shop Description / Tagline</label>
+                <input type="text" class="form-input" [(ngModel)]="settings.shop_description" name="shop_description"
+                    placeholder="e.g. Fresh groceries since 1990">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" [(ngModel)]="settings.shop_phone" name="shop_phone"
+                        placeholder="+91 98765 43210">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" [(ngModel)]="settings.shop_email" name="shop_email"
+                        placeholder="shop@example.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">GSTIN</label>
+                <input type="text" class="form-input" [(ngModel)]="settings.shop_gstin" name="shop_gstin"
+                    placeholder="e.g. 22AAAAA0000A1Z5" maxlength="15"
+                    style="text-transform: uppercase; letter-spacing: 1px;">
+            </div>
+
+            <div class="mt-8 flex items-center justify-between">
+                <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Save Shop Details' }}
+                </button>
+                <span class="text-success fw-600" *ngIf="message">{{ message }}</span>
+            </div>
+        </form>
+    </div>
+
+    <!-- Appearance & Config Card -->
+    <div class="flex-col gap-16">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Appearance</h2>
+            </div>
+
+            <div class="flex-col gap-12">
+                <div class="form-group">
+                    <label class="form-label">Theme</label>
+                    <select class="form-select" [(ngModel)]="settings.theme" name="theme"
+                        (ngModelChange)="saveSettings()">
+                        <option value="light">☀️ Light Theme</option>
+                        <option value="dark">🌙 Dark Theme</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Font Family</label>
+                    <select class="form-select" [(ngModel)]="settings.font_family" name="font_family"
+                        (ngModelChange)="saveSettings()">
+                        <option *ngFor="let f of fontOptions" [value]="f.value">{{ f.label }}</option>
+                    </select>
+                </div>
+
+                <!-- Font Preview -->
+                <div class="font-preview" [style.font-family]="settings.font_family + ', sans-serif'">
+                    <div class="preview-label">Font Preview</div>
+                    <div class="preview-text-lg">The quick brown fox jumps</div>
+                    <div class="preview-text-sm">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+                    <div class="preview-text-sm">abcdefghijklmnopqrstuvwxyz 0123456789</div>
+                    <div class="preview-text-sm">₹1,234.56 — 10% off — GST included</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Tax Configuration</h2>
+            </div>
+
+            <div class="flex-col gap-12">
+                <div class="form-group">
+                    <label class="form-label">Tax Application Mode</label>
+                    <select class="form-select" [(ngModel)]="settings.tax_mode" name="tax_mode">
+                        <option value="product">Product Wise</option>
+                        <option value="category">Category Wise</option>
+                    </select>
+                    <p class="help-text" *ngIf="settings.tax_mode === 'product'">
+                        Tax rate is set individually per product in Inventory.
+                    </p>
+                    <p class="help-text" *ngIf="settings.tax_mode === 'category'">
+                        Tax rate is inherited from the product's category.
+                    </p>
+                </div>
+
+                <button class="btn btn-primary btn-sm" (click)="saveSettings()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Save Tax Config' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

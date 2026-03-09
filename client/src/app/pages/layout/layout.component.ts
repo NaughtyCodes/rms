@@ -15,11 +15,10 @@ export class LayoutComponent {
     sidebarCollapsed = false;
     today = new Date();
 
-    navItems = [
+    navItems: any[] = [
         { path: '/dashboard', icon: '📊', label: 'Dashboard' },
         { path: '/billing', icon: '🧾', label: 'New Bill' },
         { path: '/invoices', icon: '📋', label: 'Invoices' },
-        { path: '/inventory', icon: '📦', label: 'Inventory' },
         { path: '/reports', icon: '📈', label: 'Reports' },
     ];
 
@@ -28,7 +27,20 @@ export class LayoutComponent {
         public settingsService: SettingsService
     ) {
         if (this.auth.getUser()?.role === 'admin') {
-            this.navItems.push({ path: '/admin', icon: '⚙️', label: 'Admin Settings' });
+            this.navItems.push({
+                path: '/admin',
+                icon: '⚙️',
+                label: 'Admin Settings',
+                children: [
+                    { path: '/inventory', icon: '📦', label: 'Inventory' },
+                    { path: '/admin/stock-management', icon: '🔄', label: 'Stock Mgmt' },
+                    { path: '/admin/meta-setup', icon: '📝', label: 'Meta Setup' },
+                    { path: '/admin/taxes', icon: '💰', label: 'Tax Settings' },
+                    { path: '/admin/discounts', icon: '🏷️', label: 'Discounts' },
+                    { path: '/admin/shop-config', icon: '🏪', label: 'Shop Config' },
+                    { path: '/admin/print-config', icon: '🖨️', label: 'Print Config' }
+                ]
+            });
         }
     }
 

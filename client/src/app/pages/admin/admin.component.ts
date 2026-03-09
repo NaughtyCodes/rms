@@ -1,60 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SettingsService, ShopSettings } from '../../services/settings.service';
+import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-admin',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: './admin.component.html',
     styleUrl: './admin.component.css'
 })
-export class AdminComponent implements OnInit {
-    settings: ShopSettings = {
-        shop_name: '',
-        shop_address: '',
-        shop_description: '',
-        theme: 'dark',
-        tax_mode: 'product',
-        bill_layout: 'standard'
-    };
-
-    isSaving = false;
-    message = '';
-
+export class AdminComponent {
     selectedFile: File | null = null;
     isUploading = false;
     uploadMessage = '';
 
-    constructor(
-        private settingsService: SettingsService,
-        private http: HttpClient
-    ) { }
-
-    ngOnInit() {
-        this.settingsService.settings$.subscribe(s => {
-            this.settings = { ...s };
-        });
-    }
-
-    saveSettings() {
-        this.isSaving = true;
-        this.message = '';
-        this.settingsService.updateSettings(this.settings).subscribe({
-            next: () => {
-                this.isSaving = false;
-                this.message = 'Settings saved successfully!';
-                setTimeout(() => this.message = '', 3000);
-            },
-            error: (err) => {
-                this.isSaving = false;
-                this.message = 'Error saving settings.';
-                console.error(err);
-            }
-        });
-    }
+    constructor(private http: HttpClient) { }
 
     onFileSelected(event: any) {
         const file = event.target.files[0];

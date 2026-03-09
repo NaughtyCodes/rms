@@ -1,0 +1,140 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Advanced Stock Management</h1>
+        <p class="page-subtitle">Manage inventory batches, record damaged stock, and view transaction history.</p>
+    </div>
+</div>
+
+<div class="card mb-24">
+    <div class="p-16">
+        <div class="form-group mb-0">
+            <label class="form-label">Select Product to Manage</label>
+            <select class="form-select" [(ngModel)]="selectedProductId" (change)="onProductSelect()">
+                <option [ngValue]="null">-- Select a Product --</option>
+                <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }} ({{ p.barcode || 'No Barcode' }}) - Total Qty: {{ p.quantity }}</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs mb-16" *ngIf="selectedProductId">
+    <button class="tab-btn" [class.active]="activeTab === 'add'" (click)="activeTab = 'add'">Add Stock (Batch)</button>
+    <button class="tab-btn" [class.active]="activeTab === 'damage'" (click)="activeTab = 'damage'">Record Damage</button>
+    <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">Transaction History</button>
+</div>
+
+<div *ngIf="isLoading" class="text-center p-24 text-muted">Processing...</div>
+<div *ngIf="message" class="alert alert-success mt-12 mb-12 fw-600">{{ message }}</div>
+
+<!-- ADD STOCK TAB -->
+<div class="card" *ngIf="selectedProductId && activeTab === 'add' && !isLoading">
+    <div class="card-header"><h2 class="card-title">Add Running Inventory</h2></div>
+    <form (ngSubmit)="submitAddStock()" class="flex-col gap-16 p-16">
+        <div class="grid-2">
+            <div class="form-group">
+                <label class="form-label">Batch Number / Lot ID</label>
+                <input type="text" class="form-input" [(ngModel)]="newStock.batch_number" name="batch" required placeholder="e.g. BATCH-2024-001">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Quantity Received</label>
+                <input type="number" class="form-input" [(ngModel)]="newStock.quantity" name="qty" required min="1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cost Price (per unit)</label>
+                <input type="number" class="form-input" [(ngModel)]="newStock.cost_price" name="cost" step="0.01">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Expiry Date</label>
+                <input type="date" class="form-input" [(ngModel)]="newStock.expiry_date" name="expiry">
+            </div>
+        </div>
+
+        <!-- Dynamic Meta Data for this Batch -->
+        <div class="alert alert-info mt-8">
+            <div class="flex items-center justify-between mb-8">
+                <div class="fw-600">Batch-Specific Metadata (Optional)</div>
+                <button type="button" class="btn btn-sm btn-secondary" (click)="addDynamicField()">+ Add Field</button>
+            </div>
+            <p class="text-muted mb-12" style="font-size: 13px;">Add running meta specific to this incoming inventory (e.g. Supplier Name, Arrival Condition).</p>
+            
+            <div class="flex gap-8 mb-8 items-center" *ngFor="let field of dynamicFields; let i = index">
+                <input type="text" class="form-input" placeholder="Key (e.g. Supplier)" [(ngModel)]="field.key" [name]="'key_'+i">
+                <input type="text" class="form-input" placeholder="Value (e.g. ACME Corp)" [(ngModel)]="field.value" [name]="'val_'+i">
+                <button type="button" class="btn btn-sm btn-danger" (click)="removeDynamicField(i)">X</button>
+            </div>
+        </div>
+
+        <div class="mt-8 text-right">
+            <button type="submit" class="btn btn-primary" [disabled]="!newStock.batch_number || newStock.quantity < 1">Receive Stock</button>
+        </div>
+    </form>
+</div>
+
+<!-- RECORD DAMAGE TAB -->
+<div class="card" *ngIf="selectedProductId && activeTab === 'damage' && !isLoading">
+    <div class="card-header"><h2 class="card-title">Record Damaged Goods</h2></div>
+    <form (ngSubmit)="submitDamage()" class="flex-col gap-12 p-16">
+        <div class="form-group">
+            <label class="form-label">Select Affected Batch (Optional)</label>
+            <select class="form-select" [(ngModel)]="damageData.batch_id" name="dbatch">
+                <option [ngValue]="null">-- General Product Damage (Not Batch Specific) --</option>
+                <option *ngFor="let b of batches" [ngValue]="b.id">
+                    {{ b.batch_number }} (Qty Available: {{ b.quantity }}) {{ b.expiry_date ? '- Exp: ' + (b.expiry_date | date) : '' }}
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Damaged Quantity</label>
+            <input type="number" class="form-input" [(ngModel)]="damageData.quantity" name="dqty" required min="1">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Reason / Notes</label>
+            <textarea class="form-input" rows="3" [(ngModel)]="damageData.reason" name="dreason" required placeholder="Describe the damage..." style="resize: vertical;"></textarea>
+        </div>
+
+        <div class="mt-8 text-right">
+            <button type="submit" class="btn btn-danger" [disabled]="damageData.quantity < 1 || !damageData.reason">Record Damage & Deduct Stock</button>
+        </div>
+    </form>
+</div>
+
+<!-- TRANSACTION HISTORY TAB -->
+<div class="card" *ngIf="activeTab === 'history' && !isLoading">
+    <div class="card-header"><h2 class="card-title">Recent Inventory Transactions</h2></div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Batch</th>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let t of transactions">
+                    <td>{{ t.created_at | date:'short' }}</td>
+                    <td>{{ t.product_name }}</td>
+                    <td>{{ t.batch_number || '-' }}</td>
+                    <td>
+                        <span class="badge" [ngClass]="{'bg-success text-white': t.type === 'stock_in', 'bg-danger text-white': t.type === 'damage', 'bg-primary text-white': t.type === 'sale'}">
+                            {{ t.type | uppercase }}
+                        </span>
+                    </td>
+                    <td [ngClass]="{'text-danger fw-600': t.quantity < 0, 'text-success fw-600': t.quantity > 0}">
+                        {{ t.quantity > 0 ? '+' : ''}}{{ t.quantity }}
+                    </td>
+                    <td class="text-muted">{{ t.reason || '-' }}</td>
+                </tr>
+                <tr *ngIf="transactions.length === 0">
+                    <td colspan="6" class="text-center p-16 text-muted">No transactions found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

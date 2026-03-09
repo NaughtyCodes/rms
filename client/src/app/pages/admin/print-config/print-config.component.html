@@ -1,0 +1,191 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🖨️ Print & Bill Configuration</h1>
+        <p class="page-subtitle">Customize bill layout, paper size, and print options.</p>
+    </div>
+</div>
+
+<div class="config-layout">
+    <!-- Settings Panel -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Page Layout</h2>
+        </div>
+
+        <div class="flex-col gap-12">
+            <div class="form-group">
+                <label class="form-label">Shop Logo</label>
+                <div class="logo-upload-container">
+                    <img *ngIf="settings?.shop_logo_url" 
+                         [src]="settings?.shop_logo_url?.startsWith('/uploads') ? 'http://localhost:3001' + settings?.shop_logo_url : settings?.shop_logo_url" class="logo-preview-thumb">
+                    <div class="logo-actions">
+                        <input type="file" id="logoInp" (change)="onLogoUploaded($event)" hidden accept="image/*">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('logoInp').click()">
+                            {{ settings.shop_logo_url ? 'Change Logo' : 'Upload Logo' }}
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" *ngIf="settings.shop_logo_url" (click)="removeLogo()">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Paper Size</label>
+                    <select class="form-select" [(ngModel)]="settings.bill_paper_size" (ngModelChange)="saveSettings()">
+                        <option *ngFor="let p of paperSizes" [value]="p.value">{{ p.label }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Layout Style</label>
+                    <select class="form-select" [(ngModel)]="settings.bill_layout_style" (ngModelChange)="saveSettings()">
+                        <option *ngFor="let s of layoutStyles" [value]="s.value">{{ s.label }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Body Density</label>
+                    <select class="form-select" [(ngModel)]="settings.bill_layout" (ngModelChange)="saveSettings()">
+                        <option *ngFor="let l of layouts" [value]="l.value">{{ l.label }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Display Logo</label>
+                    <select class="form-select" [(ngModel)]="settings.bill_show_logo" (ngModelChange)="saveSettings()">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="divider">
+            
+            <div class="section-title">Watermark Settings</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Show Watermark</label>
+                    <select class="form-select" [(ngModel)]="settings.bill_show_watermark" (ngModelChange)="saveSettings()">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Watermark Text</label>
+                    <input type="text" class="form-input" [(ngModel)]="settings.bill_watermark_text" (blur)="saveSettings()">
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="section-title">Billing Convenience</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Show UPI QR</label>
+                    <select class="form-select" [(ngModel)]="settings.bill_show_qr" (ngModelChange)="saveSettings()">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">UPI ID (VPA)</label>
+                    <input type="text" class="form-input" [(ngModel)]="settings.bill_upi_id" (blur)="saveSettings()" placeholder="e.g. shop@upi">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Terms & Conditions</label>
+                <textarea class="form-input" [(ngModel)]="settings.bill_terms" rows="2"
+                    placeholder="e.g. Items sold can only be returned within 3 days." (blur)="saveSettings()"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bill Footer Text</label>
+                <textarea class="form-input" [(ngModel)]="settings.bill_footer_text" rows="1"
+                    placeholder="e.g. Thank you for shopping with us!" (blur)="saveSettings()"></textarea>
+            </div>
+
+            <div class="flex items-center gap-12 mt-8">
+                <button class="btn btn-primary" (click)="saveSettings()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Save Settings' }}
+                </button>
+                <button class="btn btn-secondary" (click)="printPreview()">
+                    📥 Print Preview / Save as PDF
+                </button>
+                <span class="text-success fw-600" *ngIf="message">{{ message }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="preview-panel">
+        <div class="preview-title">Live Bill Preview</div>
+        <div class="preview-frame" [class.preview-80mm]="settings.bill_paper_size === '80mm'"
+            [class.preview-a5]="settings.bill_paper_size === 'a5'"
+            [class.preview-a4]="settings.bill_paper_size === 'a4'">
+
+            <div id="bill-preview" class="receipt-preview"
+                [class.compact]="settings.bill_layout === 'compact'"
+                [ngClass]="settings.bill_layout_style"
+                [style.font-family]="settings.font_family + ', sans-serif'">
+
+                <!-- Watermark -->
+                <div class="watermark" *ngIf="settings.bill_show_watermark === 'true'" 
+                     [style.opacity]="settings.bill_watermark_opacity">
+                    {{ settings.bill_watermark_text }}
+                </div>
+
+                <div class="rp-header">
+                    <img *ngIf="settings?.bill_show_logo === 'true' && settings?.shop_logo_url" 
+                         [src]="settings?.shop_logo_url?.startsWith('/uploads') ? 'http://localhost:3001' + settings?.shop_logo_url : settings?.shop_logo_url" class="bill-logo">
+                    <h2>{{ settings.shop_name || 'Shop Name' }}</h2>
+                    <p>{{ settings.shop_address || 'Shop Address' }}</p>
+                    <p *ngIf="settings.shop_phone">📞 {{ settings.shop_phone }}</p>
+                    <p *ngIf="settings.shop_gstin">GSTIN: {{ settings.shop_gstin }}</p>
+                    <p style="margin-top: 6px; font-weight: 500;">Tax Invoice</p>
+                </div>
+
+                <div class="rp-meta">
+                    <div>Invoice: <strong>INV-2026-001</strong></div>
+                    <div>Date: {{ today | date:'dd/MM/yyyy hh:mm a' }}</div>
+                    <div>Customer: Walk-in Customer</div>
+                </div>
+
+                <table class="rp-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Basmati Rice 1kg</td><td>2</td><td>₹120</td><td>₹240</td></tr>
+                        <tr><td>Toor Dal 500g</td><td>1</td><td>₹85</td><td>₹85</td></tr>
+                        <tr><td>Coconut Oil 1L</td><td>1</td><td>₹195</td><td>₹195</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="rp-totals">
+                    <div class="rp-total-row"><span>Subtotal</span><span>₹520.00</span></div>
+                    <div class="rp-total-row"><span>Discount</span><span>-₹20.00</span></div>
+                    <div class="rp-total-row"><span>Tax (18%)</span><span>₹90.00</span></div>
+                    <div class="rp-grand-total"><span>Total</span><span>₹590.00</span></div>
+                    <div class="rp-payment">Paid via Cash</div>
+                </div>
+
+                <div class="rp-qr-section" *ngIf="settings.bill_show_qr === 'true' && settings.bill_upi_id">
+                    <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + getEncodedUpiId()" class="qr-code">
+                    <div class="qr-text">Scan to pay via UPI</div>
+                </div>
+
+                <div class="rp-terms" *ngIf="settings.bill_terms">{{ settings.bill_terms }}</div>
+                <div class="rp-footer">{{ settings.bill_footer_text || 'Thank you for shopping with us!' }}</div>
+            </div>
+        </div>
+    </div>
+</div>

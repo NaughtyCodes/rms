@@ -1,0 +1,72 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Product Meta Setup</h1>
+        <p class="page-subtitle">Configure dynamic fields that will appear when adding products.</p>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- List Fields -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Existing Meta Fields</h2>
+        </div>
+        
+        <div *ngIf="isLoading" class="p-16 text-center text-muted">Loading...</div>
+        
+        <div *ngIf="!isLoading && fields.length === 0" class="p-16 text-center text-muted">
+            No dynamic fields configured yet.
+        </div>
+
+        <div class="list-group" *ngIf="fields.length > 0">
+            <div class="list-item flex items-center justify-between" *ngFor="let field of fields; let i = index">
+                <div>
+                    <div class="fw-600">{{ field.name }} <span *ngIf="field.is_required" class="text-danger">*</span></div>
+                    <div class="text-muted" style="font-size: 12px;">Type: {{ field.type }} <span *ngIf="field.type === 'select'">({{ field.options?.join(', ') }})</span></div>
+                </div>
+                <button class="btn btn-danger btn-sm" (click)="deleteField(field.id!, i)">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Field Form -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Create New Field</h2>
+        </div>
+
+        <form (ngSubmit)="addField()" class="flex-col gap-12 p-16">
+            <div class="form-group">
+                <label class="form-label">Field Name</label>
+                <input type="text" class="form-input" [(ngModel)]="newField.name" name="name" required placeholder="e.g. Brand, Color, Weight">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Field Type</label>
+                <select class="form-select" [(ngModel)]="newField.type" name="type">
+                    <option value="text">Text (String)</option>
+                    <option value="number">Number</option>
+                    <option value="date">Date</option>
+                    <option value="select">Dropdown (Select)</option>
+                </select>
+            </div>
+
+            <div class="form-group" *ngIf="newField.type === 'select'">
+                <label class="form-label">Dropdown Options</label>
+                <input type="text" class="form-input" [(ngModel)]="optionsText" name="options" placeholder="Comma separated (e.g. Red, Blue, Green)">
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 8px; align-items: center;">
+                <input type="checkbox" [(ngModel)]="newField.is_required" name="is_required" id="isreq">
+                <label for="isreq" class="form-label" style="margin: 0;">Make this field Required</label>
+            </div>
+
+            <div class="mt-8 flex items-center justify-between">
+                <button type="submit" class="btn btn-primary" [disabled]="isLoading || !newField.name">
+                    Add Field
+                </button>
+                <span class="text-success fw-600" *ngIf="message">{{ message }}</span>
+            </div>
+        </form>
+    </div>
+</div>

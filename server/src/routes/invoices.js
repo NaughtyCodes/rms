@@ -24,12 +24,23 @@ router.post('/', authenticate, (req, res) => {
         }
 
         const createInvoice = db.transaction(() => {
+            // Get tax mode from settings
+            const taxModeRow = db.prepare('SELECT value FROM settings WHERE key = ?').get('tax_mode');
+            const taxMode = taxModeRow ? taxModeRow.value : 'global';
+
             // Validate stock and calculate subtotal
             let subtotal = 0;
+            let calculatedTaxAmount = 0;
             const resolvedItems = [];
 
             for (const item of items) {
-                const product = db.prepare('SELECT * FROM products WHERE id = ?').get(item.product_id);
+                const product = db.prepare(`
+                    SELECT p.*, c.tax_rate as category_tax_rate 
+                    FROM products p 
+                    LEFT JOIN categories c ON p.category_id = c.id 
+                    WHERE p.id = ?
+                `).get(item.product_id);
+
                 if (!product) throw new Error(`Product ID ${item.product_id} not found.`);
                 if (product.quantity < item.quantity) {
                     throw new Error(`Insufficient stock for "${product.name}". Available: ${product.quantity}, Requested: ${item.quantity}`);
@@ -39,27 +50,49 @@ router.post('/', authenticate, (req, res) => {
                 const lineTotal = (product.selling_price * item.quantity) - itemDiscount;
                 subtotal += lineTotal;
 
+                // Item level tax calculation
+                if (taxMode === 'product' || taxMode === 'category') {
+                    const rate = (taxMode === 'product') ? (product.tax_rate || 0) : (product.category_tax_rate || 0);
+                    // Distribute bill-level discount proportionally to item tax (simplified for consistency with frontend)
+                    const discountRatio = subtotal > 0 ? (discount / subtotal) : 0;
+                    const itemTaxable = lineTotal * (1 - (discount / (subtotal + (items.length * 10)))); // Rough estimate or just use lineTotal
+                    // Better: use the same logic as frontend: (itemTaxable * rate) / 100
+                    // Since the backend doesn't know the FINAL subtotal yet during the loop, we calculate tax after the loop for precision.
+                }
+
                 resolvedItems.push({
                     product_id: product.id,
                     product_name: product.name,
                     quantity: item.quantity,
                     unit_price: product.selling_price,
                     discount: itemDiscount,
-                    line_total: lineTotal
+                    line_total: lineTotal,
+                    tax_rate: (taxMode === 'product') ? (product.tax_rate || 0) : (product.category_tax_rate || 0)
                 });
             }
 
             const invoiceDiscount = discount;
             const taxableAmount = subtotal - invoiceDiscount;
-            const taxAmount = Math.round((taxableAmount * tax_percent / 100) * 100) / 100;
-            const total = Math.round((taxableAmount + taxAmount) * 100) / 100;
+            
+            if (taxMode === 'product' || taxMode === 'category') {
+                const discountRatio = subtotal > 0 ? (invoiceDiscount / subtotal) : 0;
+                for (const ri of resolvedItems) {
+                    const itemTaxable = ri.line_total * (1 - discountRatio);
+                    calculatedTaxAmount += (itemTaxable * ri.tax_rate) / 100;
+                }
+            } else {
+                calculatedTaxAmount = taxableAmount * tax_percent / 100;
+            }
+
+            const taxAmountFinal = Math.round(calculatedTaxAmount * 100) / 100;
+            const total = Math.round((taxableAmount + taxAmountFinal) * 100) / 100;
             const invoiceNumber = generateInvoiceNumber();
 
             // Insert invoice
             const invResult = db.prepare(`
         INSERT INTO invoices (invoice_number, user_id, subtotal, discount, tax_percent, tax_amount, total, payment_mode, customer_name, customer_phone)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(invoiceNumber, req.user.id, subtotal, invoiceDiscount, tax_percent, taxAmount, total, payment_mode, customer_name, customer_phone);
+      `).run(invoiceNumber, req.user.id, subtotal, invoiceDiscount, tax_percent, taxAmountFinal, total, payment_mode, customer_name, customer_phone);
 
             const invoiceId = invResult.lastInsertRowid;
 
@@ -75,7 +108,7 @@ router.post('/', authenticate, (req, res) => {
                 decrementStock.run(ri.quantity, ri.product_id);
             }
 
-            return { id: invoiceId, invoice_number: invoiceNumber, subtotal, discount: invoiceDiscount, tax_percent, tax_amount: taxAmount, total, payment_mode, items: resolvedItems };
+            return { id: invoiceId, invoice_number: invoiceNumber, subtotal, discount: invoiceDiscount, tax_percent, tax_amount: taxAmountFinal, total, payment_mode, items: resolvedItems };
         });
 
         const invoice = createInvoice();

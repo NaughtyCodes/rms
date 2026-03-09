@@ -3,3 +3,27 @@ textarea.form-input {
     resize: vertical;
     min-height: 60px;
 }
+
+.quick-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.quick-link:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent);
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
+
+.ql-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}

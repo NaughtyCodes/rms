@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Billing Pro - Master User Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --dark: #0f172a;
+            --text: #334155;
+            --text-light: #64748b;
+            --bg: #f1f5f9;
+            --white: #ffffff;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 300px;
+            height: 100vh;
+            background: var(--dark);
+            color: white;
+            padding: 40px 20px;
+            position: fixed;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-section {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            margin: 25px 0 10px 16px;
+            font-weight: 800;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 300px;
+            padding: 60px 80px;
+            max-width: 1300px;
+            width: 100%;
+        }
+
+        section { margin-bottom: 80px; }
+
+        h1 { font-family: 'Outfit', sans-serif; font-size: 48px; font-weight: 700; color: var(--dark); margin-bottom: 16px; }
+        h2 { font-family: 'Outfit', sans-serif; font-size: 32px; margin-top: 60px; margin-bottom: 24px; color: var(--dark); position: relative; padding-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+        h3 { font-size: 22px; margin-top: 35px; margin-bottom: 15px; color: var(--primary); font-weight: 600; }
+        
+        p { margin-bottom: 20px; font-size: 16px; color: var(--text-light); }
+
+        .card {
+            background: var(--white);
+            padding: 35px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .option-list {
+            list-style: none;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .option-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .option-item strong { display: block; color: var(--dark); margin-bottom: 4px; font-size: 14px; }
+        .option-item span { font-size: 13px; color: var(--text-light); }
+
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; }
+        .badge-info { background: #e0f2fe; color: #0284c7; }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fee2e2; color: #991b1b; }
+
+        .pro-tip {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .pro-tip div { font-size: 14px; color: #92400e; }
+        .pro-tip i { font-style: normal; font-size: 20px; }
+
+        .instruction-step {
+            counter-increment: step;
+            margin-bottom: 30px;
+            padding-left: 50px;
+            position: relative;
+        }
+        .instruction-step::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--dark);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: var(--dark); font-weight: 600; font-size: 14px; }
+        td { font-size: 14px; }
+
+        @media (max-width: 1000px) { nav { width: 0; padding: 0; } main { margin-left: 0; padding: 30px 20px; } }
+    </style>
+</head>
+<body id="master-container">
+
+    <nav>
+        <div class="nav-logo"><span>👑</span> ShopBill Pro</div>
+        
+        <div class="nav-section">Core App</div>
+        <a href="#dashboard" class="nav-link">🏠 Dashboard</a>
+        <a href="#workflows" class="nav-link">🚀 Step-by-Step Guide</a>
+        <a href="#billing" class="nav-link">🛒 Billing (POS)</a>
+        <a href="#inventory" class="nav-link">📦 Inventory</a>
+        <a href="#invoices" class="nav-link">📄 Invoice History</a>
+        
+        <div class="nav-section">Management</div>
+        <a href="#categories" class="nav-link">📁 Categories</a>
+        <a href="#reports" class="nav-link">📊 Advanced Reports</a>
+        
+        <div class="nav-section">Finance Admin</div>
+        <a href="#taxes" class="nav-link">⚖️ Tax Management</a>
+        <a href="#discounts" class="nav-link">🏷️ Discount Rules</a>
+        
+        <div class="nav-section">System Admin</div>
+        <a href="#shop-config" class="nav-link">🏪 Shop Config</a>
+        <a href="#print-config" class="nav-link">🖨️ Print & Branding</a>
+        <a href="#stock-management" class="nav-link">🛠️ Stock Control</a>
+        <a href="#bulk-import" class="nav-link">📂 Bulk Import</a>
+        <a href="#tax-logic" class="nav-link">⚖️ Tax Logic</a>
+    </nav>
+
+    <main>
+        <header>
+            <h1>Master Configuration & User Guide</h1>
+            <p>Your complete reference for managing every screen, option, and workflow in the Shop Billing Pro ecosystem.</p>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="dashboard">
+            <span class="badge badge-info">Main Screen</span>
+            <h2>🏠 Dashboard Overview</h2>
+            <p>The Dashboard provides a real-time health check of your business. It is the first screen you see after logging in.</p>
+            
+            <div class="card">
+                <h3>Dashboard Widgets</h3>
+                <div class="option-list">
+                    <div class="option-item"><strong>💰 Today's Revenue</strong><span>Total sales made today across all payment modes.</span></div>
+                    <div class="option-item"><strong>📦 Total Products</strong><span>Unique items currently in your inventory.</span></div>
+                    <div class="option-item"><strong>⚠️ Low Stock Alert</strong><span>Count of products that have reached their minimum quantity threshold.</span></div>
+                    <div class="option-item"><strong>📊 Recent Trends</strong><span>Visualization of sales performance over the past week.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP BY STEP WORKFLOWS -->
+        <section id="workflows">
+            <span class="badge badge-success">Visual Guide</span>
+            <h2>🚀 Step-by-Step Workflows</h2>
+            <p>Follow these visual guides to master the core lifecycle of your inventory and sales.</p>
+
+            <div class="card">
+                <h3>1. Adding Inventory (The Setup)</h3>
+                <p>Before you can sell, you must add your products to the system.</p>
+                <div class="instruction-step">Navigate to <strong>Inventory</strong> in the sidebar.</div>
+                <div class="instruction-step">Click the <strong>+ Add Product</strong> button.</div>
+                <div class="instruction-step">Fill in the product details as shown below. <em>Pro Tip: Use a barcode scanner to fill the barcode field instantly.</em></div>
+                <img src="/C:/Users/User/.gemini/antigravity/brain/746b7583-d95c-4f80-bb08-c358ee46dca6/inventory_add_1773061552143.png" alt="Add Product Screen" style="width: 100%; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                <div class="instruction-step">Click <strong>Save Product</strong>. Your item is now ready for stock-in or direct sale.</div>
+            </div>
+
+            <div class="card">
+                <h3>2. Inward Logistics (Stock-In)</h3>
+                <p>Use the Stock Management module to record new stock arrivals or adjustments.</p>
+                <div class="instruction-step">Go to <strong>Admin Settings > Stock Mgmt</strong>.</div>
+                <div class="instruction-step">Search for your product and select it.</div>
+                <div class="instruction-step">Enter the <strong>Quantity</strong> received and change the type to <strong>Stock In</strong>.</div>
+                <img src="/C:/Users/User/.gemini/antigravity/brain/746b7583-d95c-4f80-bb08-c358ee46dca6/stock_inward_1773061571242.png" alt="Stock Management Screen" style="width: 100%; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                <div class="instruction-step">Click <strong>Record Transaction</strong>. The quantity is instantly updated across the app.</div>
+            </div>
+
+            <div class="card">
+                <h3>3. Outward Flow (The Sale)</h3>
+                <p>The billing screen is your primary interface for customer transactions.</p>
+                <div class="instruction-step">Go to <strong>New Bill</strong>.</div>
+                <div class="instruction-step">Scan the barcode or type the product name. The item is added to the cart automatically.</div>
+                <img src="/C:/Users/User/.gemini/antigravity/brain/746b7583-d95c-4f80-bb08-c358ee46dca6/billing_cart_1773061643340.png" alt="Billing Cart Screen" style="width: 100%; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                <div class="instruction-step">Verify the items, select <strong>Payment Mode</strong>, and click <strong>Create Bill (F4)</strong>.</div>
+            </div>
+
+            <div class="card">
+                <h3>4. Printing the Bill</h3>
+                <p>Every finalize transaction generates a professional thermal receipt.</p>
+                <div class="instruction-step">The receipt screen appears immediately after creation.</div>
+                <div class="instruction-step">Review the items and branding (Logo, Watermark, QR Code).</div>
+                <img src="/C:/Users/User/.gemini/antigravity/brain/746b7583-d95c-4f80-bb08-c358ee46dca6/final_receipt_1773061654376.png" alt="Final Receipt Screen" style="width: 100%; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                <div class="instruction-step">Click <strong>Print Receipt</strong> for your thermal printer, or <strong>Save as PDF</strong> for digital storage or inkjet printing.</div>
+            </div>
+        </section>
+
+        <!-- BILLING -->
+        <section id="billing">
+            <span class="badge badge-success">Workflow</span>
+            <h2>🛒 Billing (Point of Sale)</h2>
+            <p>Designed for hyper-fast checkouts. The POS allows for seamless product selection and payment processing.</p>
+
+            <h3>Key Options on this Screen</h3>
+            <div class="option-list">
+                <div class="option-item"><strong>Product Search (Autofocus)</strong><span>Instantly search by Name or Barcode. Barcode scanners are supported.</span></div>
+                <div class="option-item"><strong>Quantity Controls</strong><span>Increase/Decrease quantities using +/- buttons or direct entry.</span></div>
+                <div class="option-item"><strong>Line-Level Discount</strong><span>Apply a specific discount for just one item in the list.</span></div>
+                <div class="option-item"><strong>Bill-Wide Discount</strong><span>Apply a final discount to the subtotal of the entire bill.</span></div>
+                <div class="option-item"><strong>Payment Mode Toggle</strong><span>Select between Cash, UPI, or Card for reporting accuracy.</span></div>
+            </div>
+
+            <div class="card">
+                <h3>How to Create a Bill</h3>
+                <div class="instruction-step">Search for an item and click to add it to the cart.</div>
+                <div class="instruction-step">Adjust quantities or apply item-level discounts if needed.</div>
+                <div class="instruction-step">Select the <strong>Payment Mode</strong> (e.g. UPI).</div>
+                <div class="instruction-step">Enter <strong>Customer Name/Phone</strong> (Optional but recommended for loyalty tracking).</div>
+                <div class="instruction-step">Press <strong>F4</strong> or click <strong>Create Bill</strong>. The receipt will appear instantly.</div>
+            </div>
+        </section>
+
+        <!-- INVENTORY -->
+        <section id="inventory">
+            <span class="badge badge-info">Management</span>
+            <h2>📦 Inventory & Product List</h2>
+            <p>Manage your catalog, prices, and stock levels effortlessly.</p>
+
+            <div class="card">
+                <h3>How to Add a New Product</h3>
+                <div class="instruction-step">Go to the <strong>Inventory</strong> screen.</div>
+                <div class="instruction-step">Click the <strong>Add Product</strong> button at the top right.</div>
+                <div class="instruction-step">Fill in the following details:
+                    <ul style="margin: 10px 40px; font-size: 14px;">
+                        <li><strong>Name:</strong> Unique name of the item.</li>
+                        <li><strong>Barcode:</strong> Scan the item or enter a unique code.</li>
+                        <li><strong>Category:</strong> Select from your predefined categories.</li>
+                        <li><strong>Selling Price:</strong> The price customers will pay.</li>
+                        <li><strong>Cost Price:</strong> Your purchase price (used for profit reporting).</li>
+                        <li><strong>Initial Stock:</strong> Current count on the shelf.</li>
+                        <li><strong>Minimum Stock:</strong> Level at which the app triggers a "Low Stock" alert.</li>
+                    </ul>
+                </div>
+                <div class="instruction-step">Click <strong>Save Product</strong>.</div>
+            </div>
+        </section>
+
+        <!-- REPORTS -->
+        <section id="reports">
+            <span class="badge badge-info">Analytics</span>
+            <h2>📊 Advanced Reporting Module</h2>
+            <p>Each report type serves a specific business intelligence purpose.</p>
+            
+            <table>
+                <thead>
+                    <tr><th>Report Type</th><th>What it Shows</th><th>Strategy Use</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Daily Sales</strong></td><td>Itemized list of every sale today + total tax collected.</td><td>Reconcile drawer at end of day.</td></tr>
+                    <tr><td><strong>Monthly Summary</strong></td><td>Aggregated totals per day for the entire month.</td><td>Track monthly growth.</td></tr>
+                    <tr><td><strong>Top Selling Products</strong></td><td>Ordered list of items by volume sold.</td><td>Identify what to stock more.</td></tr>
+                    <tr><td><strong>Stock Valuation</strong></td><td>Total value of inventory (Cost vs. Selling value).</td><td>Determine asset value.</td></tr>
+                    <tr><td><strong>Low Stock List</strong></td><td>Filtered list of items needing reorder.</td><td>Procurement planning.</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- TAXES -->
+        <section id="taxes">
+            <span class="badge badge-warning">Admin</span>
+            <h2>⚖️ Tax Management</h2>
+            <p>Set up GST, VAT, or any custom tax rules applicable to your region.</p>
+
+            <div class="card">
+                <h3>How to Configure Taxes</h3>
+                <p>1. <strong>Create Tax Rule:</strong> Go to Admin > Taxes. Add a rule like "GST 18%" with the rate "18".</p>
+                <p>2. <strong>Set Tax Mode:</strong> Go to Shop Config. Choose how taxes are applied:</p>
+                <div class="option-list">
+                    <div class="option-item"><strong>Product-Wise</strong><span>Highest precision. Set a specific tax for every product individually.</span></div>
+                    <div class="option-item"><strong>Category-Wise</strong><span>Speedy setup. Assign a tax to a category, and all items in it follow that rule.</span></div>
+                    <div class="option-item"><strong>Global/Simple</strong><span>Apply a flat percentage to the entire bill subtotal.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRINT CONFIG -->
+        <section id="print-config">
+            <span class="badge badge-info">Branding</span>
+            <h2>🖨️ Master Print & Brand Config</h2>
+            <p>This screen controls the visual output of your business identity.</p>
+
+            <div class="card">
+                <h3>Branding Options</h3>
+                <div class="option-list">
+                    <div class="option-item"><strong>Layout Style</strong><span><strong>Modern:</strong> Accented colors. <br><strong>Classic:</strong> Business borders. <br><strong>Minimal:</strong> Clean text.</span></div>
+                    <div class="option-item"><strong>Paper Size</strong><span>80mm Thermal, A4, or A5. The system automatically adjusts table widths.</span></div>
+                    <div class="option-item"><strong>Watermark</strong><span>Toggle "Yes" and enter text (e.g. "OFFICIAL") to show a rotated background label.</span></div>
+                    <div class="option-item"><strong>UPI QR Code</strong><span>Enter your UPI ID. A scannable code appears at the bill bottom for instant payments.</span></div>
+                    <div class="option-item"><strong>Logo Upload</strong><span>Upload your shop logo (PNG/JPG). Enable "Display Logo" to show it on bills.</span></div>
+                </div>
+            </div>
+
+            <div class="pro-tip">
+                <i>💡</i>
+                <div><strong>Pro Tip:</strong> Use the <strong>Live Review</strong> frame on the right side of the Print Config screen. It updates in real-time as you change settings, allowing you to perfect your bill design without wasting paper.</div>
+            </div>
+        </section>
+
+        <!-- BULK IMPORT -->
+        <section id="bulk-import">
+            <span class="badge badge-info">Admin</span>
+            <h2>📂 Bulk Inventory Import</h2>
+            <p>Save time by importing your entire product list using a CSV file. This is perfect for setting up a new shop or adding hundreds of items at once.</p>
+
+            <div class="card">
+                <h3>CSV Format Requirements</h3>
+                <p>Your CSV file should have the following headers and sample data format:</p>
+                <table>
+                    <thead>
+                        <tr><th>Header</th><th>Example Value</th><th>Description</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>name</td><td>Basmati Rice 1kg</td><td>Product Display Name</td></tr>
+                        <tr><td>barcode</td><td>8901234001</td><td>Unique ID (Scan your item)</td></tr>
+                        <tr><td>category_id</td><td>1</td><td>Internal category ID</td></tr>
+                        <tr><td>cost_price</td><td>85</td><td>Your purchase price</td></tr>
+                        <tr><td>selling_price</td><td>110</td><td>Customer price</td></tr>
+                        <tr><td>quantity</td><td>50</td><td>Current stock count</td></tr>
+                        <tr><td>tax_rate</td><td>18</td><td>Tax percentage (0, 5, 12, 18, 28)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pro-tip">
+                <i>💡</i>
+                <div><strong>Import Tip:</strong> If a barcode already exists in the system, the import will <strong>update</strong> the existing product with the new data instead of creating a duplicate.</div>
+            </div>
+        </section>
+
+        <!-- ADVANCED TAXES -->
+        <section id="tax-logic">
+            <span class="badge badge-warning">Finance</span>
+            <h2>📊 Advanced Tax Configuration</h2>
+            <p>Our system supports complex tax requirements for different retail industries.</p>
+            
+            <div class="card">
+                <h3>Tax Application Modes</h3>
+                <p>Go to <strong>Admin Settings > Shop Config</strong> to select your mode:</p>
+                <div class="instruction-step"><strong>Product Wise (Recommended):</strong> Each item uses its OWN tax rate (set in the inventory). Use this for GST/VAT where products have different slabs.</div>
+                <div class="instruction-step"><strong>Category Wise:</strong> Individual items don't have taxes. Instead, every product in "Groceries" gets one rate, while "Electronics" gets another.</div>
+                <div class="instruction-step"><strong>Global Simple:</strong> A flat percentage (e.g., 5% Sales Tax) is applied to the final bill subtotal.</div>
+            </div>
+
+            <div class="pro-tip">
+                <i>🛡️</i>
+                <div><strong>Verified Logic:</strong> During billing, if you select "Product Wise", the system calculates the tax contribution of every single item separately, ensuring 100% compliance with complex tax laws.</div>
+            </div>
+        </section>
+
+        <!-- SYSTEM -->
+        <section id="admin-misc">
+            <span class="badge badge-warning">System</span>
+            <h2>🛠️ Admin Tasks</h2>
+            
+            <h3>Bulk Inventory Import</h3>
+            <p>Located on the main Admin page. Upload a <code>.csv</code> file to batch create or update your stock. This is essential when migrating from another system or adding hundreds of items at once.</p>
+
+            <h3>Theme & Typography</h3>
+            <p>Managed in Shop Config. You can swap between <strong>Light</strong> and <strong>Dark</strong> modes globally. We recommend **Outfit** for a premium look or **Inter** for maximum readability.</p>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>🚨 Troubleshooting</h2>
+            <div class="card">
+                <h3>Logo not showing?</h3>
+                <p>Ensure you have clicked **Upload Logo** and the image appears in the thumbnail. Also ensure "Display Logo on Bill" is set to "Yes".</p>
+                <h3>GSTIN not appearing?</h3>
+                <p>Enter your GSTIN in the **Shop Config** screen. All shop identity data is pulled from there for the receipt header.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 ShopBill Pro - Professional Retail Management System.</p>
+            <p><em>End of Documentation.</em></p>
+        </footer>
+    </main>
+
+    <script>
+        // Simple active state tracker for sidebar
+        const links = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

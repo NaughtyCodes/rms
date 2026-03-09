@@ -71,6 +71,15 @@ router.get('/:id', authenticate, (req, res) => {
       WHERE p.id = ?
     `).get(req.params.id);
         if (!product) return res.status(404).json({ error: 'Product not found.' });
+
+        // Fetch meta values
+        product.meta_values = db.prepare(`
+            SELECT m.id, m.field_id, m.value, f.name, f.type 
+            FROM product_meta_values m
+            JOIN product_meta_fields f ON m.field_id = f.id
+            WHERE m.product_id = ?
+        `).all(req.params.id);
+
         res.json(product);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -80,15 +89,35 @@ router.get('/:id', authenticate, (req, res) => {
 // POST /api/products
 router.post('/', authenticate, (req, res) => {
     try {
-        const { name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate } = req.body;
+        const { name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate, meta_values } = req.body;
         if (!name) return res.status(400).json({ error: 'Product name is required.' });
 
-        const result = db.prepare(`
-      INSERT INTO products (name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(name, barcode || null, category_id || null, cost_price || 0, selling_price || 0, quantity || 0, low_stock_threshold || 5, unit || 'pcs', tax_rate || 0);
+        db.transaction(() => {
+            const result = db.prepare(`
+                INSERT INTO products (name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(name, barcode || null, category_id || null, cost_price || 0, selling_price || 0, quantity || 0, low_stock_threshold || 5, unit || 'pcs', tax_rate || 0);
 
-        const product = db.prepare('SELECT * FROM products WHERE id = ?').get(result.lastInsertRowid);
+            const productId = result.lastInsertRowid;
+
+            // Insert meta values if provided
+            if (meta_values && Array.isArray(meta_values)) {
+                const insertMeta = db.prepare(`
+                    INSERT INTO product_meta_values (product_id, field_id, value)
+                    VALUES (?, ?, ?)
+                `);
+                
+                for (const meta of meta_values) {
+                    if (meta.field_id && meta.value !== undefined && meta.value !== '') {
+                        insertMeta.run(productId, meta.field_id, String(meta.value));
+                    }
+                }
+            }
+
+            req.newProductId = productId;
+        })();
+
+        const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.newProductId);
         res.status(201).json(product);
     } catch (err) {
         if (err.message.includes('UNIQUE')) {
@@ -104,23 +133,43 @@ router.put('/:id', authenticate, (req, res) => {
         const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
         if (!existing) return res.status(404).json({ error: 'Product not found.' });
 
-        const { name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate } = req.body;
+        const { name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate, meta_values } = req.body;
 
-        db.prepare(`
-      UPDATE products SET name=?, barcode=?, category_id=?, cost_price=?, selling_price=?, quantity=?, low_stock_threshold=?, unit=?, tax_rate=?, updated_at=CURRENT_TIMESTAMP
-      WHERE id=?
-    `).run(
-            name ?? existing.name,
-            barcode !== undefined ? barcode : existing.barcode,
-            category_id !== undefined ? category_id : existing.category_id,
-            cost_price ?? existing.cost_price,
-            selling_price ?? existing.selling_price,
-            quantity ?? existing.quantity,
-            low_stock_threshold ?? existing.low_stock_threshold,
-            unit ?? existing.unit,
-            tax_rate ?? existing.tax_rate,
-            req.params.id
-        );
+        db.transaction(() => {
+            db.prepare(`
+                UPDATE products SET name=?, barcode=?, category_id=?, cost_price=?, selling_price=?, quantity=?, low_stock_threshold=?, unit=?, tax_rate=?, updated_at=CURRENT_TIMESTAMP
+                WHERE id=?
+            `).run(
+                name ?? existing.name,
+                barcode !== undefined ? barcode : existing.barcode,
+                category_id !== undefined ? category_id : existing.category_id,
+                cost_price ?? existing.cost_price,
+                selling_price ?? existing.selling_price,
+                quantity ?? existing.quantity,
+                low_stock_threshold ?? existing.low_stock_threshold,
+                unit ?? existing.unit,
+                tax_rate ?? existing.tax_rate,
+                req.params.id
+            );
+
+            // Update meta values if provided
+            if (meta_values && Array.isArray(meta_values)) {
+                // Delete existing ones
+                db.prepare('DELETE FROM product_meta_values WHERE product_id = ?').run(req.params.id);
+                
+                // Insert new ones
+                const insertMeta = db.prepare(`
+                    INSERT INTO product_meta_values (product_id, field_id, value)
+                    VALUES (?, ?, ?)
+                `);
+                
+                for (const meta of meta_values) {
+                    if (meta.field_id && meta.value !== undefined && meta.value !== '') {
+                        insertMeta.run(req.params.id, meta.field_id, String(meta.value));
+                    }
+                }
+            }
+        })();
 
         const updated = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
         res.json(updated);

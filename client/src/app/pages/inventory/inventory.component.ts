@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InventoryService, Product, Category } from '../../services/inventory.service';
+import { TaxService, TaxSlab } from '../../services/tax.service';
+import { MetaService, MetaField } from '../../services/meta.service';
 
 @Component({
     selector: 'app-inventory',
@@ -22,7 +24,12 @@ export class InventoryComponent implements OnInit {
     showModal = false;
     editMode = false;
     saving = false;
-    form: Partial<Product> = {};
+    form: Partial<Product> & { meta_values?: any[] } = {};
+
+    // Reference Data
+    activeTaxes: TaxSlab[] = [];
+    metaFields: MetaField[] = [];
+    dynamicFormValues: { [key: string]: any } = {};
 
     // Category modal
     showCatModal = false;
@@ -31,11 +38,29 @@ export class InventoryComponent implements OnInit {
 
     toast = { show: false, message: '', type: 'success' };
 
-    constructor(private inventoryService: InventoryService) { }
+    constructor(
+        private inventoryService: InventoryService,
+        private taxService: TaxService,
+        private metaService: MetaService
+    ) { }
 
     ngOnInit() {
         this.loadProducts();
         this.loadCategories();
+        this.loadTaxes();
+        this.loadMetaFields();
+    }
+
+    loadTaxes() {
+        this.taxService.getTaxes().subscribe({
+            next: (res) => this.activeTaxes = res
+        });
+    }
+
+    loadMetaFields() {
+        this.metaService.getMetaFields().subscribe({
+            next: (res) => this.metaFields = res
+        });
     }
 
     loadProducts() {
@@ -58,21 +83,40 @@ export class InventoryComponent implements OnInit {
 
     openAddModal() {
         this.editMode = false;
-        this.form = { quantity: 0, low_stock_threshold: 5, unit: 'pcs', cost_price: 0, selling_price: 0 };
+        this.form = { quantity: 0, low_stock_threshold: 5, unit: 'pcs', cost_price: 0, selling_price: 0, tax_rate: 0 };
+        this.dynamicFormValues = {};
         this.showModal = true;
     }
 
-    openEditModal(p: Product) {
+    openEditModal(p: Product | any) {
         this.editMode = true;
         this.form = { ...p };
+        this.dynamicFormValues = {};
+        
+        // Populate dynamic values if they exist
+        if (p.meta_values && Array.isArray(p.meta_values)) {
+            p.meta_values.forEach((m: any) => {
+                this.dynamicFormValues[m.field_id] = m.value;
+            });
+        }
+        
         this.showModal = true;
     }
 
     saveProduct() {
         this.saving = true;
+        
+        // Prepare meta values array from dynamic form
+        const meta_values = Object.keys(this.dynamicFormValues).map(fieldId => ({
+            field_id: Number(fieldId),
+            value: this.dynamicFormValues[fieldId]
+        }));
+        
+        const payload = { ...this.form, meta_values };
+
         const obs = this.editMode
-            ? this.inventoryService.updateProduct(this.form.id!, this.form)
-            : this.inventoryService.createProduct(this.form);
+            ? this.inventoryService.updateProduct(this.form.id!, payload)
+            : this.inventoryService.createProduct(payload);
 
         obs.subscribe({
             next: () => {

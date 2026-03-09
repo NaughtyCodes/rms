@@ -137,10 +137,25 @@
 
 <!-- Receipt View -->
 <div *ngIf="showReceipt && lastInvoice" class="receipt-wrapper">
-    <div class="receipt" id="receipt" [class.compact]="settings?.bill_layout === 'compact'">
+    <div class="receipt" id="receipt" 
+         [class.compact]="settings?.bill_layout === 'compact'"
+         [ngClass]="settings?.bill_layout_style || 'modern'"
+         [class.receipt-a4]="settings?.bill_paper_size === 'a4'"
+         [class.receipt-a5]="settings?.bill_paper_size === 'a5'">
+        
+        <!-- Watermark -->
+        <div class="watermark" *ngIf="settings?.bill_show_watermark === 'true'" 
+             [style.opacity]="settings?.bill_watermark_opacity">
+            {{ settings?.bill_watermark_text }}
+        </div>
+
         <div class="receipt-header">
+            <img *ngIf="settings?.bill_show_logo === 'true' && settings?.shop_logo_url" 
+                 [src]="settings?.shop_logo_url?.startsWith('/uploads') ? 'http://localhost:3001' + settings?.shop_logo_url : settings?.shop_logo_url" class="bill-logo">
             <h2>{{ settings?.shop_name || 'ShopBill Pro' }}</h2>
             <p>{{ settings?.shop_address }}</p>
+            <p *ngIf="settings?.shop_phone">📞 {{ settings?.shop_phone }}</p>
+            <p *ngIf="settings?.shop_gstin">GSTIN: {{ settings?.shop_gstin }}</p>
             <p *ngIf="settings?.shop_description">{{ settings?.shop_description }}</p>
             <p style="margin-top: 8px; font-weight: 500;">Tax Invoice</p>
         </div>
@@ -176,10 +191,18 @@
             <div class="summary-total"><span>Total</span><span>₹{{ lastInvoice.total }}</span></div>
             <div class="receipt-payment">Paid via {{ lastInvoice.payment_mode | titlecase }}</div>
         </div>
-        <div class="receipt-footer">Thank you for shopping with us!</div>
+
+        <div class="qr-section" *ngIf="settings?.bill_show_qr === 'true' && settings?.bill_upi_id">
+            <img [src]="'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + getEncodedUpiId()" class="qr-code">
+            <div class="qr-text">Scan to pay via UPI</div>
+        </div>
+
+        <div class="receipt-terms" *ngIf="settings?.bill_terms">{{ settings?.bill_terms }}</div>
+        <div class="receipt-footer">{{ settings?.bill_footer_text || 'Thank you for shopping with us!' }}</div>
     </div>
     <div class="receipt-actions">
         <button class="btn btn-primary" (click)="printReceipt()">🖨️ Print Receipt</button>
+        <button class="btn btn-secondary" (click)="downloadPDF()">📥 Save as PDF</button>
         <button class="btn btn-success" (click)="newBill()">🧾 New Bill</button>
     </div>
 </div>

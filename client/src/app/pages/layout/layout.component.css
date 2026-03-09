@@ -75,6 +75,36 @@
     font-weight: 600;
 }
 
+.nav-children {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 2px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-sm);
+}
+
+.child-item {
+    padding: 10px 16px 10px 44px; /* Indent the child item */
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.child-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.child-item.active {
+    color: var(--accent);
+    font-weight: 600;
+}
+
 .nav-icon {
     font-size: 18px;
     flex-shrink: 0;
