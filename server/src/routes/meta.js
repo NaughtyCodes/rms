@@ -9,9 +9,10 @@ const router = express.Router();
  * @desc    Get all active product meta fields
  * @access  Private
  */
+// GET /api/meta-fields — Get all active product meta fields
 router.get('/', authenticate, (req, res) => {
     try {
-        const fields = db.prepare('SELECT * FROM product_meta_fields').all();
+        const fields = db.prepare('SELECT * FROM product_meta_fields WHERE tenant_id = ?').all(req.tenantId);
         // Parse options array if it exists
         const formatted = fields.map(f => ({
             ...f,
@@ -24,11 +25,7 @@ router.get('/', authenticate, (req, res) => {
     }
 });
 
-/**
- * @route   POST /api/meta-fields
- * @desc    Create a new product meta field
- * @access  Private/Admin
- */
+// POST /api/meta-fields — Create a new product meta field
 router.post('/', authenticate, authorizeAdmin, (req, res) => {
     const { name, type, options, is_required } = req.body;
     
@@ -40,11 +37,11 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
         const optionsStr = options && Array.isArray(options) ? JSON.stringify(options) : null;
         
         const stmt = db.prepare(`
-            INSERT INTO product_meta_fields (name, type, options, is_required)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO product_meta_fields (tenant_id, name, type, options, is_required)
+            VALUES (?, ?, ?, ?, ?)
         `);
         
-        const result = stmt.run(name, type, optionsStr, is_required ? 1 : 0);
+        const result = stmt.run(req.tenantId, name, type, optionsStr, is_required ? 1 : 0);
         
         res.status(201).json({ 
             id: result.lastInsertRowid, 
@@ -52,20 +49,17 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
         });
     } catch (error) {
         if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-            return res.status(400).json({ error: 'Meta field with this name already exists' });
+            return res.status(400).json({ error: 'Meta field with this name already exists in your shop' });
         }
         res.status(500).json({ error: error.message });
     }
 });
 
-/**
- * @route   DELETE /api/meta-fields/:id
- * @desc    Delete a meta field
- * @access  Private/Admin
- */
+// DELETE /api/meta-fields/:id — Delete a meta field
 router.delete('/:id', authenticate, authorizeAdmin, (req, res) => {
     try {
-        db.prepare('DELETE FROM product_meta_fields WHERE id = ?').run(req.params.id);
+        const result = db.prepare('DELETE FROM product_meta_fields WHERE id = ? AND tenant_id = ?').run(req.params.id, req.tenantId);
+        if (result.changes === 0) return res.status(404).json({ error: 'Meta field not found in your shop scope' });
         res.json({ message: 'Meta field deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });

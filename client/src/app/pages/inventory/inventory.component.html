@@ -44,7 +44,16 @@
                 <td class="text-muted">{{ p.barcode || '—' }}</td>
                 <td class="text-right">{{ p.cost_price | number:'1.2-2' }}</td>
                 <td class="text-right fw-600">{{ p.selling_price | number:'1.2-2' }}</td>
-                <td class="text-right">{{ p.quantity }} {{ p.unit }}</td>
+                <td class="text-right">
+                    <div class="fw-600" title="Global Total">{{ p.quantity }} {{ p.unit }}</div>
+                    <div *ngIf="p.branch_stocks && p.branch_stocks.length > 0" class="text-xs text-muted mt-8" style="text-align: left; background: var(--surface-hover); padding: 6px; border-radius: var(--radius-sm);">
+                        <div style="font-weight: 600; margin-bottom: 4px; border-bottom: 1px solid var(--border); padding-bottom: 2px;">Branches:</div>
+                        <div *ngFor="let bs of p.branch_stocks" style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                            <span>{{ bs.branch_name }}</span>
+                            <span class="fw-600">{{ bs.quantity }}</span>
+                        </div>
+                    </div>
+                </td>
                 <td>
                     <span class="badge" [class.badge-danger]="isLowStock(p)" [class.badge-success]="!isLowStock(p)">
                         {{ isLowStock(p) ? 'Low Stock' : 'In Stock' }}

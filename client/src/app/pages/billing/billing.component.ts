@@ -74,19 +74,20 @@ export class BillingComponent implements OnInit {
     }
 
     addToCart(product: Product) {
+        const availableQty = product.branch_quantity !== undefined ? product.branch_quantity : product.quantity;
         const existing = this.cart.find(c => c.product.id === product.id);
         if (existing) {
-            if (existing.quantity < product.quantity) {
+            if (existing.quantity < availableQty) {
                 existing.quantity++;
                 this.recalcLine(existing);
             } else {
-                this.showToast('Not enough stock!', 'error');
+                this.showToast('Not enough stock in branch!', 'error');
             }
             this.search = '';
             this.filteredProducts = [];
         } else {
-            if (product.quantity < 1) {
-                this.showToast('Out of stock!', 'error');
+            if (availableQty < 1) {
+                this.showToast('Out of stock in branch!', 'error');
                 return;
             }
             
@@ -131,9 +132,11 @@ export class BillingComponent implements OnInit {
 
     updateQuantity(item: CartItem, delta: number) {
         const newQty = item.quantity + delta;
+        const availableQty = item.product.branch_quantity !== undefined ? item.product.branch_quantity : item.product.quantity;
+        
         if (newQty < 1) return;
-        if (newQty > item.product.quantity) {
-            this.showToast('Not enough stock!', 'error');
+        if (newQty > availableQty) {
+            this.showToast('Not enough stock in branch!', 'error');
             return;
         }
         item.quantity = newQty;
@@ -241,6 +244,7 @@ export class BillingComponent implements OnInit {
             <html>
             <head>
                 <title>Invoice - ${this.lastInvoice?.invoice_number || 'Receipt'}</title>
+                <base href="${window.location.origin}">
                 <link href="https://fonts.googleapis.com/css2?family=${fontFamily}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
                 <style>
                     * { margin: 0; padding: 0; box-sizing: border-box; }

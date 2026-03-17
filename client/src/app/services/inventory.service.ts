@@ -11,12 +11,14 @@ export interface Product {
     cost_price: number;
     selling_price: number;
     quantity: number;
+    branch_quantity?: number;
     low_stock_threshold: number;
     unit: string;
     tax_rate: number;
     category_tax_rate: number;
     created_at: string;
     updated_at: string;
+    branch_stocks?: { branch_name: string, quantity: number }[];
 }
 
 export interface ProductListResponse {

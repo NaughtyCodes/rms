@@ -1,0 +1,124 @@
+<div class="page-header flex items-center justify-between">
+    <div>
+        <h1 class="page-title">🚚 Stock Transfers</h1>
+        <p class="page-subtitle">Request and fulfill inventory movement between branches.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openNewTransferModal()">
+        + New Transfer Request
+    </button>
+</div>
+
+<div class="alert alert-success mb-16" *ngIf="successMessage && !isModalOpen">
+    {{ successMessage }}
+</div>
+<div class="alert alert-danger mb-16" *ngIf="errorMessage && !isModalOpen">
+    {{ errorMessage }}
+</div>
+
+<!-- Transfers Table -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>From (Source)</th>
+                    <th>To (Destination)</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th class="text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let t of transfers">
+                    <td class="text-sm">{{ t.created_at | date:'medium' }}</td>
+                    <td class="fw-600">{{ t.from_branch_name }}</td>
+                    <td class="fw-600">{{ t.to_branch_name }}</td>
+                    <td>
+                        <span class="badge badge-{{ t.status }}">
+                            {{ t.status | uppercase }}
+                        </span>
+                    </td>
+                    <td class="text-sm text-muted">{{ t.notes || '-' }}</td>
+                    <td class="text-right flex items-center" style="justify-content: flex-end; gap: 8px;">
+                        <button *ngIf="canShip(t)" class="btn btn-sm btn-primary" (click)="updateStatus(t.id, 'shipped')">Ship</button>
+                        <button *ngIf="canReceive(t)" class="btn btn-sm btn-success" (click)="updateStatus(t.id, 'received')">Receive</button>
+                        <button *ngIf="canCancel(t)" class="btn btn-sm btn-outline" (click)="updateStatus(t.id, 'cancelled')">Cancel</button>
+                        <div *ngIf="!canShip(t) && !canReceive(t) && !canCancel(t)" class="text-sm text-muted">No actions</div>
+                    </td>
+                </tr>
+                <tr *ngIf="transfers.length === 0">
+                    <td colspan="6" class="text-center text-muted py-24">No transfer requests found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- New Transfer Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">New Stock Transfer Request</h2>
+            <button class="modal-close" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="alert alert-danger mb-16" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <form (ngSubmit)="submitTransfer()">
+                <div class="grid-2 gap-16 mb-16">
+                    <div class="form-group">
+                        <label class="form-label">Source Branch (From)</label>
+                        <select class="form-select" [(ngModel)]="newTransfer.from_branch_id" name="from_branch">
+                            <option [value]="0">-- Select Source --</option>
+                            <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Destination Branch (To)</label>
+                        <select class="form-select" [(ngModel)]="newTransfer.to_branch_id" name="to_branch">
+                            <option [value]="0">-- Select Destination --</option>
+                            <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group mb-16">
+                    <label class="form-label">Notes (Optional)</label>
+                    <input type="text" class="form-input" [(ngModel)]="newTransfer.notes" name="notes" placeholder="e.g. Urgent stock request">
+                </div>
+
+                <!-- Items Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-8">
+                        <label class="form-label mb-0">Products List</label>
+                        <button type="button" class="btn btn-sm btn-outline text-xs" (click)="addItem()">+ Add Product</button>
+                    </div>
+
+                    <div *ngFor="let item of newTransfer.items; let i = index" class="flex gap-8 mb-8">
+                        <div style="flex: 2;">
+                            <select class="form-select" [(ngModel)]="item.product_id" name="product_{{i}}" required>
+                                <option [value]="0">-- Select Product --</option>
+                                <option *ngFor="let p of products" [value]="p.id">{{ p.name }} (Available: {{ p.quantity }})</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="number" class="form-input" [(ngModel)]="item.quantity" name="quantity_{{i}}" required min="1" placeholder="Qty">
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline text-danger px-8" (click)="removeItem(i)">✕</button>
+                    </div>
+                    <div class="text-xs text-muted" *ngIf="newTransfer.items?.length === 0">No products added. Click "+ Add Product".</div>
+                </div>
+
+                <div class="modal-footer mt-24" style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="newTransfer.items?.length === 0">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -6,27 +6,37 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function initializeDatabase() {
-    const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
-    db.exec(schema);
+    const schemaPath = path.join(__dirname, 'schema.sql');
+    const schema = fs.readFileSync(schemaPath, 'utf-8');
     
-    // Run schema migration for new columns on existing tables
+    // For a clean SaaS migration, we execute the schema. 
+    // Note: In a production app, we would use proper migrations.
     try {
-        db.exec('ALTER TABLE products ADD COLUMN tax_rate REAL DEFAULT 0;');
-        console.log('✅ Migrated: Added tax_rate to products table');
+        db.exec(schema);
+        console.log('✅ Database schema initialized');
     } catch (err) {
-        if (!err.message.includes('duplicate column name')) {
-            console.error('Error migrating products table:', err.message);
-        }
+        console.error('Error initializing schema:', err.message);
     }
+    
+    // Seed default Tenant, Branch and SuperAdmin if system is empty
+    try {
+        const tenantCount = db.prepare('SELECT COUNT(*) as count FROM tenants').get().count;
+        if (tenantCount === 0) {
+            // Create Default Tenant
+            const insertTenant = db.prepare('INSERT INTO tenants (name, slug, plan) VALUES (?, ?, ?)');
+            const tenantInfo = insertTenant.run('Default Shop', 'default', 'pro');
+            const tenantId = tenantInfo.lastInsertRowid;
+            console.log('✅ Created default tenant: Default Shop');
 
-    try {
-        db.exec('ALTER TABLE categories ADD COLUMN tax_rate REAL DEFAULT 0;');
-        console.log('✅ Migrated: Added tax_rate to categories table');
-    } catch (err) {
-        if (!err.message.includes('duplicate column name')) {
-            console.error('Error migrating categories table:', err.message);
+            // Create default branch for this tenant
+            const insertBranch = db.prepare('INSERT INTO branches (tenant_id, name, is_warehouse, is_active) VALUES (?, ?, ?, ?)');
+            const brInfo = insertBranch.run(tenantId, 'Main Branch', 1, 1);
+            const branchId = brInfo.lastInsertRowid;
+            console.log('✅ Created default branch for tenant');
+
+            // Note: Users will be seeded in seed.js
         }
+    } catch (err) {
+        console.error('Error seeding initial multi-tenant foundations:', err.message);
     }
-    
-    console.log('✅ Database schema initialized');
 }

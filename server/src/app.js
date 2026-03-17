@@ -12,6 +12,9 @@ import metaRoutes from './routes/meta.js';
 import inventoryRoutes from './routes/inventory.js';
 import taxRoutes from './routes/taxes.js';
 import discountRoutes from './routes/discounts.js';
+import branchRoutes from './routes/branches.js';
+import transferRoutes from './routes/transfers.js';
+import tenantRoutes from './routes/tenants.js';
 import { seedDefaultAdmin } from './db/seed.js';
 import path from 'path';
 import fs from 'fs';
@@ -49,6 +52,9 @@ app.use('/api/meta-fields', metaRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/taxes', taxRoutes);
 app.use('/api/discounts', discountRoutes);
+app.use('/api/branches', branchRoutes);
+app.use('/api/transfers', transferRoutes);
+app.use('/api/tenants', tenantRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));

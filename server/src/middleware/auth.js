@@ -12,6 +12,10 @@ export function authenticate(req, res, next) {
         const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
+        
+        // Ensure tenant isolation: Attach tenantId to req for controllers to use
+        req.tenantId = decoded.tenantId; 
+        
         next();
     } catch (err) {
         return res.status(401).json({ error: 'Invalid or expired token.' });
@@ -19,8 +23,15 @@ export function authenticate(req, res, next) {
 }
 
 export function authorizeAdmin(req, res, next) {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Access denied. Admin only.' });
+    if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Access denied. Admin permissions required.' });
+    }
+    next();
+}
+
+export function authorizeSuperAdmin(req, res, next) {
+    if (req.user.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Access denied. SuperAdmin permissions required.' });
     }
     next();
 }

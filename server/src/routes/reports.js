@@ -5,35 +5,38 @@ import { authenticate } from '../middleware/auth.js';
 const router = Router();
 
 // GET /api/reports/dashboard — today's KPIs
+// GET /api/reports/dashboard — today's KPIs
 router.get('/dashboard', authenticate, (req, res) => {
     try {
         const today = db.prepare(`
-      SELECT
-        COUNT(*) as total_bills,
-        COALESCE(SUM(total), 0) as total_revenue,
-        COALESCE(SUM(discount), 0) as total_discount,
-        COALESCE(SUM(tax_amount), 0) as total_tax
-      FROM invoices WHERE date(created_at) = date('now')
-    `).get();
+            SELECT
+                COUNT(*) as total_bills,
+                COALESCE(SUM(total), 0) as total_revenue,
+                COALESCE(SUM(discount), 0) as total_discount,
+                COALESCE(SUM(tax_amount), 0) as total_tax
+            FROM invoices 
+            WHERE tenant_id = ? AND date(created_at) = date('now')
+        `).get(req.tenantId);
 
         const itemsSold = db.prepare(`
-      SELECT COALESCE(SUM(ii.quantity), 0) as count
-      FROM invoice_items ii
-      JOIN invoices i ON ii.invoice_id = i.id
-      WHERE date(i.created_at) = date('now')
-    `).get().count;
+            SELECT COALESCE(SUM(ii.quantity), 0) as count
+            FROM invoice_items ii
+            JOIN invoices i ON ii.invoice_id = i.id
+            WHERE i.tenant_id = ? AND date(i.created_at) = date('now')
+        `).get(req.tenantId).count;
 
         const lowStockCount = db.prepare(
-            'SELECT COUNT(*) as count FROM products WHERE quantity <= low_stock_threshold'
-        ).get().count;
+            'SELECT COUNT(*) as count FROM products WHERE tenant_id = ? AND quantity <= low_stock_threshold'
+        ).get(req.tenantId).count;
 
-        const totalProducts = db.prepare('SELECT COUNT(*) as count FROM products').get().count;
+        const totalProducts = db.prepare('SELECT COUNT(*) as count FROM products WHERE tenant_id = ?').get(req.tenantId).count;
 
         const paymentSplit = db.prepare(`
-      SELECT payment_mode, COUNT(*) as count, COALESCE(SUM(total), 0) as amount
-      FROM invoices WHERE date(created_at) = date('now')
-      GROUP BY payment_mode
-    `).all();
+            SELECT payment_mode, COUNT(*) as count, COALESCE(SUM(total), 0) as amount
+            FROM invoices 
+            WHERE tenant_id = ? AND date(created_at) = date('now')
+            GROUP BY payment_mode
+        `).all(req.tenantId);
 
         res.json({
             today: { ...today, items_sold: itemsSold },
@@ -52,23 +55,25 @@ router.get('/daily', authenticate, (req, res) => {
         const date = req.query.date || new Date().toISOString().slice(0, 10);
 
         const summary = db.prepare(`
-      SELECT COUNT(*) as total_bills, COALESCE(SUM(total), 0) as revenue,
-             COALESCE(SUM(discount), 0) as discount, COALESCE(SUM(tax_amount), 0) as tax
-      FROM invoices WHERE date(created_at) = ?
-    `).get(date);
+            SELECT COUNT(*) as total_bills, COALESCE(SUM(total), 0) as revenue,
+                   COALESCE(SUM(discount), 0) as discount, COALESCE(SUM(tax_amount), 0) as tax
+            FROM invoices 
+            WHERE tenant_id = ? AND date(created_at) = ?
+        `).get(req.tenantId, date);
 
         const hourly = db.prepare(`
-      SELECT strftime('%H', created_at) as hour, COUNT(*) as bills, COALESCE(SUM(total), 0) as revenue
-      FROM invoices WHERE date(created_at) = ?
-      GROUP BY hour ORDER BY hour
-    `).all(date);
+            SELECT strftime('%H', created_at) as hour, COUNT(*) as bills, COALESCE(SUM(total), 0) as revenue
+            FROM invoices 
+            WHERE tenant_id = ? AND date(created_at) = ?
+            GROUP BY hour ORDER BY hour
+        `).all(req.tenantId, date);
 
         const topItems = db.prepare(`
-      SELECT ii.product_name, SUM(ii.quantity) as qty, SUM(ii.line_total) as revenue
-      FROM invoice_items ii JOIN invoices i ON ii.invoice_id = i.id
-      WHERE date(i.created_at) = ?
-      GROUP BY ii.product_id ORDER BY qty DESC LIMIT 10
-    `).all(date);
+            SELECT ii.product_name, SUM(ii.quantity) as qty, SUM(ii.line_total) as revenue
+            FROM invoice_items ii JOIN invoices i ON ii.invoice_id = i.id
+            WHERE i.tenant_id = ? AND date(i.created_at) = ?
+            GROUP BY ii.product_id ORDER BY qty DESC LIMIT 10
+        `).all(req.tenantId, date);
 
         res.json({ date, summary, hourly, top_items: topItems });
     } catch (err) {
@@ -84,18 +89,18 @@ router.get('/monthly', authenticate, (req, res) => {
         const year = req.query.year || String(now.getFullYear());
 
         const daily = db.prepare(`
-      SELECT date(created_at) as date, COUNT(*) as bills, COALESCE(SUM(total), 0) as revenue
-      FROM invoices
-      WHERE strftime('%m', created_at) = ? AND strftime('%Y', created_at) = ?
-      GROUP BY date ORDER BY date
-    `).all(month, year);
+            SELECT date(created_at) as date, COUNT(*) as bills, COALESCE(SUM(total), 0) as revenue
+            FROM invoices
+            WHERE tenant_id = ? AND strftime('%m', created_at) = ? AND strftime('%Y', created_at) = ?
+            GROUP BY date ORDER BY date
+        `).all(req.tenantId, month, year);
 
         const summary = db.prepare(`
-      SELECT COUNT(*) as total_bills, COALESCE(SUM(total), 0) as revenue,
-             COALESCE(SUM(discount), 0) as discount, COALESCE(SUM(tax_amount), 0) as tax
-      FROM invoices
-      WHERE strftime('%m', created_at) = ? AND strftime('%Y', created_at) = ?
-    `).get(month, year);
+            SELECT COUNT(*) as total_bills, COALESCE(SUM(total), 0) as revenue,
+                   COALESCE(SUM(discount), 0) as discount, COALESCE(SUM(tax_amount), 0) as tax
+            FROM invoices
+            WHERE tenant_id = ? AND strftime('%m', created_at) = ? AND strftime('%Y', created_at) = ?
+        `).get(req.tenantId, month, year);
 
         res.json({ month, year, summary, daily });
     } catch (err) {
@@ -110,12 +115,12 @@ router.get('/top-products', authenticate, (req, res) => {
         const days = req.query.days || 30;
 
         const products = db.prepare(`
-      SELECT ii.product_name, ii.product_id, SUM(ii.quantity) as total_qty, SUM(ii.line_total) as total_revenue
-      FROM invoice_items ii
-      JOIN invoices i ON ii.invoice_id = i.id
-      WHERE i.created_at >= datetime('now', '-' || ? || ' days')
-      GROUP BY ii.product_id ORDER BY total_qty DESC LIMIT ?
-    `).all(days, limit);
+            SELECT ii.product_name, ii.product_id, SUM(ii.quantity) as total_qty, SUM(ii.line_total) as total_revenue
+            FROM invoice_items ii
+            JOIN invoices i ON ii.invoice_id = i.id
+            WHERE i.tenant_id = ? AND i.created_at >= datetime('now', '-' || ? || ' days')
+            GROUP BY ii.product_id ORDER BY total_qty DESC LIMIT ?
+        `).all(req.tenantId, days, limit);
 
         res.json(products);
     } catch (err) {
@@ -127,13 +132,14 @@ router.get('/top-products', authenticate, (req, res) => {
 router.get('/stock-valuation', authenticate, (req, res) => {
     try {
         const products = db.prepare(`
-      SELECT p.id, p.name, p.quantity, p.cost_price, p.selling_price,
-             (p.quantity * p.cost_price) as cost_value,
-             (p.quantity * p.selling_price) as retail_value,
-             c.name as category_name
-      FROM products p LEFT JOIN categories c ON p.category_id = c.id
-      ORDER BY retail_value DESC
-    `).all();
+            SELECT p.id, p.name, p.quantity, p.cost_price, p.selling_price,
+                   (p.quantity * p.cost_price) as cost_value,
+                   (p.quantity * p.selling_price) as retail_value,
+                   c.name as category_name
+            FROM products p LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.tenant_id = ?
+            ORDER BY retail_value DESC
+        `).all(req.tenantId);
 
         const totals = products.reduce((acc, p) => ({
             cost_value: acc.cost_value + p.cost_value,

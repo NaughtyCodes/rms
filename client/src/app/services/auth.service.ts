@@ -8,6 +8,8 @@ export interface User {
     username: string;
     role: string;
     fullName: string;
+    branchId?: number;
+    tenantId?: number;
 }
 
 export interface LoginResponse {
@@ -53,6 +55,11 @@ export class AuthService {
     }
 
     isAdmin(): boolean {
-        return this.currentUser.value?.role === 'admin';
+        const role = this.currentUser.value?.role;
+        return role === 'admin' || role === 'superadmin';
+    }
+
+    isSuperAdmin(): boolean {
+        return this.currentUser.value?.role === 'superadmin';
     }
 }

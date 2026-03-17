@@ -17,7 +17,7 @@
                 <label class="form-label">Shop Logo</label>
                 <div class="logo-upload-container">
                     <img *ngIf="settings?.shop_logo_url" 
-                         [src]="settings?.shop_logo_url?.startsWith('/uploads') ? 'http://localhost:3001' + settings?.shop_logo_url : settings?.shop_logo_url" class="logo-preview-thumb">
+                         [src]="settings?.shop_logo_url" class="logo-preview-thumb">
                     <div class="logo-actions">
                         <input type="file" id="logoInp" (change)="onLogoUploaded($event)" hidden accept="image/*">
                         <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('logoInp').click()">
@@ -140,7 +140,7 @@
 
                 <div class="rp-header">
                     <img *ngIf="settings?.bill_show_logo === 'true' && settings?.shop_logo_url" 
-                         [src]="settings?.shop_logo_url?.startsWith('/uploads') ? 'http://localhost:3001' + settings?.shop_logo_url : settings?.shop_logo_url" class="bill-logo">
+                         [src]="settings?.shop_logo_url" class="bill-logo">
                     <h2>{{ settings.shop_name || 'Shop Name' }}</h2>
                     <p>{{ settings.shop_address || 'Shop Address' }}</p>
                     <p *ngIf="settings.shop_phone">📞 {{ settings.shop_phone }}</p>

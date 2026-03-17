@@ -2,20 +2,37 @@ import db from './connection.js';
 import bcrypt from 'bcryptjs';
 
 export function seedDefaultAdmin() {
-    const existing = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
-    if (!existing) {
-        const hash = bcrypt.hashSync('admin123', 10);
-        db.prepare('INSERT INTO users (username, password_hash, full_name, role) VALUES (?, ?, ?, ?)')
-            .run('admin', hash, 'Shop Admin', 'admin');
-        console.log('🌱 Default admin created (admin / admin123)');
+    // Seed a SuperAdmin (Global)
+    const existingSuper = db.prepare('SELECT id FROM users WHERE username = ? AND role = ?').get('super', 'superadmin');
+    if (!existingSuper) {
+        const hash = bcrypt.hashSync('super123', 10);
+        db.prepare('INSERT INTO users (username, password_hash, full_name, role, tenant_id) VALUES (?, ?, ?, ?, ?)')
+            .run('super', hash, 'Global Super Admin', 'superadmin', null);
+        console.log('🌱 SuperAdmin created (super / super123)');
+    }
+
+    // Seed a Tenant Admin for the first tenant
+    const tenant = db.prepare('SELECT id FROM tenants LIMIT 1').get();
+    if (tenant) {
+        const existingAdmin = db.prepare('SELECT id FROM users WHERE username = ? AND tenant_id = ?').get('admin', tenant.id);
+        if (!existingAdmin) {
+            const hash = bcrypt.hashSync('admin123', 10);
+            const branch = db.prepare('SELECT id FROM branches WHERE tenant_id = ? LIMIT 1').get(tenant.id);
+            db.prepare('INSERT INTO users (username, password_hash, full_name, role, tenant_id, branch_id) VALUES (?, ?, ?, ?, ?, ?)')
+                .run('admin', hash, 'Shop Admin', 'admin', tenant.id, branch?.id || null);
+            console.log('🌱 Default tenant admin created (admin / admin123)');
+        }
     }
 }
 
 export function seedSampleData() {
+    const tenant = db.prepare('SELECT id FROM tenants LIMIT 1').get();
+    if (!tenant) return;
+
     // Categories
     const categories = ['Groceries', 'Beverages', 'Snacks', 'Dairy', 'Personal Care', 'Stationery'];
-    const insertCat = db.prepare('INSERT OR IGNORE INTO categories (name) VALUES (?)');
-    for (const c of categories) insertCat.run(c);
+    const insertCat = db.prepare('INSERT OR IGNORE INTO categories (tenant_id, name) VALUES (?, ?)');
+    for (const c of categories) insertCat.run(tenant.id, c);
 
     // Sample products
     const products = [
@@ -35,18 +52,18 @@ export function seedSampleData() {
         { name: 'Ball Pen (Pack of 5)', barcode: '8901234014', cat: 'Stationery', cost: 15, sell: 25, qty: 80, unit: 'pcs', tax: 12 },
     ];
 
-    const getCatId = db.prepare('SELECT id FROM categories WHERE name = ?');
+    const getCatId = db.prepare('SELECT id FROM categories WHERE name = ? AND tenant_id = ?');
     const insertProd = db.prepare(`
-    INSERT OR IGNORE INTO products (name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+        INSERT OR IGNORE INTO products (tenant_id, name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
 
     for (const p of products) {
-        const cat = getCatId.get(p.cat);
-        insertProd.run(p.name, p.barcode, cat?.id, p.cost, p.sell, p.qty, 5, p.unit, p.tax);
+        const cat = getCatId.get(p.cat, tenant.id);
+        insertProd.run(tenant.id, p.name, p.barcode, cat?.id, p.cost, p.sell, p.qty, 5, p.unit, p.tax);
     }
 
-    console.log('🌱 Sample data seeded');
+    console.log('🌱 Sample data seeded for tenant: ' + tenant.id);
 }
 
 // Run if executed directly

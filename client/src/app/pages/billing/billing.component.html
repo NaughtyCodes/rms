@@ -21,8 +21,7 @@
                 <div class="suggestion-item" *ngFor="let p of filteredProducts" (click)="addToCart(p)">
                     <div>
                         <span class="fw-600">{{ p.name }}</span>
-                        <span class="text-muted" style="margin-left: 8px; font-size: 12px;">Stock: {{ p.quantity
-                            }}</span>
+                        <span class="text-muted" style="margin-left: 8px; font-size: 12px;">Stock: {{ p.branch_quantity !== undefined ? p.branch_quantity : p.quantity }}</span>
                     </div>
                     <span class="fw-600">₹{{ p.selling_price | number:'1.2-2' }}</span>
                 </div>
@@ -151,7 +150,7 @@
 
         <div class="receipt-header">
             <img *ngIf="settings?.bill_show_logo === 'true' && settings?.shop_logo_url" 
-                 [src]="settings?.shop_logo_url?.startsWith('/uploads') ? 'http://localhost:3001' + settings?.shop_logo_url : settings?.shop_logo_url" class="bill-logo">
+                 [src]="settings?.shop_logo_url" class="bill-logo">
             <h2>{{ settings?.shop_name || 'ShopBill Pro' }}</h2>
             <p>{{ settings?.shop_address }}</p>
             <p *ngIf="settings?.shop_phone">📞 {{ settings?.shop_phone }}</p>

@@ -4,6 +4,8 @@ import { authenticate, authorizeAdmin } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,7 +15,7 @@ const router = Router();
 // Configure multer for logo uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, path.join(__dirname, '../../uploads'));
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -62,7 +64,7 @@ export const DEFAULT_SETTINGS = {
 // GET /api/settings
 router.get('/', authenticate, (req, res) => {
     try {
-        const rows = db.prepare('SELECT key, value FROM settings').all();
+        const rows = db.prepare('SELECT key, value FROM settings WHERE tenant_id IS ?').all(req.tenantId);
         const settings = { ...DEFAULT_SETTINGS };
         rows.forEach(row => {
             settings[row.key] = row.value;
@@ -78,11 +80,18 @@ router.put('/', authenticate, authorizeAdmin, (req, res) => {
     try {
         const settings = req.body;
 
-        const stmt = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');
+        const checkStmt = db.prepare('SELECT id FROM settings WHERE tenant_id IS ? AND key = ?');
+        const updateStmt = db.prepare('UPDATE settings SET value = ? WHERE id = ?');
+        const insertStmt = db.prepare('INSERT INTO settings (tenant_id, key, value) VALUES (?, ?, ?)');
 
         const bulkUpdate = db.transaction((entries) => {
             for (const [key, value] of entries) {
-                stmt.run(key, String(value));
+                const existing = checkStmt.get(req.tenantId, key);
+                if (existing) {
+                    updateStmt.run(String(value), existing.id);
+                } else {
+                    insertStmt.run(req.tenantId, key, String(value));
+                }
             }
         });
 
@@ -94,24 +103,46 @@ router.put('/', authenticate, authorizeAdmin, (req, res) => {
     }
 });
 
+
+
 // POST /api/settings/upload-logo
-router.post('/upload-logo', authenticate, authorizeAdmin, upload.single('logo'), (req, res) => {
+router.post('/upload-logo', authenticate, authorizeAdmin, upload.single('logo'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        const logoUrl = `/uploads/${req.file.filename}`;
+        const filename = 'processed-' + req.file.filename;
+        const processedPath = path.join(__dirname, '../../uploads', filename);
+        
+        // Resize and optimize the image using sharp
+        await sharp(req.file.path)
+            .resize({ width: 500, withoutEnlargement: true }) // Resize to 500px max width
+            .toFile(processedPath);
+
+        // Delete the original raw upload to save space
+        fs.unlinkSync(req.file.path);
+
+        const logoUrl = `/uploads/${filename}`;
         
         // Update the shop_logo_url setting in the database
-        const stmt = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value');
-        stmt.run('shop_logo_url', logoUrl);
+        const checkStmt = db.prepare('SELECT id FROM settings WHERE tenant_id IS ? AND key = ?');
+        const existing = checkStmt.get(req.tenantId, 'shop_logo_url');
+
+        if (existing) {
+            db.prepare('UPDATE settings SET value = ? WHERE id = ?').run(logoUrl, existing.id);
+        } else {
+            db.prepare('INSERT INTO settings (tenant_id, key, value) VALUES (?, ?, ?)').run(req.tenantId, 'shop_logo_url', logoUrl);
+        }
 
         res.json({ 
-            message: 'Logo uploaded successfully',
+            message: 'Logo uploaded and optimized successfully',
             logo_url: logoUrl
         });
     } catch (err) {
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
         res.status(500).json({ error: err.message });
     }
 });

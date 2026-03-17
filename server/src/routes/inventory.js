@@ -9,9 +9,14 @@ const router = express.Router();
  * @desc    Get tracking batches for a product
  * @access  Private
  */
+// GET /api/inventory/batches/:productId
 router.get('/batches/:productId', authenticate, (req, res) => {
     try {
-        const batches = db.prepare('SELECT * FROM product_batches WHERE product_id = ? ORDER BY created_at DESC').all(req.params.productId);
+        const batches = db.prepare(`
+            SELECT * FROM product_batches 
+            WHERE product_id = ? AND tenant_id = ? 
+            ORDER BY created_at DESC
+        `).all(req.params.productId, req.tenantId);
         
         res.json(batches.map(b => ({
             ...b,
@@ -22,11 +27,7 @@ router.get('/batches/:productId', authenticate, (req, res) => {
     }
 });
 
-/**
- * @route   POST /api/inventory/stock-in
- * @desc    Add new running inventory (create a batch and logic transaction)
- * @access  Private/Admin
- */
+// POST /api/inventory/stock-in
 router.post('/stock-in', authenticate, authorizeAdmin, (req, res) => {
     const { product_id, batch_number, expiry_date, quantity, cost_price, meta_data } = req.body;
 
@@ -36,34 +37,50 @@ router.post('/stock-in', authenticate, authorizeAdmin, (req, res) => {
 
     try {
         db.transaction(() => {
+            // Verify product belongs to tenant
+            const prod = db.prepare('SELECT id FROM products WHERE id = ? AND tenant_id = ?').get(product_id, req.tenantId);
+            if (!prod) throw new Error('Product not found in your tenant scope');
+
             // 1. Create or Update Batch
             const metaStr = meta_data ? JSON.stringify(meta_data) : null;
-            
-            const existingBatch = db.prepare('SELECT id, quantity FROM product_batches WHERE product_id = ? AND batch_number = ?').get(product_id, batch_number);
+            const existingBatch = db.prepare('SELECT id, quantity FROM product_batches WHERE product_id = ? AND batch_number = ? AND tenant_id = ?')
+                .get(product_id, batch_number, req.tenantId);
             
             let batchId;
             if (existingBatch) {
-                db.prepare('UPDATE product_batches SET quantity = quantity + ?, cost_price = ?, expiry_date = COALESCE(?, expiry_date), meta_data = COALESCE(?, meta_data) WHERE id = ?')
-                  .run(quantity, cost_price || 0, expiry_date, metaStr, existingBatch.id);
+                db.prepare('UPDATE product_batches SET quantity = quantity + ?, cost_price = ?, expiry_date = COALESCE(?, expiry_date), meta_data = COALESCE(?, meta_data) WHERE id = ? AND tenant_id = ?')
+                  .run(quantity, cost_price || 0, expiry_date, metaStr, existingBatch.id, req.tenantId);
                 batchId = existingBatch.id;
             } else {
                 const batchResult = db.prepare(`
-                    INSERT INTO product_batches (product_id, batch_number, expiry_date, quantity, cost_price, meta_data)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `).run(product_id, batch_number, expiry_date || null, quantity, cost_price || 0, metaStr);
+                    INSERT INTO product_batches (tenant_id, product_id, batch_number, expiry_date, quantity, cost_price, meta_data)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `).run(req.tenantId, product_id, batch_number, expiry_date || null, quantity, cost_price || 0, metaStr);
                 batchId = batchResult.lastInsertRowid;
             }
 
             // 2. Record Transaction
             db.prepare(`
-                INSERT INTO inventory_transactions (product_id, batch_id, type, quantity, reason)
-                VALUES (?, ?, 'stock_in', ?, 'New stock received')
-            `).run(product_id, batchId, quantity);
+                INSERT INTO inventory_transactions (tenant_id, product_id, batch_id, type, quantity, reason)
+                VALUES (?, ?, ?, 'stock_in', ?, 'New stock received')
+            `).run(req.tenantId, product_id, batchId, quantity);
 
-            // 3. Update Master Product Quantity
-            db.prepare('UPDATE products SET quantity = quantity + ? WHERE id = ?').run(quantity, product_id);
+            // 3. Update Branch Stock
+            const targetBranch = req.body.branch_id || req.user.branchId;
+            if (targetBranch) {
+                const existingStock = db.prepare('SELECT * FROM branch_stock WHERE branch_id = ? AND product_id = ? AND tenant_id = ?')
+                    .get(targetBranch, product_id, req.tenantId);
+                if (existingStock) {
+                    db.prepare('UPDATE branch_stock SET quantity = quantity + ? WHERE branch_id = ? AND product_id = ? AND tenant_id = ?')
+                        .run(quantity, targetBranch, product_id, req.tenantId);
+                } else {
+                    db.prepare('INSERT INTO branch_stock (tenant_id, branch_id, product_id, quantity) VALUES (?, ?, ?, ?)').run(req.tenantId, targetBranch, product_id, quantity);
+                }
+            } else {
+                db.prepare('UPDATE products SET quantity = quantity + ? WHERE id = ? AND tenant_id = ?').run(quantity, product_id, req.tenantId);
+            }
 
-        })(); // execute transaction
+        })();
         
         res.status(201).json({ message: 'Stock added successfully' });
     } catch (error) {
@@ -71,11 +88,7 @@ router.post('/stock-in', authenticate, authorizeAdmin, (req, res) => {
     }
 });
 
-/**
- * @route   POST /api/inventory/damage
- * @desc    Record damaged stock, deducting from a specific batch & main product
- * @access  Private/Admin
- */
+// POST /api/inventory/damage
 router.post('/damage', authenticate, authorizeAdmin, (req, res) => {
     const { product_id, batch_id, quantity, reason } = req.body;
 
@@ -85,19 +98,29 @@ router.post('/damage', authenticate, authorizeAdmin, (req, res) => {
 
     try {
         db.transaction(() => {
+            // Verify product belongs to tenant
+            const prod = db.prepare('SELECT id FROM products WHERE id = ? AND tenant_id = ?').get(product_id, req.tenantId);
+            if (!prod) throw new Error('Product not found in your tenant scope');
+
             // Record damage transaction
             db.prepare(`
-                INSERT INTO inventory_transactions (product_id, batch_id, type, quantity, reason)
-                VALUES (?, ?, 'damage', ?, ?)
-            `).run(product_id, batch_id || null, -Math.abs(quantity), reason || 'Damaged goods');
+                INSERT INTO inventory_transactions (tenant_id, product_id, batch_id, type, quantity, reason)
+                VALUES (?, ?, ?, 'damage', ?, ?)
+            `).run(req.tenantId, product_id, batch_id || null, -Math.abs(quantity), reason || 'Damaged goods');
 
             // Reduce Batch Quantity if tracking batches
             if (batch_id) {
-                db.prepare('UPDATE product_batches SET quantity = quantity - ? WHERE id = ?').run(Math.abs(quantity), batch_id);
+                db.prepare('UPDATE product_batches SET quantity = quantity - ? WHERE id = ? AND tenant_id = ?').run(Math.abs(quantity), batch_id, req.tenantId);
             }
 
-            // Reduce Master Product Quantity
-            db.prepare('UPDATE products SET quantity = quantity - ? WHERE id = ?').run(Math.abs(quantity), product_id);
+            // Reduce Branch Stock
+            const targetBranch = req.body.branch_id || req.user.branchId;
+            if (targetBranch) {
+                db.prepare('UPDATE branch_stock SET quantity = quantity - ? WHERE branch_id = ? AND product_id = ? AND tenant_id = ?')
+                    .run(Math.abs(quantity), targetBranch, product_id, req.tenantId);
+            } else {
+                db.prepare('UPDATE products SET quantity = quantity - ? WHERE id = ? AND tenant_id = ?').run(Math.abs(quantity), product_id, req.tenantId);
+            }
 
         })();
         
@@ -107,11 +130,7 @@ router.post('/damage', authenticate, authorizeAdmin, (req, res) => {
     }
 });
 
-/**
- * @route   GET /api/inventory/transactions
- * @desc    Get recent inventory transactions logs
- * @access  Private/Admin
- */
+// GET /api/inventory/transactions
 router.get('/transactions', authenticate, authorizeAdmin, (req, res) => {
     try {
         const transactions = db.prepare(`
@@ -119,9 +138,10 @@ router.get('/transactions', authenticate, authorizeAdmin, (req, res) => {
             FROM inventory_transactions t
             JOIN products p ON t.product_id = p.id
             LEFT JOIN product_batches b ON t.batch_id = b.id
+            WHERE t.tenant_id = ?
             ORDER BY t.created_at DESC
             LIMIT 50
-        `).all();
+        `).all(req.tenantId);
         res.json(transactions);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -26,7 +26,8 @@ export class LayoutComponent {
         public auth: AuthService,
         public settingsService: SettingsService
     ) {
-        if (this.auth.getUser()?.role === 'admin') {
+        const role = this.auth.getUser()?.role;
+        if (role === 'admin' || role === 'superadmin') {
             this.navItems.push({
                 path: '/admin',
                 icon: '⚙️',
@@ -34,12 +35,22 @@ export class LayoutComponent {
                 children: [
                     { path: '/inventory', icon: '📦', label: 'Inventory' },
                     { path: '/admin/stock-management', icon: '🔄', label: 'Stock Mgmt' },
+                    { path: '/admin/branches', icon: '🏢', label: 'Branches' },
+                    { path: '/admin/transfers', icon: '🚚', label: 'Transfers' },
                     { path: '/admin/meta-setup', icon: '📝', label: 'Meta Setup' },
                     { path: '/admin/taxes', icon: '💰', label: 'Tax Settings' },
                     { path: '/admin/discounts', icon: '🏷️', label: 'Discounts' },
                     { path: '/admin/shop-config', icon: '🏪', label: 'Shop Config' },
                     { path: '/admin/print-config', icon: '🖨️', label: 'Print Config' }
                 ]
+            });
+        }
+
+        if (this.auth.isSuperAdmin()) {
+            this.navItems.push({
+                path: '/superadmin/tenants',
+                icon: '🏢',
+                label: 'Tenant Mgmt'
             });
         }
     }

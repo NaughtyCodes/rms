@@ -210,10 +210,21 @@
 }
 
 .bill-logo {
-    max-width: 60px;
-    max-height: 60px;
-    margin-bottom: 10px;
+    max-width: 100%;
+    max-height: 100%;
+    margin-bottom: 12px;
+    object-fit: contain;
 }
+
+/* Dynamic sizing based on paper settings */
+.preview-80mm .bill-logo { max-width: 80px; max-height: 80px; }
+.preview-a5 .bill-logo { max-width: 140px; max-height: 140px; }
+.preview-a4 .bill-logo { max-width: 200px; max-height: 200px; }
+
+/* In the actual printed receipt (if these classes are used there) */
+.receipt-preview.paper-80mm .bill-logo { max-width: 80px; }
+.receipt-preview.paper-a5 .bill-logo { max-width: 140px; }
+.receipt-preview.paper-a4 .bill-logo { max-width: 200px; }
 
 .watermark {
     position: absolute;

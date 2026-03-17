@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { superAdminGuard } from './guards/superadmin.guard';
 
 export const routes: Routes = [
     { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
+    { path: 'user-guide', loadComponent: () => import('./pages/user-guide/user-guide.component').then(m => m.UserGuideComponent) },
     {
         path: '',
         loadComponent: () => import('./pages/layout/layout.component').then(m => m.LayoutComponent),
@@ -21,6 +23,13 @@ export const routes: Routes = [
             { path: 'admin/stock-management', loadComponent: () => import('./pages/admin/stock-management/stock-management.component').then(m => m.StockManagementComponent) },
             { path: 'admin/shop-config', loadComponent: () => import('./pages/admin/shop-config/shop-config.component').then(m => m.ShopConfigComponent) },
             { path: 'admin/print-config', loadComponent: () => import('./pages/admin/print-config/print-config.component').then(m => m.PrintConfigComponent) },
+            { path: 'admin/branches', loadComponent: () => import('./pages/admin/branches/branches.component').then(m => m.BranchesComponent) },
+            { path: 'admin/transfers', loadComponent: () => import('./pages/admin/transfers/transfers.component').then(m => m.TransfersComponent) },
+            { 
+                path: 'superadmin/tenants', 
+                loadComponent: () => import('./pages/superadmin/tenants/tenants.component').then(m => m.TenantsComponent),
+                canActivate: [superAdminGuard]
+            },
         ]
     },
     { path: '**', redirectTo: '' }

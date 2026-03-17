@@ -1,0 +1,108 @@
+<div class="page-header flex items-center justify-between">
+    <div>
+        <h1 class="page-title">🏢 Branch Management</h1>
+        <p class="page-subtitle">Add, edit, and manage shop branches or warehouses.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openModal()">
+        + Add New Branch
+    </button>
+</div>
+
+<!-- Error Message -->
+<div class="alert alert-danger mb-16" *ngIf="errorMessage && !isModalOpen">
+    {{ errorMessage }}
+</div>
+
+<!-- Branches Table -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Branch Name</th>
+                    <th>Address & Phone</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let branch of branches">
+                    <td class="fw-600">{{ branch.name }}</td>
+                    <td>
+                        <div class="text-sm">{{ branch.address || 'N/A' }}</div>
+                        <div class="text-xs text-muted">{{ branch.phone || 'N/A' }}</div>
+                    </td>
+                    <td>
+                        <span class="badge" [ngClass]="branch.is_warehouse ? 'badge-primary' : 'badge-secondary'">
+                            {{ branch.is_warehouse ? 'Warehouse' : 'Retail Branch' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" [ngClass]="branch.is_active ? 'badge-success' : 'badge-danger'">
+                            {{ branch.is_active ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <button class="btn btn-sm btn-outline mr-8" (click)="openModal(branch)">Edit</button>
+                    </td>
+                </tr>
+                <tr *ngIf="branches.length === 0">
+                    <td colspan="5" class="text-center text-muted py-24">No branches found.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Branch Modal Overlay -->
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">{{ editingBranch?.id ? 'Edit Branch' : 'Add New Branch' }}</h2>
+            <button class="modal-close" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="alert alert-danger mb-16" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <form (ngSubmit)="saveBranch()" *ngIf="editingBranch">
+                <div class="form-group">
+                    <label class="form-label">Branch Name *</label>
+                    <input type="text" class="form-input" [(ngModel)]="editingBranch.name" name="name"
+                           placeholder="e.g. Main Street Branch" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-input" [(ngModel)]="editingBranch.address" name="address" rows="2"
+                              placeholder="Full address"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="text" class="form-input" [(ngModel)]="editingBranch.phone" name="phone"
+                           placeholder="Contact number">
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="isWarehouse" [checked]="editingBranch.is_warehouse === 1" (change)="toggleWarehouse($event)">
+                    <label for="isWarehouse" class="form-label mb-0" style="margin-bottom: 0;">Is Central Warehouse?</label>
+                </div>
+                <p class="text-xs text-muted mb-16 ms-24">Warehouses are used as centralized stock hubs for stock transfers.</p>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="isActive" [checked]="editingBranch.is_active === 1" (change)="toggleActive($event)">
+                    <label for="isActive" class="form-label mb-0" style="margin-bottom: 0;">Active</label>
+                </div>
+
+                <div class="modal-footer mt-24" style="display: flex; justify-content: flex-end; gap: 12px;">
+                    <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Branch</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

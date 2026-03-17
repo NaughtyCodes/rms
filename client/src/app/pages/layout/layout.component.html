@@ -25,7 +25,7 @@
             </ng-container>
         </nav>
 
-        <div class="sidebar-footer">
+    <div class="sidebar-footer">
             <div class="user-info" *ngIf="!sidebarCollapsed">
                 <div class="user-avatar">{{ (auth.getUser()?.fullName || 'U')[0] }}</div>
                 <div class="user-details">
@@ -33,6 +33,10 @@
                     <span class="user-role">{{ auth.getUser()?.role | titlecase }}</span>
                 </div>
             </div>
+            <a href="/user-guide" target="_blank" class="btn btn-outline btn-sm guide-btn" style="width: 100%; margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; color: var(--primary-color, #6366f1); background: transparent; cursor: pointer; font-size: 13px;">
+                <span>📖</span>
+                <span *ngIf="!sidebarCollapsed">User Guide</span>
+            </a>
             <button class="btn btn-danger btn-sm" (click)="auth.logout()" style="width: 100%;">
                 <span>🚪</span>
                 <span *ngIf="!sidebarCollapsed">Logout</span>
@@ -45,6 +49,7 @@
         <header class="top-header">
             <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
             <div class="header-right">
+                <a href="/user-guide" target="_blank" class="toggle-btn" title="User Guide" style="text-decoration: none;">📖</a>
                 <button class="toggle-btn" (click)="toggleTheme()" title="Toggle Theme">
                     <span *ngIf="(settingsService.settings$ | async)?.theme === 'dark'">☀️</span>
                     <span *ngIf="(settingsService.settings$ | async)?.theme === 'light'">🌙</span>

@@ -26,37 +26,59 @@ router.post('/login', (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role, fullName: user.full_name },
+            { 
+                id: user.id, 
+                username: user.username, 
+                role: user.role, 
+                fullName: user.full_name, 
+                branchId: user.branch_id,
+                tenantId: user.tenant_id // Will be null for superadmins
+            },
             JWT_SECRET,
             { expiresIn: '12h' }
         );
 
         res.json({
             token,
-            user: { id: user.id, username: user.username, role: user.role, fullName: user.full_name }
+            user: { 
+                id: user.id, 
+                username: user.username, 
+                role: user.role, 
+                fullName: user.full_name, 
+                branchId: user.branch_id,
+                tenantId: user.tenant_id
+            }
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// POST /api/auth/register (admin only)
+// POST /api/auth/register (admin only, creates user in SAME tenant as current admin)
 router.post('/register', authenticate, authorizeAdmin, (req, res) => {
     try {
-        const { username, password, fullName, role } = req.body;
+        const { username, password, fullName, role, branchId } = req.body;
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required.' });
         }
 
+        // Only superadmins can create other superadmins. 
+        // Normal admins can only create users within their own tenant.
+        if (role === 'superadmin' && req.user.role !== 'superadmin') {
+            return res.status(403).json({ error: 'Only SuperAdmins can create other SuperAdmins.' });
+        }
+
+        const tenantId = req.user.tenantId; // Inherit tenant from the creator
+
         const hash = bcrypt.hashSync(password, 10);
         const result = db.prepare(
-            'INSERT INTO users (username, password_hash, full_name, role) VALUES (?, ?, ?, ?)'
-        ).run(username, hash, fullName || '', role || 'cashier');
+            'INSERT INTO users (username, password_hash, full_name, role, branch_id, tenant_id) VALUES (?, ?, ?, ?, ?, ?)'
+        ).run(username, hash, fullName || '', role || 'cashier', branchId || null, tenantId);
 
-        res.status(201).json({ id: result.lastInsertRowid, username, role: role || 'cashier' });
+        res.status(201).json({ id: result.lastInsertRowid, username, role: role || 'cashier', branchId, tenantId });
     } catch (err) {
         if (err.message.includes('UNIQUE')) {
-            return res.status(409).json({ error: 'Username already exists.' });
+            return res.status(409).json({ error: 'Username already exists in this tenant.' });
         }
         res.status(500).json({ error: err.message });
     }

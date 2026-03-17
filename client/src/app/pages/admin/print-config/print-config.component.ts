@@ -53,6 +53,7 @@ export class PrintConfigComponent implements OnInit {
     this.http.post<{ logo_url: string }>('/api/settings/upload-logo', formData).subscribe({
       next: (res: { logo_url: string }) => {
         this.settings.shop_logo_url = res.logo_url;
+        this.settingsService.loadSettings();
         this.isSaving = false;
         this.message = 'Logo uploaded!';
         setTimeout(() => this.message = '', 3000);
@@ -110,6 +111,7 @@ export class PrintConfigComponent implements OnInit {
       <html>
       <head>
         <title>Bill Preview - ${this.settings.shop_name}</title>
+        <base href="${window.location.origin}">
         <link href="https://fonts.googleapis.com/css2?family=${fontFamily}:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
