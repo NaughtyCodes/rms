@@ -209,10 +209,19 @@
 }
 
 .bill-logo {
-    max-width: 80px;
-    max-height: 80px;
-    margin-bottom: 15px;
+    max-width: 100%;
+    max-height: 100%;
+    margin-bottom: 12px;
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+/* Dynamic sizing based on paper size */
+.receipt.receipt-80mm .bill-logo { max-width: 80px; max-height: 80px; }
+.receipt-a5 .bill-logo { max-width: 140px; max-height: 140px; }
+.receipt-a4 .bill-logo { max-width: 200px; max-height: 200px; }
 
 .watermark {
     position: absolute;

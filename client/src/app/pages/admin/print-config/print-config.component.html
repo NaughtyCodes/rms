@@ -129,6 +129,9 @@
 
             <div id="bill-preview" class="receipt-preview"
                 [class.compact]="settings.bill_layout === 'compact'"
+                [class.paper-80mm]="settings.bill_paper_size === '80mm'"
+                [class.paper-a5]="settings.bill_paper_size === 'a5'"
+                [class.paper-a4]="settings.bill_paper_size === 'a4'"
                 [ngClass]="settings.bill_layout_style"
                 [style.font-family]="settings.font_family + ', sans-serif'">
 

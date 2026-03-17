@@ -261,7 +261,10 @@ export class BillingComponent implements OnInit {
                         pointer-events: none; white-space: nowrap; z-index: 1; text-transform: uppercase;
                     }
 
-                    .bill-logo { max-width: 80px; max-height: 80px; margin-bottom: 15px; }
+                    .bill-logo { max-width: 100%; height: auto; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+                    .receipt.receipt-80mm .bill-logo { max-width: 80px; }
+                    .receipt.receipt-a5 .bill-logo { max-width: 140px; }
+                    .receipt.receipt-a4 .bill-logo { max-width: 200px; }
                     .receipt-header { text-align: center; margin-bottom: 16px; border-bottom: 2px dashed #ccc; padding-bottom: 12px; }
                     .receipt-header h2 { font-size: 20px; margin-bottom: 4px; }
                     .receipt-header p { font-size: 12px; color: #666; }

@@ -139,6 +139,7 @@
     <div class="receipt" id="receipt" 
          [class.compact]="settings?.bill_layout === 'compact'"
          [ngClass]="settings?.bill_layout_style || 'modern'"
+         [class.receipt-80mm]="settings?.bill_paper_size === '80mm'"
          [class.receipt-a4]="settings?.bill_paper_size === 'a4'"
          [class.receipt-a5]="settings?.bill_paper_size === 'a5'">
         

@@ -120,6 +120,10 @@ export class PrintConfigComponent implements OnInit {
           .receipt-header { text-align: center; margin-bottom: 16px; border-bottom: 2px dashed #ccc; padding-bottom: 12px; }
           .receipt-header h2 { font-size: ${headerSize}; margin-bottom: 4px; }
           .receipt-header p { font-size: 12px; color: #666; }
+          .bill-logo { max-width: 100%; height: auto; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+          .receipt-preview.paper-80mm .bill-logo { max-width: 80px; }
+          .receipt-preview.paper-a5 .bill-logo { max-width: 140px; }
+          .receipt-preview.paper-a4 .bill-logo { max-width: 200px; }
           .receipt-meta { font-size: 12px; margin-bottom: 12px; }
           .receipt-meta div { margin-bottom: 2px; }
           table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
