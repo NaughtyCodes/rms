@@ -74,7 +74,7 @@ export class BillingComponent implements OnInit {
     }
 
     addToCart(product: Product) {
-        const availableQty = product.branch_quantity !== undefined ? product.branch_quantity : product.quantity;
+        const availableQty = product.branch_quantity != null ? product.branch_quantity : product.quantity;
         const existing = this.cart.find(c => c.product.id === product.id);
         if (existing) {
             if (existing.quantity < availableQty) {
@@ -132,7 +132,7 @@ export class BillingComponent implements OnInit {
 
     updateQuantity(item: CartItem, delta: number) {
         const newQty = item.quantity + delta;
-        const availableQty = item.product.branch_quantity !== undefined ? item.product.branch_quantity : item.product.quantity;
+        const availableQty = item.product.branch_quantity != null ? item.product.branch_quantity : item.product.quantity;
         
         if (newQty < 1) return;
         if (newQty > availableQty) {

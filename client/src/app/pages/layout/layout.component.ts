@@ -41,7 +41,8 @@ export class LayoutComponent {
                     { path: '/admin/taxes', icon: '💰', label: 'Tax Settings' },
                     { path: '/admin/discounts', icon: '🏷️', label: 'Discounts' },
                     { path: '/admin/shop-config', icon: '🏪', label: 'Shop Config' },
-                    { path: '/admin/print-config', icon: '🖨️', label: 'Print Config' }
+                    { path: '/admin/print-config', icon: '🖨️', label: 'Print Config' },
+                    { path: '/admin/test-results', icon: '🧪', label: 'Test Results' }
                 ]
             });
         }

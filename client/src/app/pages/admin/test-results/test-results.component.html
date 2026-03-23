@@ -1,0 +1,59 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🧪 E2E Test Results</h1>
+        <p class="page-subtitle">View the latest Playwright automated test executions.</p>
+    </div>
+    <button class="btn btn-primary" (click)="ngOnInit()">Refresh</button>
+</div>
+
+<div *ngIf="loading" class="text-center p-24 text-muted">
+    Loading test results...
+</div>
+
+<div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+</div>
+
+<div class="card" *ngIf="results">
+    <div class="card-header pb-0 flex items-center justify-between" style="border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+        <h2 class="card-title mb-0">Test Execution Summary</h2>
+        <div class="flex gap-12">
+            <span class="badge badge-success">Passed: {{ results?.stats?.expected || 0 }}</span>
+            <span class="badge badge-danger">Failed: {{ results?.stats?.unexpected || 0 }}</span>
+            <span class="badge badge-secondary">Total: {{ results?.stats?.startTime | date:'medium' }}</span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Suite / File</th>
+                    <th>Test Name</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let fileSuite of results.suites">
+                   <ng-container *ngFor="let spec of getSpecs([fileSuite])">
+                        <tr>
+                            <td class="text-muted text-sm">{{ fileSuite.title }}</td>
+                            <td class="fw-600">{{ spec.title }}</td>
+                            <td>
+                                <span class="badge" [ngClass]="spec.ok ? 'badge-success' : 'badge-danger'">
+                                    {{ spec.ok ? 'Passed' : 'Failed' }}
+                                </span>
+                            </td>
+                            <td class="text-muted text-sm">
+                                {{ spec.tests?.[0]?.results?.[0]?.duration }} ms
+                            </td>
+                        </tr>
+                   </ng-container>
+                </ng-container>
+                <tr *ngIf="results.suites?.length === 0">
+                    <td colspan="4" class="text-center text-muted p-24">No tests executed.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
