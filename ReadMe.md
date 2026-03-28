@@ -86,8 +86,8 @@ sequenceDiagram
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/NaughtyCodes/tracly.git
-   cd tracly
+   git clone https://github.com/NaughtyCodes/tractly.git
+   cd tractly
    ```
 
 2. **Setup the Backend**:
