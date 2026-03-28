@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.png" alt="Tracly Logo" width="150">
+  <img src="assets/logo.jpg" alt="Tracly Logo" width="150">
   <h1>Tracly</h1>
   <p><strong>A powerful, minimalist Shop Inventory & Billing System for modern businesses.</strong></p>
 
@@ -16,7 +16,7 @@
 Tracly is a comprehensive solution designed to streamline inventory management and billing for retail shops and multi-branch businesses. Built with a focus on speed, scalability, and ease of use, it provides everything you need to manage your inventory, process sales, and track business performance in one place.
 
 <div align="center">
-  <img src="assets/dashboard_mockup.png" alt="Tracly Dashboard" width="800">
+  <img src="assets/dashboard_mockup.jpg" alt="Tracly Dashboard" width="800">
 </div>
 
 ---
