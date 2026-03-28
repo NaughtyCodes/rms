@@ -1,46 +1,119 @@
-# ShopBill Pro - Quick Start Guide
+<div align="center">
+  <img src="assets/logo.png" alt="Tracly Logo" width="150">
+  <h1>Tracly</h1>
+  <p><strong>A powerful, minimalistShop Inventory & Billing System for modern businesses.</strong></p>
 
-## The Easiest Way to Start (Windows Only)
-You can start both the backend server and frontend client at the same time using the provided PowerShell script.
-
-1. Open a PowerShell terminal in the `d:\AG\` folder.
-2. Run the script:
-   ```powershell
-   .\start.ps1
-   ```
-3. If the servers are already running, the script will warn you and ask if you want to stop and restart them. Just type `Y` to restart, or `N` to cancel.
-
----
-
-## Starting Manually
-
-If you prefer to start the services individually, you will need two separate terminal windows.
-
-### 1. Start the Backend Server
-In your first terminal window:
-```bash
-cd d:\AG\server
-node src/app.js
-```
-
-### 2. Start the Frontend Client
-In your second terminal window:
-```bash
-cd d:\AG\client
-npm start 
-```
-
-Once running, the application will be available in your browser at: **http://localhost:4200**
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Angular](https://img.shields.io/badge/Angular-17+-DD0031?logo=angular&logoColor=white)](https://angular.io/)
+  [![Node.js](https://img.shields.io/badge/Node.js-LTS-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+  [![SQLite](https://img.shields.io/badge/SQLite-Fast-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+</div>
 
 ---
 
-### Troubleshooting: "Address already in use" Error
-If you try to start the backend manually and see an `EADDRINUSE :::3001` error, it means the server is already running in the background.
+## 🚀 Overview
 
-To fix this, you can either:
-1. Use the `.\start.ps1` script (which handles this automatically).
-2. Manually kill the process from PowerShell using:
-   ```powershell
-   Stop-Process -Id (Get-NetTCPConnection -LocalPort 3001).OwningProcess -Force
+Tracly is a comprehensive solution designed to streamline inventory management and billing for retail shops and multi-branch businesses. Built with a focus on speed, scalability, and ease of use, it provides everything you need to manage your inventory, process sales, and track business performance in one place.
+
+<div align="center">
+  <img src="assets/dashboard_mockup.png" alt="Tracly Dashboard" width="800">
+</div>
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: [Angular 17+](https://angular.io/) - Modern, component-based framework for a dynamic and responsive UI.
+- **Backend**: [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/) - High-performance server for handling APIs and business logic.
+- **Database**: [SQLite](https://www.sqlite.org/) (via `better-sqlite3`) - Lightweight, disk-persistent database for local or cloud deployments.
+- **Image Processing**: [Sharp](https://sharp.pixelplumbing.com/) - Blazing fast image transformations for product and bill logos.
+- **File Uploads**: [Multer](https://github.com/expressjs/multer) - Handling multipart/form-data for image and file storage.
+
+---
+
+## 📐 Architecture Diagram
+
+Tracly follows a client-server architecture with a local database, optimized for high availability and low latency.
+
+```mermaid
+graph TD
+    A[Angular Client] -->|HTTP/REST| B[Node.js / Express Server]
+    B -->|Query / Storage| C[(SQLite DB)]
+    B -->|FS / Processing| D[Local Storage / Sharp]
+    
+    subgraph "Core Business Logic"
+        B1[Auth Middleware / JWT]
+        B2[Inventory Controllers]
+        B3[Billing / Invoice Generator]
+    end
+```
+
+---
+
+## 🔄 Core Business Workflow
+
+Tracly simplifies the entire lifecycle from stocking to billing.
+
+```mermaid
+sequenceDiagram
+    participant A as Admin / Staff
+    participant B as Inventory Management
+    participant C as Stock Transfer / Sales
+    participant D as Customer Billing
+    participant E as Invoicing & Receipts
+
+    A->>B: Set up Products & Categories
+    B->>C: Allocate Stock (Branches / Warehouse)
+    C->>D: Process Sale / Checkout
+    D->>E: Generate Dynamic Invoice (PDF/Thermal)
+    E->>A: Business Insights / Sales Reports
+```
+
+---
+
+## ✨ Features
+
+- 🏢 **Multi-Branch Support**: Scalable architecture for managing multiple business locations within a single tenant.
+- 📦 **Granular Inventory**: Manage products, categories, stock levels, and historical data with ease.
+- 🧾 **Dynamic Billing**: Professional invoice generation with support for taxes, discounts, and custom logos.
+- 🚛 **Stock Transfers**: Effortlessly move inventory between branches with full traceabilty.
+- 🔒 **Secure Authentication**: Built-in user management with bcrypt hashing and JWT-based session control.
+- 📊 **Business Insights**: Detailed reports on sales, inventory levels, and branch performance.
+
+---
+
+## 🏗️ Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/NaughtyCodes/tracly.git
+   cd tracly
    ```
-# ag
+
+2. **Setup the Backend**:
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
+
+3. **Setup the Frontend**:
+   ```bash
+   cd ../client
+   npm install
+   npm start
+   ```
+
+The application will be available at: **http://localhost:4200**
+
+---
+
+## 📜 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by NaughtyCodes</p>
+</div>

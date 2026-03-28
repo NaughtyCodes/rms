@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: (req, file, cb) => {
         const allowedTypes = /jpeg|jpg|png|webp/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -105,8 +105,19 @@ router.put('/', authenticate, authorizeAdmin, (req, res) => {
 
 
 
+const uploadMiddleware = (req, res, next) => {
+    upload.single('logo')(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ error: err.message });
+        } else if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+        next();
+    });
+};
+
 // POST /api/settings/upload-logo
-router.post('/upload-logo', authenticate, authorizeAdmin, upload.single('logo'), async (req, res) => {
+router.post('/upload-logo', authenticate, authorizeAdmin, uploadMiddleware, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
@@ -115,8 +126,11 @@ router.post('/upload-logo', authenticate, authorizeAdmin, upload.single('logo'),
         const filename = 'processed-' + req.file.filename;
         const processedPath = path.join(__dirname, '../../uploads', filename);
         
+        // Read file into buffer to avoid EBUSY lock on Windows when unlinking
+        const inputBuffer = fs.readFileSync(req.file.path);
+        
         // Resize and optimize the image using sharp
-        await sharp(req.file.path)
+        await sharp(inputBuffer)
             .resize({ width: 500, withoutEnlargement: true }) // Resize to 500px max width
             .toFile(processedPath);
 

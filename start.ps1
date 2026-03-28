@@ -35,10 +35,10 @@ function Start-Services {
         exit
     }
     Write-Host "Starting Backend Service..." -ForegroundColor Green
-    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd d:\rms\server; node src/app.js"
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd $PSScriptRoot\server; node src/app.js"
     
     Write-Host "Starting Frontend Service..." -ForegroundColor Green
-    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd d:\rms\client; npm start"
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd $PSScriptRoot\client; npm start"
     
     Write-Host "Both services have been launched in separate windows!" -ForegroundColor Cyan
     Write-Host "The application will be available at http://localhost:4200" -ForegroundColor Cyan

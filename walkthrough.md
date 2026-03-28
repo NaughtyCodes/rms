@@ -17,9 +17,9 @@ All features from the previous implementation (Admin screens, dynamic form field
 
 ## Bug Fixed
 
-### Billing discount recalculation ([recalcLine](file:///d:/rms/client/src/app/pages/billing/billing.component.ts#143-147))
+### Billing discount recalculation ([recalcLine](file:///d:/tracly/client/src/app/pages/billing/billing.component.ts#143-147))
 
-The [recalcLine](file:///d:/rms/client/src/app/pages/billing/billing.component.ts#143-147) method in [billing.component.ts](file:///d:/rms/client/src/app/pages/billing/billing.component.ts) had a **math bug**: it tried to reverse-derive the per-unit discount from the total discount using `item.quantity - 1`, but since `quantity` was already incremented before the call, this produced wrong results on every quantity change after the first.
+The [recalcLine](file:///d:/tracly/client/src/app/pages/billing/billing.component.ts#143-147) method in [billing.component.ts](file:///d:/tracly/client/src/app/pages/billing/billing.component.ts) had a **math bug**: it tried to reverse-derive the per-unit discount from the total discount using `item.quantity - 1`, but since `quantity` was already incremented before the call, this produced wrong results on every quantity change after the first.
 
 **Fix:** Added a `unitDiscount` field to the [CartItem](file:///d:/rms/client/src/app/pages/billing/billing.component.ts#9-16) interface. The per-unit discount is stored once when the item is first added to cart (fetched from the discount API), and [recalcLine](file:///d:/rms/client/src/app/pages/billing/billing.component.ts#143-147) now simply multiplies:
 

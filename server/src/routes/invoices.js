@@ -116,7 +116,7 @@ router.post('/', authenticate, (req, res) => {
                 }
             }
 
-            return { id: invoiceId, invoice_number: invoiceNumber, subtotal, discount: invoiceDiscount, tax_percent, tax_amount: taxAmountFinal, total, payment_mode, items: resolvedItems };
+            return { id: invoiceId, invoice_number: invoiceNumber, subtotal, discount: invoiceDiscount, tax_percent, tax_amount: taxAmountFinal, total, payment_mode, customer_name, customer_phone, items: resolvedItems };
         });
 
         const invoice = createInvoice();
