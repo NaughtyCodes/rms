@@ -111,6 +111,15 @@ The application will be available at: **http://localhost:4200**
 
 ---
 
+## 📖 Resources & Documentation
+
+- 🌐 **[Official Product Page](https://naughtycodes.github.io/tractly/)**
+- 📘 **[Web User Guide](https://naughtycodes.github.io/tractly/user_guide.html)**
+- 📝 **[Markdown User Guide](USER_GUIDE.md)**
+- 📐 **[Architecture Overview](https://naughtycodes.github.io/tractly/#architecture)**
+
+---
+
 ## 📜 License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
