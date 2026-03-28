@@ -2,6 +2,7 @@
   <img src="assets/logo.jpg" alt="Tracly Logo" width="150">
   <h1>Tracly</h1>
   <p><strong>A powerful, minimalist Shop Inventory & Billing System for modern businesses.</strong></p>
+  <p><a href="https://naughtycodes.github.io/tractly/"><strong>Visit Product Page →</strong></a></p>
 
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Angular](https://img.shields.io/badge/Angular-17+-DD0031?logo=angular&logoColor=white)](https://angular.io/)
@@ -25,9 +26,10 @@ Tracly is a comprehensive solution designed to streamline inventory management a
 
 - **Frontend**: [Angular 17+](https://angular.io/) - Modern, component-based framework for a dynamic and responsive UI.
 - **Backend**: [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/) - High-performance server for handling APIs and business logic.
-- **Database**: [SQLite](https://www.sqlite.org/) (via `better-sqlite3`) - Lightweight, disk-persistent database for local or cloud deployments.
+- **Database**: [SQLite](https://www.sqlite.org/), [MySQL](https://www.mysql.com/), & [PostgreSQL](https://www.postgresql.org/) - Flexible, multi-engine database support for any scale.
 - **Image Processing**: [Sharp](https://sharp.pixelplumbing.com/) - Blazing fast image transformations for product and bill logos.
 - **File Uploads**: [Multer](https://github.com/expressjs/multer) - Handling multipart/form-data for image and file storage.
+- **Backup & Recovery**: Built-in automated database backup and restore management.
 
 ---
 
@@ -77,7 +79,8 @@ sequenceDiagram
 - 📦 **Granular Inventory**: Manage products, categories, stock levels, and historical data with ease.
 - 🧾 **Dynamic Billing**: Professional invoice generation with support for taxes, discounts, and custom logos.
 - 🚛 **Stock Transfers**: Effortlessly move inventory between branches with full traceabilty.
-- 🔒 **Secure Authentication**: Built-in user management with bcrypt hashing and JWT-based session control.
+- 🔒 **Extensive User Management**: Granular role-based access control (RBAC) with secure bcrypt hashing and JWT.
+- 💾 **Backup & Restore**: Effortless database management with automated backup and point-in-time recovery.
 - 📊 **Business Insights**: Detailed reports on sales, inventory levels, and branch performance.
 
 ---
