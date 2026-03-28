@@ -39,12 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
-            navbar.style.padding = '0.75rem 0';
-            navbar.style.background = 'rgba(15, 23, 42, 0.95)';
         } else {
             navbar.classList.remove('scrolled');
-            navbar.style.padding = '1.5rem 0';
-            navbar.style.background = 'rgba(15, 23, 42, 0.8)';
         }
     });
 });
