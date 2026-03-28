@@ -1,8 +1,11 @@
 <div *ngIf="!showReceipt">
-    <div class="page-header">
-        <div>
-            <h1 class="page-title">🧾 New Bill</h1>
-            <p class="page-subtitle">Point of Sale</p>
+    <div class="page-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="/assets/logo.png" alt="Tracly" style="width: 48px; height: 48px; object-fit: contain;">
+            <div>
+                <h1 class="page-title">🧾 New Bill</h1>
+                <p class="page-subtitle">Point of Sale</p>
+            </div>
         </div>
     </div>
 
@@ -152,7 +155,7 @@
         <div class="receipt-header">
             <img *ngIf="settings?.bill_show_logo === 'true' && settings?.shop_logo_url" 
                  [src]="settings?.shop_logo_url" class="bill-logo">
-            <h2>{{ settings?.shop_name || 'ShopBill Pro' }}</h2>
+            <h2>{{ settings?.shop_name || 'Tracly' }}</h2>
             <p>{{ settings?.shop_address }}</p>
             <p *ngIf="settings?.shop_phone">📞 {{ settings?.shop_phone }}</p>
             <p *ngIf="settings?.shop_gstin">GSTIN: {{ settings?.shop_gstin }}</p>

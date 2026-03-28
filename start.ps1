@@ -6,7 +6,7 @@ param (
     [string]$Action = "start"
 )
 
-Write-Host "ShopBill Pro Service Manager" -ForegroundColor Cyan
+Write-Host "Tracly Service Manager" -ForegroundColor Cyan
 Write-Host "Action: $Action" -ForegroundColor DarkCyan
 
 $backendRunning = Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue

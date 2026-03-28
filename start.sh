@@ -6,7 +6,7 @@
 ACTION=${1:-start}
 ACTION=$(echo "$ACTION" | tr '[:upper:]' '[:lower:]')
 
-echo -e "\e[36mShopBill Pro Service Manager\e[0m"
+echo -e "\e[36mTracly Service Manager\e[0m"
 echo -e "\e[36mAction: $ACTION\e[0m"
 
 # Get absolute path to the directory containing this script

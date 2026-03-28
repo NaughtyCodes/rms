@@ -1,7 +1,10 @@
-<div class="page-header">
-    <div>
-        <h1 class="page-title">📋 Invoices</h1>
-        <p class="page-subtitle">{{ total }} invoices found | Revenue: ₹{{ getTotalRevenue() | number:'1.0-0' }}</p>
+<div class="page-header" style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <img src="/assets/logo.png" alt="Tracly" style="width: 48px; height: 48px; object-fit: contain;">
+        <div>
+            <h1 class="page-title">📋 Invoices</h1>
+            <p class="page-subtitle">{{ total }} invoices found | Revenue: ₹{{ getTotalRevenue() | number:'1.0-0' }}</p>
+        </div>
     </div>
     <div class="flex gap-12 items-center">
         <input type="date" class="form-input" [(ngModel)]="dateFilter" (change)="loadInvoices()">
