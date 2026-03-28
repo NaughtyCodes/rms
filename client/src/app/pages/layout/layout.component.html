@@ -11,17 +11,17 @@
 
         <nav class="sidebar-nav">
             <ng-container *ngFor="let item of navItems">
-                <a [routerLink]="item.path" routerLinkActive="active" 
-                   [routerLinkActiveOptions]="item.children ? {exact: true} : {exact: false}" 
-                   class="nav-item" (click)="closeMobileMenu()">
+                <a [routerLink]="item.path" routerLinkActive="active"
+                    [routerLinkActiveOptions]="item.children ? {exact: true} : {exact: false}" class="nav-item"
+                    (click)="closeMobileMenu()">
                     <span class="nav-icon">{{ item.icon }}</span>
                     <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
                 </a>
-                
+
                 <!-- Nested Children Items -->
                 <div class="nav-children" *ngIf="item.children && !sidebarCollapsed">
-                    <a *ngFor="let child of item.children" [routerLink]="child.path" routerLinkActive="active" 
-                       class="nav-item child-item" (click)="closeMobileMenu()">
+                    <a *ngFor="let child of item.children" [routerLink]="child.path" routerLinkActive="active"
+                        class="nav-item child-item" (click)="closeMobileMenu()">
                         <span class="nav-icon">{{ child.icon }}</span>
                         <span class="nav-label">{{ child.label }}</span>
                     </a>

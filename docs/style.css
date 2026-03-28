@@ -14,7 +14,9 @@
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    --glass: rgba(255, 255, 255, 0.8);
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --indigo-gradient: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
 }
 
 * {
@@ -32,7 +34,11 @@ body {
     scroll-behavior: smooth;
 }
 
-h1, h2, h3, h4, .logo span {
+h1,
+h2,
+h3,
+h4,
+.logo span {
     font-family: 'Outfit', sans-serif;
 }
 
@@ -46,7 +52,9 @@ h1, h2, h3, h4, .logo span {
     color: var(--primary);
 }
 
-.text-center { text-align: center; }
+.text-center {
+    text-align: center;
+}
 
 /* Navbar */
 .navbar {
@@ -61,8 +69,9 @@ h1, h2, h3, h4, .logo span {
 }
 
 .navbar.scrolled {
-    padding: 0.75rem 0;
-    box-shadow: var(--shadow);
+    padding: 0.6rem 0;
+    background: var(--glass);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
 .nav-content {
@@ -81,7 +90,7 @@ h1, h2, h3, h4, .logo span {
 }
 
 .logo img {
-    height: 36px;
+    height: 42px;
 }
 
 .nav-links {
@@ -104,8 +113,21 @@ h1, h2, h3, h4, .logo span {
 
 /* Hero */
 .hero {
-    padding: 8rem 0 6rem;
-    background: radial-gradient(circle at top right, var(--primary-light), transparent);
+    padding: 10rem 0 8rem;
+    background: radial-gradient(circle at 70% 30%, #EEF2FF 0%, #FFFFFF 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 40%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
+    z-index: 0;
 }
 
 .hero-content {
@@ -203,18 +225,36 @@ h1, h2, h3, h4, .logo span {
 }
 
 .card {
-    background: white;
-    padding: 3rem;
-    border-radius: 20px;
+    background: var(--bg-main);
+    padding: 2.5rem;
+    border-radius: 24px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow);
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
     border-color: var(--primary);
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--indigo-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::after {
+    opacity: 1;
 }
 
 .feature-icon {
@@ -272,9 +312,21 @@ h1, h2, h3, h4, .logo span {
     padding: 5rem 0 2rem;
 }
 
-.footer h4 { color: white; margin-bottom: 2rem; }
-.footer p, .footer a { color: #94a3b8; text-decoration: none; transition: color 0.2s; }
-.footer a:hover { color: white; }
+.footer h4 {
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.footer p,
+.footer a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: white;
+}
 
 .footer-content {
     display: grid;
@@ -354,19 +406,48 @@ h1, h2, h3, h4, .logo span {
     text-align: center;
 }
 
-.guide-cta h2 { color: white; font-size: 2.5rem; margin-bottom: 1.5rem; }
-.guide-cta p { font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.9; }
+.guide-cta h2 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.guide-cta p {
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+}
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .hero-content { grid-template-columns: 1fr; text-align: center; }
-    .hero-text h1 { font-size: 3rem; }
-    .hero-cta { justify-content: center; }
-    .feature-grid { grid-template-columns: repeat(2, 1fr); }
-    .tech-matrix { grid-template-columns: 1fr; }
+    .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero-text h1 {
+        font-size: 3rem;
+    }
+
+    .hero-cta {
+        justify-content: center;
+    }
+
+    .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tech-matrix {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
-    .feature-grid { grid-template-columns: 1fr; }
-    .workflow-steps { grid-template-columns: 1fr; }
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .workflow-steps {
+        grid-template-columns: 1fr;
+    }
 }
