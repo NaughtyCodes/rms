@@ -51,12 +51,12 @@ h1, h2, h3, h4, .logo span {
 /* Navbar */
 .navbar {
     padding: 1rem 0;
-    background: var(--primary);
+    background: #ffffff;
     backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid var(--primary-dark);
+    border-bottom: 1px solid var(--border);
     transition: all 0.3s ease;
 }
 
@@ -77,12 +77,11 @@ h1, h2, h3, h4, .logo span {
     gap: 0.75rem;
     font-size: 1.5rem;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--primary);
 }
 
 .logo img {
     height: 36px;
-    filter: brightness(0) invert(1);
 }
 
 .nav-links {
@@ -94,13 +93,13 @@ h1, h2, h3, h4, .logo span {
 
 .nav-links a {
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-main);
     transition: color 0.3s ease;
     font-weight: 500;
 }
 
 .nav-links a:hover {
-    color: #ffffff;
+    color: var(--primary);
 }
 
 /* Hero */
