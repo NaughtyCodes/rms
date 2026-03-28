@@ -17,8 +17,14 @@
 Tracly is a comprehensive solution designed to streamline inventory management and billing for retail shops and multi-branch businesses. Built with a focus on speed, scalability, and ease of use, it provides everything you need to manage your inventory, process sales, and track business performance in one place.
 
 <div align="center">
-  <img src="assets/dashboard_mockup.jpg" alt="Tracly Dashboard" width="800">
+  <img src="assets/dashboard_desktop.png" alt="Tracly Dashboard" width="800">
 </div>
+
+### 📱 UI Reference
+
+| Login Page | Dashboard (Desktop) | Mobile View |
+|:---:|:---:|:---:|
+| <img src="assets/login_page.png" width="250"> | <img src="assets/dashboard_desktop.png" width="250"> | <img src="assets/mobile_view.png" width="250"> |
 
 ---
 

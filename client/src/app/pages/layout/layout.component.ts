@@ -63,6 +63,16 @@ export class LayoutComponent {
         this.isScrolled = window.scrollY > 0;
     }
 
+    @HostListener('window:resize', ['$event'])
+    onResize(event: any) {
+        if (window.innerWidth > 768 && this.sidebarCollapsed) {
+            this.sidebarCollapsed = false;
+        }
+        if (window.innerWidth > 768 && this.mobileMenuOpen) {
+            this.mobileMenuOpen = false;
+        }
+    }
+
     onContentScroll(event: Event) {
         const target = event.target as HTMLElement;
         this.isScrolled = target.scrollTop > 0;

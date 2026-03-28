@@ -19,6 +19,20 @@ Welcome to the Tracly User Guide. This document provides comprehensive instructi
 ## 1. Introduction
 Tracly is a streamlined Inventory and Billing System designed for modern retail businesses. Whether you operate a single boutique or a multi-city enterprise, Tracly provides the tools to maintain control over your stock and sales.
 
+## 🖼️ Visual Guide
+
+### Login Screen
+The entry point into the system, featuring a secure login with a modern, high-contrast interface.
+![Login Screen](assets/login_page.png)
+
+### Dashboard Overview
+Your command center for real-time inventory and sales monitoring.
+![Dashboard](assets/dashboard_desktop.png)
+
+### Mobile-Ready Interface
+Tracly is fully responsive and works beautifully on any mobile device or tablet.
+![Mobile View](assets/mobile_view.png)
+
 ## 2. Getting Started
 ### Setup
 - Ensure **Node.js LTS** and **npm** are installed.

@@ -18,6 +18,7 @@
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ startOnLoad: true, theme: 'default' });
     </script>
+    <link rel="icon" type="image/png" href="assets/logo.png">
 </head>
 <body>
     <nav class="navbar">
@@ -28,6 +29,7 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
+                <li><a href="#interface">Interface</a></li>
                 <li><a href="#architecture">Architecture</a></li>
                 <li><a href="#workflow">Workflow</a></li>
                 <li><a href="user_guide.html">User Guide</a></li>
@@ -189,6 +191,33 @@
             <div class="card h-reveal">
                 <h2 class="section-title">Working <span class="accent">Model</span></h2>
                 <p>Tracly operates on a <strong>Direct-to-Disk Architecture</strong>, combined with a <strong>Stateful Reactivity Model</strong> in the frontend. This ensures that even with intermittent connectivity, the system remains responsive and data integrity is maintained across all branch nodes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="interface" class="section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Seamless <span class="accent">Interface</span></h2>
+                <p class="section-subtitle">A modern, intuitive UI designed for maximum productivity on any device.</p>
+            </div>
+            
+            <div class="feature-grid" style="margin-top: 40px;">
+                <div class="card h-reveal text-center">
+                    <img src="images/login_page.png" alt="Login Page" class="img-fluid rounded shadow-sm" style="max-width: 100%; border-radius: 12px; margin-bottom: 20px;">
+                    <h3>Secure Access</h3>
+                    <p>Branded login experience with role-based authentication.</p>
+                </div>
+                <div class="card h-reveal text-center">
+                    <img src="images/dashboard_desktop.png" alt="Dashboard" class="img-fluid rounded shadow-sm" style="max-width: 100%; border-radius: 12px; margin-bottom: 20px;">
+                    <h3>Real-time Insights</h3>
+                    <p>Comprehensive dashboard for monitoring stock and sales stats.</p>
+                </div>
+                <div class="card h-reveal text-center">
+                    <img src="images/mobile_view.png" alt="Mobile View" class="img-fluid rounded shadow-sm" style="max-width: 100%; border-radius: 12px; margin-bottom: 20px;">
+                    <h3>Mobile Optimized</h3>
+                    <p>Fully responsive design for managing on the go.</p>
+                </div>
             </div>
         </div>
     </section>
