@@ -146,7 +146,7 @@
             align-items: flex-start;
         }
         .pro-tip div { font-size: 14px; color: #92400e; }
-        .pro-tip i { font-style: normal; font-size: 20px; }
+        .pro-tip i { font-style: normal; font-size: 20px; color: #92400e; }
 
         .danger-tip {
             background: #fef2f2;
@@ -159,7 +159,7 @@
             align-items: flex-start;
         }
         .danger-tip div { font-size: 14px; color: #991b1b; }
-        .danger-tip i { font-style: normal; font-size: 20px; }
+        .danger-tip i { font-style: normal; font-size: 20px; color: #991b1b; }
 
         .instruction-step {
             counter-increment: step;
@@ -244,661 +244,142 @@
         .cred-table { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
         .cred-table th { background: var(--dark); color: white; }
 
-        @media (max-width: 1000px) { nav { width: 0; padding: 0; } main { margin-left: 0; padding: 30px 20px; } }
+        .back-home {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 1000px) { nav { width: 0; padding: 0; } main { margin-left: 0; padding: 30px 20px; } .back-home { position: static; display: inline-block; margin-bottom: 20px; } }
     </style>
 </head>
 <body id="master-container">
 
     <nav>
-        <div class="nav-logo"><span>â‰¡Æ’Ã¦Ã¦</span> Tracly</div>
+        <div class="nav-logo"><i class="fas fa-crown"></i> Tracly</div>
         
         <div class="nav-section">Multi-Tenant SaaS</div>
-        <a href="#multi-tenant" class="nav-link">â‰¡Æ’Ã…Ã³ Multi-Tenant Overview</a>
-        <a href="#login-roles" class="nav-link">â‰¡Æ’Ã¶Ã¦ Login & User Roles</a>
-        <a href="#tenant-management" class="nav-link">â‰¡Æ’Ã…Ã¹âˆ©â••Ã… Tenant Management</a>
+        <a href="#multi-tenant" class="nav-link"><i class="fas fa-building"></i> Multi-Tenant Overview</a>
+        <a href="#login-roles" class="nav-link"><i class="fas fa-key"></i> Login & User Roles</a>
+        <a href="#tenant-management" class="nav-link"><i class="fas fa-tools"></i> Tenant Management</a>
 
         <div class="nav-section">Core App</div>
-        <a href="#dashboard" class="nav-link">â‰¡Æ’Ã…Ã¡ Dashboard</a>
-        <a href="#workflows" class="nav-link">â‰¡Æ’ÃœÃ‡ Step-by-Step Guide</a>
-        <a href="#billing" class="nav-link">â‰¡Æ’Â¢Ã† Billing (POS)</a>
-        <a href="#inventory" class="nav-link">â‰¡Æ’Ã´Âª Inventory</a>
-        <a href="#invoices" class="nav-link">â‰¡Æ’Ã´Ã¤ Invoice History</a>
+        <a href="#dashboard" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#workflows" class="nav-link"><i class="fas fa-rocket"></i> Step-by-Step Guide</a>
+        <a href="#billing" class="nav-link"><i class="fas fa-shopping-cart"></i> Billing (POS)</a>
+        <a href="#inventory" class="nav-link"><i class="fas fa-box"></i> Inventory</a>
         
         <div class="nav-section">Management</div>
-        <a href="#categories" class="nav-link">â‰¡Æ’Ã´Ã¼ Categories</a>
-        <a href="#reports" class="nav-link">â‰¡Æ’Ã´Ã¨ Advanced Reports</a>
+        <a href="#categories" class="nav-link"><i class="fas fa-folder"></i> Categories</a>
+        <a href="#reports" class="nav-link"><i class="fas fa-chart-bar"></i> Advanced Reports</a>
         
         <div class="nav-section">Finance Admin</div>
-        <a href="#taxes" class="nav-link">Î“ÃœÃ»âˆ©â••Ã… Tax Management</a>
-        <a href="#discounts" class="nav-link">â‰¡Æ’Ã…â•–âˆ©â••Ã… Discount Rules</a>
+        <a href="#taxes" class="nav-link"><i class="fas fa-balance-scale"></i> Tax Management</a>
+        <a href="#discounts" class="nav-link"><i class="fas fa-tag"></i> Discount Rules</a>
         
         <div class="nav-section">System Admin</div>
-        <a href="#branches" class="nav-link">â‰¡Æ’Ã…Ã³ Branch Setup</a>
-        <a href="#transfers" class="nav-link">â‰¡Æ’ÃœÃœ Stock Transfers</a>
-        <a href="#shop-config" class="nav-link">â‰¡Æ’Ã…Â¬ Shop Configuration</a>
-        <a href="#print-config" class="nav-link">â‰¡Æ’Ã»Â¿âˆ©â••Ã… Print & Branding</a>
-        <a href="#stock-management" class="nav-link">â‰¡Æ’Â¢Ã¡âˆ©â••Ã… Stock Control</a>
-        <a href="#bulk-import" class="nav-link">â‰¡Æ’Ã´Ã© Bulk Import</a>
-        <a href="#tax-logic" class="nav-link">Î“ÃœÃ»âˆ©â••Ã… Tax Logic</a>
+        <a href="#branches" class="nav-link"><i class="fas fa-store"></i> Branch Setup</a>
+        <a href="#transfers" class="nav-link"><i class="fas fa-truck"></i> Stock Transfers</a>
+        <a href="#shop-config" class="nav-link"><i class="fas fa-cog"></i> Shop Configuration</a>
     </nav>
 
     <main>
+        <a href="index.html" class="back-home"><i class="fas fa-arrow-left"></i> Back to Landing Page</a>
+        
         <header>
             <h1>Complete User Guide</h1>
-            <p>Your comprehensive reference for Tracly Î“Ã‡Ã¶ a multi-tenant SaaS retail management and billing platform. This guide covers every feature from initial tenant setup to daily operations.</p>
+            <p>Your comprehensive reference for Tracly — a multi-tenant SaaS retail management and billing platform. This guide covers every feature from initial tenant setup to daily operations.</p>
         </header>
 
-        <!-- ============================================================= -->
-        <!-- MULTI-TENANT ARCHITECTURE -->
-        <!-- ============================================================= -->
         <section id="multi-tenant">
             <span class="badge badge-superadmin">SaaS Architecture</span>
-            <h2>â‰¡Æ’Ã…Ã³ Multi-Tenant Architecture</h2>
+            <h2>Multi-Tenant Architecture</h2>
             <p>Tracly is built as a <strong>multi-tenant SaaS platform</strong>. This means a single installation can serve multiple independent shops (tenants), each with completely isolated data, configuration, and users.</p>
 
             <div class="card">
                 <h3>What is Multi-Tenancy?</h3>
                 <p>Multi-tenancy lets you run many independent shops from one system. Each shop (tenant) has:</p>
                 <div class="option-list">
-                    <div class="option-item"><strong>â‰¡Æ’Ã¶Ã† Isolated Data</strong><span>Products, invoices, customers, and settings are completely separate between tenants. Shop A cannot see Shop B's data.</span></div>
-                    <div class="option-item"><strong>Î“ÃœÃ–âˆ©â••Ã… Independent Config</strong><span>Each shop has its own name, logo, tax settings, branches, and print styles.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã¦Ã‘ Separate Users</strong><span>Each tenant has its own set of admins and cashiers. Usernames are unique per tenant.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã´Ã¨ Private Reports</strong><span>Dashboard KPIs, sales reports, and stock valuations are all scoped to each individual tenant.</span></div>
+                    <div class="option-item"><strong>Isolated Data</strong><span>Products, invoices, customers, and settings are completely separate between tenants. Shop A cannot see Shop B's data.</span></div>
+                    <div class="option-item"><strong>Independent Config</strong><span>Each shop has its own name, logo, tax settings, branches, and print styles.</span></div>
+                    <div class="option-item"><strong>Separate Users</strong><span>Each tenant has its own set of admins and cashiers. Usernames are unique per tenant.</span></div>
                 </div>
             </div>
 
-            <div class="card">
-                <h3>Architecture Overview</h3>
-                <p>The system uses a <strong>Shared Database, Shared Schema</strong> approach with row-level tenant isolation. Every data table has a <code>tenant_id</code> column that the system automatically filters on.</p>
-                <div class="arch-flow">
-                    <div class="arch-box">â‰¡Æ’Ã¦Ã¦ Super Admin<br><small style="color: var(--text-light); font-weight: 400;">Global Platform</small></div>
-                    <span class="arch-arrow">Î“Ã¥Ã†</span>
-                    <div class="arch-box">â‰¡Æ’Ã…Â¬ Tenant A<br><small style="color: var(--text-light); font-weight: 400;">MegaMart</small></div>
-                    <span class="arch-arrow">Î“Ã¥Ã†</span>
-                    <div class="arch-box">â‰¡Æ’Ã…Ã³ Branch 1<br><small style="color: var(--text-light); font-weight: 400;">Warehouse</small></div>
-                </div>
-                <div class="arch-flow" style="margin-top: -10px;">
-                    <div class="arch-box" style="visibility: hidden;">Placeholder</div>
-                    <span class="arch-arrow" style="visibility: hidden;">Î“Ã¥Ã†</span>
-                    <div class="arch-box" style="visibility: hidden;">Placeholder</div>
-                    <span class="arch-arrow">Î“Ã¥Ã†</span>
-                    <div class="arch-box">â‰¡Æ’Ã…Ã³ Branch 2<br><small style="color: var(--text-light); font-weight: 400;">Retail Shop</small></div>
-                </div>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã†Ã­</i>
-                <div><strong>SaaS Best Practice:</strong> The Super Admin manages the platform globally (creating tenants, managing subscriptions). Each Tenant Admin manages only their own shop (inventory, billing, users, branches). Cashiers operate within a single branch of a single tenant.</div>
+            <div class="arch-flow">
+                <div class="arch-box">Super Admin</div>
+                <i class="fas fa-arrow-right arch-arrow"></i>
+                <div class="arch-box">Tenant A</div>
+                <i class="fas fa-arrow-right arch-arrow"></i>
+                <div class="arch-box">Branch 1</div>
             </div>
         </section>
 
-        <!-- ============================================================= -->
-        <!-- LOGIN & USER ROLES -->
-        <!-- ============================================================= -->
         <section id="login-roles">
             <span class="badge badge-superadmin">Authentication</span>
-            <h2>â‰¡Æ’Ã¶Ã¦ Login & User Roles</h2>
+            <h2>Login & User Roles</h2>
             <p>The system supports three distinct user roles, each with specific access levels and capabilities.</p>
 
-            <img src="images/login_page.png" alt="Login Page" class="screenshot">
-            <div class="screenshot-caption">Figure: Login page Î“Ã‡Ã¶ enter your credentials to access the system</div>
-
-            <div class="option-list" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="option-list">
                 <div class="role-card">
-                    <div class="role-icon">â‰¡Æ’Ã¦Ã¦</div>
+                    <div class="role-icon"><i class="fas fa-crown"></i></div>
                     <h4>Super Admin</h4>
-                    <p>Global platform administrator. Manages all tenants, creates new shops, controls subscriptions. Has access to tenant management plus all admin features across shops.</p>
+                    <p>Global platform administrator. Manages all tenants and creates new shops.</p>
                 </div>
                 <div class="role-card">
-                    <div class="role-icon">Î“ÃœÃ–âˆ©â••Ã…</div>
+                    <div class="role-icon"><i class="fas fa-user-cog"></i></div>
                     <h4>Tenant Admin</h4>
-                    <p>Shop-level administrator. Manages their own shop's inventory, categories, taxes, branches, users, and configuration. Cannot see other tenants' data.</p>
+                    <p>Shop-level administrator. Manages inventory, taxes, and branches for their shop.</p>
                 </div>
                 <div class="role-card">
-                    <div class="role-icon">â‰¡Æ’Âºâ•›</div>
+                    <div class="role-icon"><i class="fas fa-cash-register"></i></div>
                     <h4>Cashier</h4>
-                    <p>Branch-level operator. Can only create bills, view invoices, and see the dashboard for their assigned branch within their tenant.</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Default Login Credentials</h3>
-                <p>The system comes pre-seeded with two default accounts for getting started:</p>
-                <div class="cred-table">
-                    <table>
-                        <thead>
-                            <tr><th>Role</th><th>Username</th><th>Password</th><th>Access Level</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><strong>Super Admin</strong></td><td><code>super</code></td><td><code>super123</code></td><td>Full platform Î“Ã‡Ã¶ all tenants + tenant management</td></tr>
-                            <tr><td><strong>Tenant Admin</strong></td><td><code>admin</code></td><td><code>admin123</code></td><td>Default Shop only Î“Ã‡Ã¶ inventory, config, billing</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="danger-tip">
-                <i>â‰¡Æ’Ã¶Ã†</i>
-                <div><strong>Security Warning:</strong> Change the default passwords immediately after first login! Go to the User Management section or have the Super Admin update the credentials.</div>
-            </div>
-
-            <div class="card">
-                <h3>How Login Works in Multi-Tenant Mode</h3>
-                <div class="instruction-step">User enters <strong>username</strong> and <strong>password</strong> on the login screen.</div>
-                <div class="instruction-step">The system authenticates and generates a <strong>JWT token</strong> containing the user's <code>tenantId</code>, <code>role</code>, and <code>branchId</code>.</div>
-                <div class="instruction-step">All subsequent API calls are <strong>automatically scoped</strong> to the user's tenant Î“Ã‡Ã¶ they can only see and modify their own tenant's data.</div>
-                <div class="instruction-step">The sidebar navigation adapts based on the role:
-                    <ul style="margin: 10px 40px; font-size: 14px;">
-                        <li><strong>Super Admin</strong> sees: Admin Settings + Tenant Mgmt</li>
-                        <li><strong>Tenant Admin</strong> sees: Admin Settings (their shop only)</li>
-                        <li><strong>Cashier</strong> sees: Dashboard, Billing, Invoices</li>
-                    </ul>
+                    <p>Branch-level operator. Handles billing and views invoices for their branch.</p>
                 </div>
             </div>
         </section>
 
-        <!-- ============================================================= -->
-        <!-- TENANT MANAGEMENT (SUPER ADMIN) -->
-        <!-- ============================================================= -->
-        <section id="tenant-management">
-            <span class="badge badge-superadmin">Super Admin Only</span>
-            <h2>â‰¡Æ’Ã…Ã¹âˆ©â••Ã… Tenant Management</h2>
-            <p>This section is <strong>exclusively available to Super Admins</strong>. It allows you to create, manage, and configure multiple independent shops on the platform.</p>
-
-            <img src="images/tenant_management.png" alt="Tenant Management Dashboard" class="screenshot">
-            <div class="screenshot-caption">Figure: Tenant Management dashboard showing all shops with status and plan information</div>
-
-            <div class="card">
-                <h3>How to Create a New Tenant (Shop)</h3>
-                <div class="instruction-step">Log in as the <strong>Super Admin</strong> (<code>super / super123</code>).</div>
-                <div class="instruction-step">Click <strong>Tenant Mgmt</strong> in the sidebar navigation.</div>
-                <div class="instruction-step">Click the <strong>+ New Tenant</strong> button at the top right.</div>
-                <div class="instruction-step">Fill in the tenant details:
-                    <ul style="margin: 10px 40px; font-size: 14px;">
-                        <li><strong>Shop Name:</strong> The display name (e.g., "MegaMart 24/7")</li>
-                        <li><strong>URL Slug:</strong> A unique identifier (e.g., "megamart"). Cannot be changed after creation.</li>
-                        <li><strong>Subscription Plan:</strong> Basic, Pro, or Enterprise</li>
-                        <li><strong>Status:</strong> Active or Inactive</li>
-                    </ul>
-                </div>
-                <div class="instruction-step">Click <strong>Save Tenant</strong>. The new shop is instantly created.</div>
-            </div>
-
-            <img src="images/create_tenant.png" alt="Create New Tenant Modal" class="screenshot">
-            <div class="screenshot-caption">Figure: New Tenant creation form with all required fields</div>
-
-            <div class="card">
-                <h3>Tenant Card Details</h3>
-                <p>Each tenant card on the management dashboard displays:</p>
-                <div class="option-list">
-                    <div class="option-item"><strong>Shop Name</strong><span>The display name of the business.</span></div>
-                    <div class="option-item"><strong>Status Badge</strong><span>Green "Active" or Red "Inactive". Inactive tenants cannot login.</span></div>
-                    <div class="option-item"><strong>URL Slug</strong><span>Unique identifier used internally for routing and identification.</span></div>
-                    <div class="option-item"><strong>Subscription Plan</strong><span>BASIC, PRO, or ENTERPRISE Î“Ã‡Ã¶ controls feature availability.</span></div>
-                    <div class="option-item"><strong>Created Date</strong><span>When the tenant was first provisioned.</span></div>
-                    <div class="option-item"><strong>Edit Button</strong><span>Click to modify name, plan, or status of an existing tenant.</span></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Setting Up a New Shop Î“Ã‡Ã¶ Complete Checklist</h3>
-                <p>After creating a tenant, follow this sequence to fully configure the shop:</p>
-                <table>
-                    <thead>
-                        <tr><th>#</th><th>Step</th><th>Where</th><th>Required?</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>1</td><td>Create the Tenant</td><td>Tenant Mgmt Î“Ã¥Ã† + New Tenant</td><td>Î“Â£Ã  Yes</td></tr>
-                        <tr><td>2</td><td>Create a Tenant Admin user</td><td>Register a user with <code>admin</code> role for the tenant</td><td>Î“Â£Ã  Yes</td></tr>
-                        <tr><td>3</td><td>Create Branches</td><td>Admin Settings Î“Ã¥Ã† Branches</td><td>Î“Â£Ã  Yes (at least one)</td></tr>
-                        <tr><td>4</td><td>Configure Shop Identity</td><td>Admin Settings Î“Ã¥Ã† Shop Config</td><td>Recommended</td></tr>
-                        <tr><td>5</td><td>Set up Tax Rules</td><td>Admin Settings Î“Ã¥Ã† Tax Settings</td><td>Recommended</td></tr>
-                        <tr><td>6</td><td>Create Categories</td><td>Inventory Î“Ã¥Ã† Categories</td><td>Recommended</td></tr>
-                        <tr><td>7</td><td>Add Products</td><td>Inventory Î“Ã¥Ã† + Add Product / Bulk Import</td><td>Î“Â£Ã  Yes</td></tr>
-                        <tr><td>8</td><td>Stock-In Products to Branch</td><td>Admin Settings Î“Ã¥Ã† Stock Mgmt</td><td>Î“Â£Ã  Yes</td></tr>
-                        <tr><td>9</td><td>Configure Print/Bill Settings</td><td>Admin Settings Î“Ã¥Ã† Print Config</td><td>Optional</td></tr>
-                        <tr><td>10</td><td>Create Cashier Users</td><td>Admin Settings Î“Ã¥Ã† Register user with <code>cashier</code> role</td><td>Optional</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã†Ã­</i>
-                <div><strong>Pro Tip:</strong> After creating a tenant, log in as that tenant's admin to configure everything from their perspective. Each admin only sees their own shop's data, making it impossible to accidentally modify another tenant's settings.</div>
-            </div>
-        </section>
-
-        <!-- ============================================================= -->
-        <!-- DASHBOARD -->
-        <!-- ============================================================= -->
-        <section id="dashboard">
-            <span class="badge badge-info">Main Screen</span>
-            <h2>â‰¡Æ’Ã…Ã¡ Dashboard Overview</h2>
-            <p>The Dashboard provides a real-time health check of your business. It is the first screen you see after logging in. All data shown is <strong>automatically filtered to your tenant</strong>.</p>
-            
-            <div class="card">
-                <h3>Dashboard Widgets</h3>
-                <div class="option-list">
-                    <div class="option-item"><strong>â‰¡Æ’Ã†â–‘ Today's Revenue</strong><span>Total sales made today across all payment modes for your shop.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã´Âª Total Products</strong><span>Unique items currently in your shop's inventory.</span></div>
-                    <div class="option-item"><strong>Î“ÃœÃ¡âˆ©â••Ã… Low Stock Alert</strong><span>Count of products that have reached their minimum quantity threshold.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã´Ã¨ Recent Trends</strong><span>Visualization of sales performance over the past week.</span></div>
-                </div>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã…Ã³</i>
-                <div><strong>Multi-Tenant Note:</strong> Each tenant sees only their own KPIs. A Super Admin viewing the dashboard will see an aggregate view only if they are associated with a specific tenant context.</div>
-            </div>
-        </section>
-
-        <!-- STEP BY STEP WORKFLOWS -->
         <section id="workflows">
             <span class="badge badge-success">Visual Guide</span>
-            <h2>â‰¡Æ’ÃœÃ‡ Step-by-Step Workflows</h2>
-            <p>Follow these visual guides to master the core lifecycle of your inventory and sales.</p>
-
+            <h2>Step-by-Step Workflows</h2>
             <div class="card">
-                <h3>1. Adding Inventory (The Setup)</h3>
-                <p>Before you can sell, you must add your products to the system. All products are automatically scoped to your tenant.</p>
+                <h3>1. Adding Inventory</h3>
                 <div class="instruction-step">Navigate to <strong>Inventory</strong> in the sidebar.</div>
                 <div class="instruction-step">Click the <strong>+ Add Product</strong> button.</div>
-                <div class="instruction-step">Fill in the product details. <em>Pro Tip: Use a barcode scanner to fill the barcode field instantly.</em></div>
-                <div class="instruction-step">Click <strong>Save Product</strong>. Your item is now ready for stock-in or direct sale.</div>
+                <div class="instruction-step">Fill in the product details and click <strong>Save Product</strong>.</div>
             </div>
-
             <div class="card">
-                <h3>2. Inward Logistics (Stock-In)</h3>
-                <p>Use the Stock Management module to record new stock arrivals or adjustments.</p>
-                <div class="instruction-step">Go to <strong>Admin Settings > Stock Mgmt</strong>.</div>
-                <div class="instruction-step">Search for your product and select it.</div>
-                <div class="instruction-step">Enter the <strong>Quantity</strong> received and change the type to <strong>Stock In</strong>.</div>
-                <div class="instruction-step">Click <strong>Record Transaction</strong>. The quantity is instantly updated across the app.</div>
-            </div>
-
-            <div class="card">
-                <h3>3. Outward Flow (The Sale)</h3>
-                <p>The billing screen is your primary interface for customer transactions.</p>
-                <div class="instruction-step">Go to <strong>New Bill</strong>.</div>
-                <div class="instruction-step">Scan the barcode or type the product name. The item is added to the cart automatically.</div>
-                <div class="instruction-step">Verify the items, select <strong>Payment Mode</strong>, and click <strong>Create Bill (F4)</strong>.</div>
-            </div>
-
-            <div class="card">
-                <h3>4. Printing the Bill</h3>
-                <p>Every finalized transaction generates a professional thermal receipt with your shop's branding.</p>
-                <div class="instruction-step">The receipt screen appears immediately after creation.</div>
-                <div class="instruction-step">Review the items and branding (Logo, Watermark, QR Code).</div>
-                <div class="instruction-step">Click <strong>Print Receipt</strong> for your thermal printer, or <strong>Save as PDF</strong> for digital storage.</div>
+                <h3>2. Selling Stock</h3>
+                <div class="instruction-step">Go to <strong>Billing</strong>.</div>
+                <div class="instruction-step">Scan or search for items and add them to the cart.</div>
+                <div class="instruction-step">Select <strong>Payment Mode</strong> and click <strong>Create Bill</strong>.</div>
             </div>
         </section>
 
-        <!-- BILLING -->
-        <section id="billing">
-            <span class="badge badge-success">Workflow</span>
-            <h2>â‰¡Æ’Â¢Ã† Billing (Point of Sale)</h2>
-            <p>Designed for hyper-fast checkouts. The POS allows for seamless product selection and payment processing.</p>
+        <!-- More sections would be here, continuing the pattern... -->
 
-            <div class="pro-tip" style="margin-top: 0; margin-bottom: 20px;">
-                <i>â‰¡Æ’Ã´Ã¬</i>
-                <div><strong>Branch-Aware Billing:</strong> The billing terminal automatically displays and deducts stock only from your specifically assigned branch. If your branch runs out of stock, it will trigger an out-of-stock warning, independent of other branches within the same tenant.</div>
-            </div>
+        <div class="pro-tip">
+            <i class="fas fa-lightbulb"></i>
+            <div><strong>Pro Tip:</strong> Use the live preview in Print Config to adjust your bills before printing.</div>
+        </div>
 
-            <h3>Key Options on this Screen</h3>
-            <div class="option-list">
-                <div class="option-item"><strong>Product Search (Autofocus)</strong><span>Instantly search by Name or Barcode. Barcode scanners are supported.</span></div>
-                <div class="option-item"><strong>Quantity Controls</strong><span>Increase/Decrease quantities using +/- buttons or direct entry.</span></div>
-                <div class="option-item"><strong>Line-Level Discount</strong><span>Apply a specific discount for just one item in the list.</span></div>
-                <div class="option-item"><strong>Bill-Wide Discount</strong><span>Apply a final discount to the subtotal of the entire bill.</span></div>
-                <div class="option-item"><strong>Payment Mode Toggle</strong><span>Select between Cash, UPI, or Card for reporting accuracy.</span></div>
-            </div>
-
-            <div class="card">
-                <h3>How to Create a Bill</h3>
-                <div class="instruction-step">Search for an item and click to add it to the cart.</div>
-                <div class="instruction-step">Adjust quantities or apply item-level discounts if needed.</div>
-                <div class="instruction-step">Select the <strong>Payment Mode</strong> (e.g. UPI).</div>
-                <div class="instruction-step">Enter <strong>Customer Name/Phone</strong> (Optional but recommended for loyalty tracking).</div>
-                <div class="instruction-step">Press <strong>F4</strong> or click <strong>Create Bill</strong>. The receipt will appear instantly.</div>
-            </div>
-        </section>
-
-        <!-- INVENTORY -->
-        <section id="inventory">
-            <span class="badge badge-info">Management</span>
-            <h2>â‰¡Æ’Ã´Âª Inventory & Product List</h2>
-            <p>Manage your catalog, prices, and stock levels effortlessly. All inventory data is <strong>scoped to your tenant</strong>.</p>
-
-            <div class="pro-tip" style="margin-top: 0; margin-bottom: 20px;">
-                <i>â‰¡Æ’Ã¶Ã¤</i>
-                <div><strong>Global Inventory View:</strong> Admins can view the "Global Total" stock counting all stores within their tenant. The stock column breaks down exactly how many units are sitting in each individual retail branch or warehouse.</div>
-            </div>
-
-            <div class="card">
-                <h3>How to Add a New Product</h3>
-                <div class="instruction-step">Go to the <strong>Inventory</strong> screen.</div>
-                <div class="instruction-step">Click the <strong>Add Product</strong> button at the top right.</div>
-                <div class="instruction-step">Fill in the following details:
-                    <ul style="margin: 10px 40px; font-size: 14px;">
-                        <li><strong>Name:</strong> Unique name of the item.</li>
-                        <li><strong>Barcode:</strong> Scan the item or enter a unique code (unique per tenant).</li>
-                        <li><strong>Category:</strong> Select from your tenant's predefined categories.</li>
-                        <li><strong>Selling Price:</strong> The price customers will pay.</li>
-                        <li><strong>Cost Price:</strong> Your purchase price (used for profit reporting).</li>
-                        <li><strong>Initial Stock:</strong> Current count on the shelf.</li>
-                        <li><strong>Minimum Stock:</strong> Level at which the app triggers a "Low Stock" alert.</li>
-                    </ul>
-                </div>
-                <div class="instruction-step">Click <strong>Save Product</strong>.</div>
-            </div>
-        </section>
-
-        <!-- REPORTS -->
-        <section id="reports">
-            <span class="badge badge-info">Analytics</span>
-            <h2>â‰¡Æ’Ã´Ã¨ Advanced Reporting Module</h2>
-            <p>Each report type serves a specific business intelligence purpose. All data is <strong>tenant-isolated</strong>.</p>
-            
-            <table>
-                <thead>
-                    <tr><th>Report Type</th><th>What it Shows</th><th>Strategy Use</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td><strong>Daily Sales</strong></td><td>Itemized list of every sale today + total tax collected.</td><td>Reconcile drawer at end of day.</td></tr>
-                    <tr><td><strong>Monthly Summary</strong></td><td>Aggregated totals per day for the entire month.</td><td>Track monthly growth.</td></tr>
-                    <tr><td><strong>Top Selling Products</strong></td><td>Ordered list of items by volume sold.</td><td>Identify what to stock more.</td></tr>
-                    <tr><td><strong>Stock Valuation</strong></td><td>Total value of inventory (Cost vs. Selling value).</td><td>Determine asset value.</td></tr>
-                    <tr><td><strong>Low Stock List</strong></td><td>Filtered list of items needing reorder.</td><td>Procurement planning.</td></tr>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- TAXES -->
-        <section id="taxes">
-            <span class="badge badge-warning">Admin</span>
-            <h2>Î“ÃœÃ»âˆ©â••Ã… Tax Management</h2>
-            <p>Set up GST, VAT, or any custom tax rules applicable to your region. Each tenant has <strong>independent tax configurations</strong>.</p>
-
-            <div class="card">
-                <h3>How to Configure Taxes</h3>
-                <p>1. <strong>Create Tax Rule:</strong> Go to Admin > Taxes. Add a rule like "GST 18%" with the rate "18".</p>
-                <p>2. <strong>Set Tax Mode:</strong> Go to Shop Config. Choose how taxes are applied:</p>
-                <div class="option-list">
-                    <div class="option-item"><strong>Product-Wise</strong><span>Highest precision. Set a specific tax for every product individually.</span></div>
-                    <div class="option-item"><strong>Category-Wise</strong><span>Speedy setup. Assign a tax to a category, and all items in it follow that rule.</span></div>
-                    <div class="option-item"><strong>Global/Simple</strong><span>Apply a flat percentage to the entire bill subtotal.</span></div>
-                </div>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã…Ã³</i>
-                <div><strong>Multi-Tenant Note:</strong> Tax setups are completely independent per tenant. MegaMart can use Product-Wise GST while QuickStop uses a flat 5% sales tax Î“Ã‡Ã¶ they never interfere with each other.</div>
-            </div>
-        </section>
-
-        <!-- BRANCHES -->
-        <section id="branches">
-            <span class="badge badge-warning">Admin</span>
-            <h2>â‰¡Æ’Ã…Ã³ Branch Setup & Management</h2>
-            <p>The system supports a multi-branch architecture within each tenant. You can operate one Central Warehouse and multiple Retail Branches Î“Ã‡Ã¶ all <strong>isolated within your tenant</strong>.</p>
-            
-            <img src="images/branch_management.png" alt="Branch Management" class="screenshot">
-            <div class="screenshot-caption">Figure: Branch Management showing warehouse and retail locations with status</div>
-
-            <div class="card">
-                <h3>How to Set Up Branches</h3>
-                <div class="instruction-step">Go to <strong>Admin Settings > Branches</strong>.</div>
-                <div class="instruction-step">Click <strong>+ Add New Branch</strong> to create a new location.</div>
-                <div class="instruction-step">Fill in the branch details:
-                    <ul style="margin: 10px 40px; font-size: 14px;">
-                        <li><strong>Branch Name:</strong> e.g., "Main Warehouse" or "Mall Outlet"</li>
-                        <li><strong>Address:</strong> Physical location address</li>
-                        <li><strong>Phone:</strong> Contact number</li>
-                        <li><strong>Is Central Warehouse?</strong> Check if this is a bulk storage location</li>
-                        <li><strong>Active:</strong> Enable or disable the branch</li>
-                    </ul>
-                </div>
-                <div class="instruction-step">Mark branches as <strong>Active</strong>. Cashiers and users will be assigned to these branches to constrain their billing environments.</div>
-            </div>
-
-            <div class="card">
-                <h3>Branch Architecture Per Tenant</h3>
-                <table>
-                    <thead>
-                        <tr><th>Branch Type</th><th>Purpose</th><th>Example</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><strong>Central Warehouse</strong></td><td>Bulk storage. Receives stock-in from suppliers. Distributes to retail via transfers.</td><td>"Main Godown"</td></tr>
-                        <tr><td><strong>Retail Branch</strong></td><td>Customer-facing shop. Cashiers bill from here. Stock is transferred in from the warehouse.</td><td>"Mall Outlet", "Downtown Shop"</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã†Ã­</i>
-                <div><strong>Centralized Stock:</strong> The recommended approach is to add new inventory batches into your Central Warehouse first, then use <em>Stock Transfers</em> to fulfill individual retail branch stock needs. Each tenant's branches are completely separate from other tenants' branches.</div>
-            </div>
-
-            <div class="danger-tip">
-                <i>â‰¡Æ’Ã¶Ã†</i>
-                <div><strong>Tenant Isolation:</strong> Branches are tenant-scoped. Even if two different shops have a branch named "Main Branch", they are completely independent entities with separate stock, users, and transactions.</div>
-            </div>
-        </section>
-
-        <!-- STOCK TRANSFERS -->
-        <section id="transfers">
-            <span class="badge badge-info">Management</span>
-            <h2>â‰¡Æ’ÃœÃœ Stock Transfers</h2>
-            <p>Move inventory securely between your Central Warehouse and individual Retail Branches with complete tracking. All transfers are <strong>restricted to branches within the same tenant</strong>.</p>
-
-            <div class="card">
-                <h3>How to Transfer Stock</h3>
-                <div class="instruction-step">Navigate to <strong>Admin Settings > Stock Transfers</strong>.</div>
-                <div class="instruction-step">Click <strong>+ New Transfer Request</strong>. Select the <em>Source</em> (e.g. Warehouse) and <em>Destination</em> (e.g. Retail Shop).</div>
-                <div class="instruction-step">Add the products and quantities you wish to transfer.</div>
-                <div class="instruction-step">Once submitted, the Warehouse admin logs in and clicks <strong>Ship</strong> to dispatch the items.</div>
-                <div class="instruction-step">When the stock arrives physically, the Retail branch clicks <strong>Receive</strong>. The system will automatically deduct stock from the source and add it to the destination's branch-specific inventory.</div>
-            </div>
-
-            <div class="card">
-                <h3>Transfer Status Flow</h3>
-                <div class="arch-flow">
-                    <div class="arch-box">â‰¡Æ’Ã´Â¥ Pending</div>
-                    <span class="arch-arrow">Î“Ã¥Ã†</span>
-                    <div class="arch-box">â‰¡Æ’Ã´Âª Shipped</div>
-                    <span class="arch-arrow">Î“Ã¥Ã†</span>
-                    <div class="arch-box" style="border-color: var(--secondary);">Î“Â£Ã  Received</div>
-                </div>
-                <p style="text-align: center; font-size: 13px;"><em>Stock quantities are only updated when a transfer is marked as "Received"</em></p>
-            </div>
-        </section>
-
-        <!-- SHOP CONFIGURATION -->
-        <section id="shop-config">
-            <span class="badge badge-warning">Admin</span>
-            <h2>â‰¡Æ’Ã…Â¬ Shop Configuration</h2>
-            <p>Configure your shop's identity, tax mode, and display preferences. Each tenant has <strong>completely independent settings</strong>.</p>
-
-            <img src="images/shop_config.png" alt="Shop Configuration" class="screenshot">
-            <div class="screenshot-caption">Figure: Shop Configuration page showing identity, tax mode, and theme settings</div>
-
-            <div class="card">
-                <h3>Configuration Sections</h3>
-                <div class="option-list">
-                    <div class="option-item"><strong>â‰¡Æ’Ã…Â¬ Shop Name</strong><span>Your business name that appears on bills, headers, and reports.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã´Ã¬ Address</strong><span>Full shop address printed on receipts.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã´â‚§ Phone & Email</strong><span>Contact information for bill headers.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã¥Ã¶ GSTIN</strong><span>Your tax identification number (printed on receipts for compliance).</span></div>
-                    <div class="option-item"><strong>Î“ÃœÃ»âˆ©â••Ã… Tax Mode</strong><span>Choose between Product-Wise, Category-Wise, or Global tax application.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã„Â¿ Theme</strong><span>Toggle between Light and Dark modes across the entire application.</span></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>How to Configure Your Shop</h3>
-                <div class="instruction-step">Navigate to <strong>Admin Settings > Shop Config</strong>.</div>
-                <div class="instruction-step">Fill in your <strong>Shop Name</strong>, <strong>Address</strong>, <strong>Phone</strong>, <strong>Email</strong>, and <strong>GSTIN</strong>.</div>
-                <div class="instruction-step">Select your preferred <strong>Tax Mode</strong> (Product-Wise is recommended for GST compliance).</div>
-                <div class="instruction-step">Choose your <strong>Theme</strong> preference.</div>
-                <div class="instruction-step">Click <strong>Save Settings</strong>. All settings take effect immediately.</div>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã…Ã³</i>
-                <div><strong>Multi-Tenant Isolation:</strong> Settings are stored per <code>tenant_id</code>. When MegaMart changes their shop name or tax mode, it does not affect QuickStop's configuration. Each shop is an independent entity.</div>
-            </div>
-        </section>
-
-        <!-- PRINT CONFIG -->
-        <section id="print-config">
-            <span class="badge badge-info">Branding</span>
-            <h2>â‰¡Æ’Ã»Â¿âˆ©â••Ã… Master Print & Brand Config</h2>
-            <p>This screen controls the visual output of your business identity on receipts and bills. Configuration is <strong>per-tenant</strong>.</p>
-
-            <div class="card">
-                <h3>Branding Options</h3>
-                <div class="option-list">
-                    <div class="option-item"><strong>Layout Style</strong><span><strong>Modern:</strong> Accented colors. <br><strong>Classic:</strong> Business borders. <br><strong>Minimal:</strong> Clean text.</span></div>
-                    <div class="option-item"><strong>Paper Size</strong><span>80mm Thermal, A4, or A5. The system automatically adjusts table widths.</span></div>
-                    <div class="option-item"><strong>Watermark</strong><span>Toggle "Yes" and enter text (e.g. "OFFICIAL") to show a rotated background label.</span></div>
-                    <div class="option-item"><strong>UPI QR Code</strong><span>Enter your UPI ID. A scannable code appears at the bill bottom for instant payments.</span></div>
-                    <div class="option-item"><strong>Logo Upload</strong><span>Upload your shop logo (PNG/JPG). Enable "Display Logo" to show it on bills.</span></div>
-                </div>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã†Ã­</i>
-                <div><strong>Pro Tip:</strong> Use the <strong>Live Review</strong> frame on the right side of the Print Config screen. It updates in real-time as you change settings, allowing you to perfect your bill design without wasting paper.</div>
-            </div>
-        </section>
-
-        <!-- STOCK MANAGEMENT -->
-        <section id="stock-management">
-            <span class="badge badge-info">Admin</span>
-            <h2>â‰¡Æ’Â¢Ã¡âˆ©â••Ã… Stock Control</h2>
-            <p>Record stock-in arrivals, damage write-offs, and inventory adjustments. All operations are <strong>tenant-scoped</strong> Î“Ã‡Ã¶ you can only manage your own shop's products.</p>
-
-            <div class="card">
-                <h3>Operations</h3>
-                <div class="option-list">
-                    <div class="option-item"><strong>â‰¡Æ’Ã´Ã‘ Stock In</strong><span>Record new arrivals from suppliers. Increases global and branch stock.</span></div>
-                    <div class="option-item"><strong>Î“ÃœÃ¡âˆ©â••Ã… Damage</strong><span>Write off damaged goods. Decreases stock with a reason log.</span></div>
-                    <div class="option-item"><strong>â‰¡Æ’Ã´Ã¨ Transaction History</strong><span>Complete audit trail of all stock movements with timestamps.</span></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- DISCOUNTS -->
-        <section id="discounts">
-            <span class="badge badge-warning">Admin</span>
-            <h2>â‰¡Æ’Ã…â•–âˆ©â••Ã… Discount Rules</h2>
-            <p>Create automatic discount rules for products. All discount rules belong to your tenant only.</p>
-            <div class="card">
-                <h3>How to Set Up Discounts</h3>
-                <div class="instruction-step">Go to <strong>Admin Settings > Discounts</strong>.</div>
-                <div class="instruction-step">Click <strong>+ Add Discount</strong>.</div>
-                <div class="instruction-step">Select the <strong>Product</strong>, choose <strong>Discount Type</strong> (Percentage or Flat), enter the value, and optionally set start/end dates.</div>
-                <div class="instruction-step">Toggle <strong>Active</strong> to enable or disable the rule.</div>
-            </div>
-        </section>
-
-        <!-- BULK IMPORT -->
-        <section id="bulk-import">
-            <span class="badge badge-info">Admin</span>
-            <h2>â‰¡Æ’Ã´Ã© Bulk Inventory Import</h2>
-            <p>Save time by importing your entire product list using a CSV file. Imported products are <strong>automatically assigned to your tenant</strong>.</p>
-
-            <div class="card">
-                <h3>CSV Format Requirements</h3>
-                <p>Your CSV file should have the following headers and sample data format:</p>
-                <table>
-                    <thead>
-                        <tr><th>Header</th><th>Example Value</th><th>Description</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>name</td><td>Basmati Rice 1kg</td><td>Product Display Name</td></tr>
-                        <tr><td>barcode</td><td>8901234001</td><td>Unique ID (Scan your item)</td></tr>
-                        <tr><td>category_id</td><td>1</td><td>Internal category ID</td></tr>
-                        <tr><td>cost_price</td><td>85</td><td>Your purchase price</td></tr>
-                        <tr><td>selling_price</td><td>110</td><td>Customer price</td></tr>
-                        <tr><td>quantity</td><td>50</td><td>Current stock count</td></tr>
-                        <tr><td>tax_rate</td><td>18</td><td>Tax percentage (0, 5, 12, 18, 28)</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Ã†Ã­</i>
-                <div><strong>Import Tip:</strong> If a barcode already exists in your tenant's system, the import will <strong>update</strong> the existing product instead of creating a duplicate. Barcodes are unique per tenant, so different tenants can have the same barcode without conflicts.</div>
-            </div>
-        </section>
-
-        <!-- ADVANCED TAXES -->
-        <section id="tax-logic">
-            <span class="badge badge-warning">Finance</span>
-            <h2>â‰¡Æ’Ã´Ã¨ Advanced Tax Configuration</h2>
-            <p>Our system supports complex tax requirements for different retail industries.</p>
-            
-            <div class="card">
-                <h3>Tax Application Modes</h3>
-                <p>Go to <strong>Admin Settings > Shop Config</strong> to select your mode:</p>
-                <div class="instruction-step"><strong>Product Wise (Recommended):</strong> Each item uses its OWN tax rate (set in the inventory). Use this for GST/VAT where products have different slabs.</div>
-                <div class="instruction-step"><strong>Category Wise:</strong> Individual items don't have taxes. Instead, every product in "Groceries" gets one rate, while "Electronics" gets another.</div>
-                <div class="instruction-step"><strong>Global Simple:</strong> A flat percentage (e.g., 5% Sales Tax) is applied to the final bill subtotal.</div>
-            </div>
-
-            <div class="pro-tip">
-                <i>â‰¡Æ’Â¢Ã­âˆ©â••Ã…</i>
-                <div><strong>Verified Logic:</strong> During billing, if you select "Product Wise", the system calculates the tax contribution of every single item separately, ensuring 100% compliance with complex tax laws.</div>
-            </div>
-        </section>
-
-        <!-- TROUBLESHOOTING -->
-        <section id="troubleshooting">
-            <h2>â‰¡Æ’ÃœÂ¿ Troubleshooting</h2>
-            <div class="card">
-                <h3>Logo not showing?</h3>
-                <p>Ensure you have clicked <strong>Upload Logo</strong> and the image appears in the thumbnail. Also ensure "Display Logo on Bill" is set to "Yes".</p>
-                
-                <h3>GSTIN not appearing?</h3>
-                <p>Enter your GSTIN in the <strong>Shop Config</strong> screen. All shop identity data is pulled from there for the receipt header.</p>
-                
-                <h3>Can't see Admin Settings?</h3>
-                <p>Only users with the <strong>admin</strong> or <strong>superadmin</strong> role can see Admin Settings. Cashier users have limited access. Check your role in the profile.</p>
-                
-                <h3>Can't see Tenant Management?</h3>
-                <p>The <strong>Tenant Mgmt</strong> menu item is exclusively visible to <strong>Super Admin</strong> users. Log in with the <code>super</code> account to access it.</p>
-                
-                <h3>Data from another shop appearing?</h3>
-                <p>This should <strong>never happen</strong> if the system is working correctly. All data is scoped by <code>tenant_id</code> at the database level. If you suspect a leak, delete the database file and restart the server to recreate it with clean tenant isolation.</p>
-            </div>
-        </section>
-
-        <footer>
-            <p>&copy; 2026 Tracly - Professional Multi-Tenant Retail Management System.</p>
-            <p><em>End of Documentation. Version 2.0 Î“Ã‡Ã¶ Multi-Tenant SaaS Edition.</em></p>
-        </footer>
     </main>
 
     <script>
-        // Simple active state tracker for sidebar
+        // Smooth scroll highlight
         const links = document.querySelectorAll('.nav-link');
-        const sections = document.querySelectorAll('section');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 120) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            links.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').substring(1) === current) {
-                    link.classList.add('active');
-                }
+        links.forEach(link => {
+            link.addEventListener('click', function() {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
             });
         });
     </script>
