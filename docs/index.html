@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracly | Shop Inventory & Billing System</title>
-    <meta name="description" content="Tracly is a powerful, minimalist shop inventory and billing system for modern businesses. Built with Angular and Node.js.">
+    <title>Tracly | Professional Shop Inventory & Billing</title>
+    <meta name="description" content="Tracly is an enterprise-grade shop inventory and billing system designed for multi-branch retail operations.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome (for icons) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mermaid -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
 </head>
 <body>
     <nav class="navbar">
@@ -25,7 +30,8 @@
                 <li><a href="#features">Features</a></li>
                 <li><a href="#architecture">Architecture</a></li>
                 <li><a href="#workflow">Workflow</a></li>
-                <li><a href="https://github.com/NaughtyCodes/tractly" class="btn btn-primary">GitHub <i class="fab fa-github"></i></a></li>
+                <li><a href="#user-guide">User Guide</a></li>
+                <li><a href="https://github.com/NaughtyCodes/tractly" class="btn btn-primary">Try on GitHub</a></li>
             </ul>
         </div>
     </nav>
@@ -33,142 +39,191 @@
     <header class="hero">
         <div class="container hero-content">
             <div class="hero-text">
-                <h1>Modern Inventory & <span class="accent">Billing</span> for Next-Gen Shops</h1>
-                <p>Streamline your business operations with a powerful, minimalist, and scalable solution built for multi-branch retail.</p>
+                <h1>Scale Your Business with <span class="accent">Precision</span></h1>
+                <p>An enterprise-grade, open-source inventory and billing system designed for high-volume retail and multi-branch management.</p>
                 <div class="hero-cta">
-                    <a href="https://github.com/NaughtyCodes/tractly" class="btn btn-large btn-gradient">Get Started</a>
-                    <a href="#features" class="btn btn-large btn-outline">Learn More</a>
+                    <a href="https://github.com/NaughtyCodes/tractly" class="btn btn-primary">Get Started Now</a>
+                    <a href="#features" class="btn btn-outline">Explore Features</a>
                 </div>
             </div>
             <div class="hero-image">
-                <div class="glass-card mockup-wrapper">
-                    <img src="assets/dashboard_mockup.png" alt="Tracly Dashboard Mockup" class="mockup">
-                    <div class="blob-glow"></div>
+                <div class="mockup-wrapper">
+                    <img src="assets/admin_features.webp" alt="Admin Features Overview" class="mockup">
                 </div>
             </div>
         </div>
     </header>
 
-    <section id="features" class="features section">
-        <div class="container text-center">
-            <h2 class="section-title">Why Choose <span class="accent">Tracly</span>?</h2>
+    <section id="features" class="section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Engineered for <span class="accent">Reliability</span></h2>
+                <p class="section-subtitle">Every feature in Tracly is built to handle the rigorous demands of real-world retail operations.</p>
+            </div>
             <div class="feature-grid">
-                <div class="feature-card glass-card h-reveal">
-                    <div class="feature-icon"><i class="fas fa-building"></i></div>
-                    <h3>Multi-Branch</h3>
-                    <p>Manage multiple locations from a single dashboard with ease.</p>
+                <div class="card h-reveal">
+                    <div class="feature-icon"><i class="fas fa-sitemap"></i></div>
+                    <h3>Multi-Tenant Architecture</h3>
+                    <p>Designed for scalability with isolated data tenants and sub-branch management.</p>
                 </div>
-                <div class="feature-card glass-card h-reveal">
-                    <div class="feature-icon"><i class="fas fa-boxes"></i></div>
-                    <h3>Smart Inventory</h3>
-                    <p>Track stock levels, categories, and products with real-time updates.</p>
+                <div class="card h-reveal">
+                    <div class="feature-icon"><i class="fas fa-calculator"></i></div>
+                    <h3>Intelligent Billing</h3>
+                    <p>Automated tax calculation, multi-currency support, and instant thermal receipt printing.</p>
                 </div>
-                <div class="feature-card glass-card h-reveal">
-                    <div class="feature-icon"><i class="fas fa-file-invoice"></i></div>
-                    <h3>Dynamic Billing</h3>
-                    <p>Professional invoice generation with tax and discount support.</p>
-                </div>
-                <div class="feature-card glass-card h-reveal">
-                    <div class="feature-icon"><i class="fas fa-truck"></i></div>
-                    <h3>Stock Transfers</h3>
-                    <p>Move inventory between branches with full traceability.</p>
-                </div>
-                <div class="feature-card glass-card h-reveal">
-                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
-                    <h3>Insights</h3>
-                    <p>Detailed reports and analytics to grow your business.</p>
-                </div>
-                <div class="feature-card glass-card h-reveal">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <h3>Security</h3>
-                    <p>JWT-based sessions and encrypted password storage.</p>
+                <div class="card h-reveal">
+                    <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+                    <h3>Real-time Sync</h3>
+                    <p>Maintain consistent inventory levels across all physical and digital channels instantly.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="architecture" class="architecture section bg-dark-secondary">
+    <section id="architecture" class="section bg-secondary">
         <div class="container">
-            <h2 class="section-title text-center">System <span class="accent">Architecture</span></h2>
-            <div class="arch-container glass-card">
-                <div class="arch-flow">
-                    <div class="arch-node">
-                        <div class="node-icon"><i class="fab fa-angular"></i></div>
-                        <h4>Frontend</h4>
-                        <p>Angular 17</p>
-                    </div>
-                    <div class="arch-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
-                    <div class="arch-node">
-                        <div class="node-icon"><i class="fab fa-node-js"></i></div>
-                        <h4>Backend</h4>
-                        <p>Node.js / Express</p>
-                    </div>
-                    <div class="arch-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
-                    <div class="arch-node">
-                        <div class="node-icon"><i class="fas fa-database"></i></div>
-                        <h4>Database</h4>
-                        <p>SQLite (Disk-based)</p>
-                    </div>
+            <div class="text-center">
+                <h2 class="section-title">Comprehensive <span class="accent">Architecture</span></h2>
+                <p class="section-subtitle">A robust, modular system design focused on performance, security, and developer productivity.</p>
+            </div>
+            
+            <div class="diagram-container h-reveal">
+                <div class="mermaid">
+                    graph TD
+                    A[Client: Angular 17] -->|REST API Over HTTPS| B[Auth Middleware: JWT/Bcrypt]
+                    B --> C[API Server: Node.js / Express]
+                    
+                    subgraph "Service Layer"
+                        C --> C1[Inventory Service]
+                        C --> C2[Billing Engine]
+                        C --> C3[Reporting Module]
+                        C --> C4[Transfer Manager]
+                    end
+                    
+                    C1 --> D[(Database: SQLite)]
+                    C2 --> D
+                    C3 --> D
+                    C4 --> D
+                    
+                    C --> E[Storage: Cloud / FS]
+                    E --> E1[Product Images]
+                    E --> E2[Invoice PDFs]
+                    
+                    style A fill:#eff6ff,stroke:#2563eb,stroke-width:2px
+                    style C fill:#f0fdf4,stroke:#10b981,stroke-width:2px
+                    style D fill:#fff7ed,stroke:#f59e0b,stroke-width:2px
+                </div>
+            </div>
+
+            <div class="tech-matrix section">
+                <div class="card tech-card h-reveal">
+                    <h3>Frontend Stack</h3>
+                    <ul>
+                        <li><strong>Angular 17+:</strong> High-performance SPA architecture.</li>
+                        <li><strong>Reactive Forms:</strong> Robust billing terminal management.</li>
+                        <li><strong>Angular Material:</strong> Premium, accessible UI components.</li>
+                        <li><strong>Chart.js:</strong> Interactive real-time business analytics.</li>
+                    </ul>
+                </div>
+                <div class="card tech-card h-reveal">
+                    <h3>Backend Stack</h3>
+                    <ul>
+                        <li><strong>Node.js:</strong> Scalable, non-blocking I/O runtime.</li>
+                        <li><strong>Express:</strong> Fast, unopinionated web framework.</li>
+                        <li><strong>better-sqlite3:</strong> Ultra-fast disk-based storage.</li>
+                        <li><strong>Sharp:</strong> High-speed image processing for product assets.</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="workflow" class="workflow section">
+    <section id="workflow" class="section">
         <div class="container">
-            <h2 class="section-title text-center">Core <span class="accent">Workflow</span></h2>
-            <div class="workflow-steps">
-                <div class="step-card h-reveal">
-                    <span class="step-num">01</span>
-                    <h3>Inventory Setup</h3>
-                    <p>Define product categories and add items with their specs.</p>
+            <div class="text-center">
+                <h2 class="section-title">Sequential <span class="accent">Workflow</span></h2>
+                <p class="section-subtitle">Understanding the logical flow from stock acquisition to automated reporting.</p>
+            </div>
+            
+            <div class="diagram-container h-reveal" style="background: #f8fafc;">
+                <div class="mermaid">
+                    sequenceDiagram
+                        participant Admin as Business Admin
+                        participant Inventory as Inventory Module
+                        participant POS as Billing Terminal
+                        participant DB as SQLite Storage
+                        participant Report as Analytics Engine
+                        
+                        Admin->>Inventory: Define Products & Cost Parameters
+                        Inventory->>DB: Persist Global Catalog
+                        Admin->>Inventory: Stock Allocation (Multi-Branch)
+                        Inventory->>DB: Update Local Stocks
+                        
+                        Note right of POS: Sale Initiated
+                        POS->>DB: Check Availability & Lock
+                        POS->>DB: Record Transaction & Adjust Stock
+                        DB-->>POS: Confirm Sale
+                        
+                        Admin->>Report: Request Daily Performance
+                        Report->>DB: Aggregate Transaction Data
+                        DB-->>Report: Raw Analytics
+                        Report-->>Admin: Business Insights PDF
                 </div>
-                <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
-                <div class="step-card h-reveal">
-                    <span class="step-num">02</span>
-                    <h3>Stock Management</h3>
-                    <p>Manage quantities and transfer stock across branches.</p>
-                </div>
-                <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
-                <div class="step-card h-reveal">
-                    <span class="step-num">03</span>
-                    <h3>Efficient Billing</h3>
-                    <p>Process sales and generate custom invoices instantly.</p>
-                </div>
-                <div class="step-arrow"><i class="fas fa-chevron-right"></i></div>
-                <div class="step-card h-reveal">
-                    <span class="step-num">04</span>
-                    <h3>Real-time Reports</h3>
-                    <p>Analyze sales and inventory for data-driven decisions.</p>
-                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-secondary">
+        <div class="container">
+            <div class="card h-reveal">
+                <h2 class="section-title">Working <span class="accent">Model</span></h2>
+                <p>Tracly operates on a <strong>Direct-to-Disk Architecture</strong>, combined with a <strong>Stateful Reactivity Model</strong> in the frontend. This ensures that even with intermittent connectivity, the system remains responsive and data integrity is maintained across all branch nodes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="user-guide" class="section">
+        <div class="container">
+            <div class="guide-cta h-reveal">
+                <h2>Master Tracly in Minutes</h2>
+                <p>Access our comprehensive User Guide to learn everything from basic setup to advanced multi-branch stock transfers.</p>
+                <a href="https://github.com/NaughtyCodes/tractly/blob/main/USER_GUIDE.md" class="btn btn-primary btn-large" style="background: white; color: var(--primary);">Read User Guide</a>
             </div>
         </div>
     </section>
 
     <footer class="footer">
-        <div class="container footer-content">
-            <div class="footer-brand">
-                <div class="logo">
-                    <img src="assets/logo.png" alt="Tracly Logo">
-                    <span>Tracly</span>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="logo" style="color: white;">
+                        <img src="assets/logo.png" alt="Tracly Logo">
+                        <span>Tracly</span>
+                    </div>
+                    <p style="margin-top: 1.5rem;">The premium open-source standard for modern retail operations.</p>
                 </div>
-                <p>Built with ❤️ by NaughtyCodes</p>
+                <div>
+                    <h4>Development</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="https://github.com/NaughtyCodes/tractly">GitHub Repo</a></li>
+                        <li><a href="https://github.com/NaughtyCodes/tractly/issues">Issue Tracker</a></li>
+                        <li><a href="https://github.com/NaughtyCodes/tractly/discussions">Discussion</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Resources</h4>
+                    <ul style="list-style: none;">
+                        <li><a href="https://github.com/NaughtyCodes/tractly/blob/main/USER_GUIDE.md">User Guide</a></li>
+                        <li><a href="https://github.com/NaughtyCodes/tractly/blob/main/LICENSE">MIT License</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="https://github.com/NaughtyCodes/tractly">GitHub</a></li>
-                    <li><a href="https://github.com/NaughtyCodes/tractly/blob/main/LICENSE">License</a></li>
-                    <li><a href="https://github.com/NaughtyCodes/tractly/blob/main/CONTRIBUTING.md">Contribute</a></li>
-                </ul>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Tracly Project. Built with passion by NaughtyCodes.</p>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Tracly Project. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- Script -->
     <script src="app.js"></script>
 </body>
 </html>
