@@ -32,6 +32,6 @@ export class UserGuideComponent {
     guideSrc: SafeResourceUrl;
 
     constructor(private sanitizer: DomSanitizer) {
-        this.guideSrc = this.sanitizer.bypassSecurityTrustResourceUrl('/assets/docs/user_guide.html');
+        this.guideSrc = this.sanitizer.bypassSecurityTrustResourceUrl('https://naughtycodes.github.io/tractly/user_guide.html');
     }
 }
