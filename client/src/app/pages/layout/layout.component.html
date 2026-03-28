@@ -1,23 +1,27 @@
 <div class="app-layout" [class.collapsed]="sidebarCollapsed">
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" *ngIf="mobileMenuOpen" (click)="closeMobileMenu()"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-brand" style="display: flex; align-items: center; gap: 12px; padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05);">
-            <img src="/assets/logo.png" alt="Tracly" style="width: 32px; height: 32px; object-fit: contain;">
-            <span class="brand-text" *ngIf="!sidebarCollapsed" style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 22px; color: var(--primary-color, #6366f1);">Tracly</span>
+    <aside class="sidebar" [class.mobile-open]="mobileMenuOpen">
+        <div class="sidebar-brand">
+            <img src="/assets/logo.png" alt="Tracly" class="brand-logo">
+            <span class="brand-text" *ngIf="!sidebarCollapsed">Tracly</span>
         </div>
 
         <nav class="sidebar-nav">
             <ng-container *ngFor="let item of navItems">
                 <a [routerLink]="item.path" routerLinkActive="active" 
                    [routerLinkActiveOptions]="item.children ? {exact: true} : {exact: false}" 
-                   class="nav-item">
+                   class="nav-item" (click)="closeMobileMenu()">
                     <span class="nav-icon">{{ item.icon }}</span>
                     <span class="nav-label" *ngIf="!sidebarCollapsed">{{ item.label }}</span>
                 </a>
                 
                 <!-- Nested Children Items -->
                 <div class="nav-children" *ngIf="item.children && !sidebarCollapsed">
-                    <a *ngFor="let child of item.children" [routerLink]="child.path" routerLinkActive="active" class="nav-item child-item">
+                    <a *ngFor="let child of item.children" [routerLink]="child.path" routerLinkActive="active" 
+                       class="nav-item child-item" (click)="closeMobileMenu()">
                         <span class="nav-icon">{{ child.icon }}</span>
                         <span class="nav-label">{{ child.label }}</span>
                     </a>
@@ -25,39 +29,51 @@
             </ng-container>
         </nav>
 
-    <div class="sidebar-footer">
-            <div class="user-info" *ngIf="!sidebarCollapsed">
-                <div class="user-avatar">{{ (auth.getUser()?.fullName || 'U')[0] }}</div>
-                <div class="user-details">
-                    <span class="user-name">{{ auth.getUser()?.fullName || auth.getUser()?.username }}</span>
-                    <span class="user-role">{{ auth.getUser()?.role | titlecase }}</span>
-                </div>
-            </div>
-            <a href="/user-guide" target="_blank" class="btn btn-outline btn-sm guide-btn" style="width: 100%; margin-bottom: 8px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px solid rgba(99,102,241,0.3); border-radius: 8px; color: var(--primary-color, #6366f1); background: transparent; cursor: pointer; font-size: 13px;">
-                <span>📖</span>
-                <span *ngIf="!sidebarCollapsed">User Guide</span>
+        <div class="sidebar-footer">
+            <a href="/user-guide" target="_blank" class="sidebar-link" style="text-decoration: none;">
+                <span class="nav-icon">📖</span>
+                <span class="nav-label" *ngIf="!sidebarCollapsed">User Guide</span>
             </a>
-            <button class="btn btn-danger btn-sm" (click)="auth.logout()" style="width: 100%;">
-                <span>🚪</span>
-                <span *ngIf="!sidebarCollapsed">Logout</span>
+            <button class="sidebar-link logout-btn" (click)="auth.logout()">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-label" *ngIf="!sidebarCollapsed">Logout</span>
             </button>
         </div>
     </aside>
 
     <!-- Main content -->
     <div class="main-area">
-        <header class="top-header">
-            <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+        <header class="top-header" [class.scrolled]="isScrolled">
+            <div class="header-left">
+                <button class="hamburger-btn" (click)="toggleSidebar()">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <button class="mobile-hamburger" (click)="toggleMobileMenu()">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+
             <div class="header-right">
-                <a href="/user-guide" target="_blank" class="toggle-btn" title="User Guide" style="text-decoration: none;">📖</a>
-                <button class="toggle-btn" (click)="toggleTheme()" title="Toggle Theme">
+                <span class="header-datetime">{{ today | date:'mediumDate' }} · {{ today | date:'shortTime' }}</span>
+                <a href="/user-guide" target="_blank" class="header-icon-btn" title="User Guide">📖</a>
+                <button class="header-icon-btn" (click)="toggleTheme()" title="Toggle Theme">
                     <span *ngIf="(settingsService.settings$ | async)?.theme === 'dark'">☀️</span>
                     <span *ngIf="(settingsService.settings$ | async)?.theme === 'light'">🌙</span>
                 </button>
-                <span class="datetime">{{ today | date:'medium' }}</span>
+                <div class="header-user">
+                    <div class="header-avatar">{{ getUserInitial() }}</div>
+                    <div class="header-user-info">
+                        <span class="header-user-name">{{ auth.getUser()?.fullName || auth.getUser()?.username }}</span>
+                        <span class="header-user-role">{{ auth.getUser()?.role | titlecase }}</span>
+                    </div>
+                </div>
             </div>
         </header>
-        <main class="content">
+        <main class="content" (scroll)="onContentScroll($event)">
             <router-outlet></router-outlet>
         </main>
     </div>

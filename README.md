@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.jpg" alt="Tracly Logo" width="150">
+  <img src="assets/logo.png" alt="Tracly Logo" width="150">
   <h1>Tracly</h1>
   <p><strong>A powerful, minimalist Shop Inventory & Billing System for modern businesses.</strong></p>
   <p><a href="https://naughtycodes.github.io/tractly/"><strong>Visit Product Page →</strong></a></p>

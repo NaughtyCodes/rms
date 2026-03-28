@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -13,6 +13,8 @@ import { SettingsService } from '../../services/settings.service';
 })
 export class LayoutComponent {
     sidebarCollapsed = false;
+    mobileMenuOpen = false;
+    isScrolled = false;
     today = new Date();
 
     navItems: any[] = [
@@ -56,11 +58,37 @@ export class LayoutComponent {
         }
     }
 
+    @HostListener('window:scroll', [])
+    onWindowScroll() {
+        this.isScrolled = window.scrollY > 0;
+    }
+
+    onContentScroll(event: Event) {
+        const target = event.target as HTMLElement;
+        this.isScrolled = target.scrollTop > 0;
+    }
+
     toggleSidebar() {
         this.sidebarCollapsed = !this.sidebarCollapsed;
+        if (this.mobileMenuOpen) {
+            this.mobileMenuOpen = false;
+        }
+    }
+
+    toggleMobileMenu() {
+        this.mobileMenuOpen = !this.mobileMenuOpen;
+    }
+
+    closeMobileMenu() {
+        this.mobileMenuOpen = false;
     }
 
     toggleTheme() {
         this.settingsService.toggleTheme();
+    }
+
+    getUserInitial(): string {
+        const name = this.auth.getUser()?.fullName || this.auth.getUser()?.username || 'U';
+        return name.charAt(0).toUpperCase();
     }
 }
