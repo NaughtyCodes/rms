@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --secondary: #10b981;
-            --dark: #0f172a;
-            --text: #334155;
-            --text-light: #64748b;
-            --bg: #f1f5f9;
-            --white: #ffffff;
+            --primary: #4F46E5;
+            --primary-light: #EEF2FF;
+            --secondary: #10B981;
+            --dark: #0F172A;
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --bg: #F9FAFB;
+            --white: #FFFFFF;
             --radius: 12px;
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
@@ -48,10 +48,15 @@
             font-size: 26px;
             font-weight: 700;
             margin-bottom: 20px;
-            color: var(--primary-light);
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        .nav-logo img {
+            height: 32px;
+            filter: brightness(0) invert(1);
         }
 
         .nav-back-button {
@@ -271,7 +276,7 @@
 <body id="master-container">
 
     <nav>
-        <div class="nav-logo"><i class="fa-solid fa-crown"></i> Tracly</div>
+        <div class="nav-logo"><img src="assets/logo.png" alt="Tracly Logo"> Tracly</div>
         
         <a href="index.html" class="nav-back-button"><i class="fa-solid fa-arrow-left"></i> Back to Landing Page</a>
 
