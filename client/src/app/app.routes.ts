@@ -25,6 +25,9 @@ export const routes: Routes = [
             { path: 'admin/print-config', loadComponent: () => import('./pages/admin/print-config/print-config.component').then(m => m.PrintConfigComponent) },
             { path: 'admin/branches', loadComponent: () => import('./pages/admin/branches/branches.component').then(m => m.BranchesComponent) },
             { path: 'admin/transfers', loadComponent: () => import('./pages/admin/transfers/transfers.component').then(m => m.TransfersComponent) },
+            { path: 'admin/users', loadComponent: () => import('./pages/admin/user-management/user-management.component').then(m => m.UserManagementComponent) },
+            { path: 'admin/roles', loadComponent: () => import('./pages/admin/roles/roles.component').then(m => m.RolesComponent) },
+            { path: 'admin/system-config', loadComponent: () => import('./pages/admin/system-config/system-config.component').then(m => m.SystemConfigComponent) },
             { path: 'admin/test-results', loadComponent: () => import('./pages/admin/test-results/test-results.component').then(m => m.TestResultsComponent) },
             { 
                 path: 'superadmin/tenants', 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -50,7 +50,7 @@ router.get('/dashboard', authenticate, (req, res) => {
 });
 
 // GET /api/reports/daily?date=YYYY-MM-DD
-router.get('/daily', authenticate, (req, res) => {
+router.get('/daily', authenticate, authorizePermission('view_sales_reports'), (req, res) => {
     try {
         const date = req.query.date || new Date().toISOString().slice(0, 10);
 
@@ -82,7 +82,7 @@ router.get('/daily', authenticate, (req, res) => {
 });
 
 // GET /api/reports/monthly?month=MM&year=YYYY
-router.get('/monthly', authenticate, (req, res) => {
+router.get('/monthly', authenticate, authorizePermission('view_sales_reports'), (req, res) => {
     try {
         const now = new Date();
         const month = req.query.month || String(now.getMonth() + 1).padStart(2, '0');
@@ -109,7 +109,7 @@ router.get('/monthly', authenticate, (req, res) => {
 });
 
 // GET /api/reports/top-products?limit=10&days=30
-router.get('/top-products', authenticate, (req, res) => {
+router.get('/top-products', authenticate, authorizePermission('view_sales_reports'), (req, res) => {
     try {
         const limit = req.query.limit || 10;
         const days = req.query.days || 30;
@@ -129,7 +129,7 @@ router.get('/top-products', authenticate, (req, res) => {
 });
 
 // GET /api/reports/stock-valuation
-router.get('/stock-valuation', authenticate, (req, res) => {
+router.get('/stock-valuation', authenticate, authorizePermission('view_sales_reports'), (req, res) => {
     try {
         const products = db.prepare(`
             SELECT p.id, p.name, p.quantity, p.cost_price, p.selling_price,

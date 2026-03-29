@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 import db from '../db/connection.js';
 
 const router = express.Router();
@@ -26,7 +26,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // POST /api/meta-fields — Create a new product meta field
-router.post('/', authenticate, authorizeAdmin, (req, res) => {
+router.post('/', authenticate, authorizePermission('manage_meta_fields'), (req, res) => {
     const { name, type, options, is_required } = req.body;
     
     if (!name || !type) {
@@ -56,7 +56,7 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
 });
 
 // DELETE /api/meta-fields/:id — Delete a meta field
-router.delete('/:id', authenticate, authorizeAdmin, (req, res) => {
+router.delete('/:id', authenticate, authorizePermission('manage_meta_fields'), (req, res) => {
     try {
         const result = db.prepare('DELETE FROM product_meta_fields WHERE id = ? AND tenant_id = ?').run(req.params.id, req.tenantId);
         if (result.changes === 0) return res.status(404).json({ error: 'Meta field not found in your shop scope' });

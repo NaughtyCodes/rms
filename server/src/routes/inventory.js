@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizeAdmin, authorizePermission } from '../middleware/auth.js';
 import db from '../db/connection.js';
 
 const router = express.Router();
@@ -10,7 +10,7 @@ const router = express.Router();
  * @access  Private
  */
 // GET /api/inventory/batches/:productId
-router.get('/batches/:productId', authenticate, (req, res) => {
+router.get('/batches/:productId', authenticate, authorizePermission('view_inventory'), (req, res) => {
     try {
         const batches = db.prepare(`
             SELECT * FROM product_batches 
@@ -28,7 +28,7 @@ router.get('/batches/:productId', authenticate, (req, res) => {
 });
 
 // POST /api/inventory/stock-in
-router.post('/stock-in', authenticate, authorizeAdmin, (req, res) => {
+router.post('/stock-in', authenticate, authorizePermission('manage_inventory'), (req, res) => {
     const { product_id, batch_number, expiry_date, quantity, cost_price, meta_data } = req.body;
 
     if (!product_id || !batch_number || !quantity) {
@@ -89,7 +89,7 @@ router.post('/stock-in', authenticate, authorizeAdmin, (req, res) => {
 });
 
 // POST /api/inventory/damage
-router.post('/damage', authenticate, authorizeAdmin, (req, res) => {
+router.post('/damage', authenticate, authorizePermission('manage_inventory'), (req, res) => {
     const { product_id, batch_id, quantity, reason } = req.body;
 
     if (!product_id || !quantity) {
@@ -131,7 +131,7 @@ router.post('/damage', authenticate, authorizeAdmin, (req, res) => {
 });
 
 // GET /api/inventory/transactions
-router.get('/transactions', authenticate, authorizeAdmin, (req, res) => {
+router.get('/transactions', authenticate, authorizePermission('view_inventory'), (req, res) => {
     try {
         const transactions = db.prepare(`
             SELECT t.*, p.name as product_name, b.batch_number

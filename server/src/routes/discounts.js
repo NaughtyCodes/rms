@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 import db from '../db/connection.js';
 
 const router = express.Router();
@@ -28,7 +28,7 @@ router.get('/:productId', authenticate, (req, res) => {
 });
 
 // POST /api/discounts — Create or update a product discount
-router.post('/', authenticate, authorizeAdmin, (req, res) => {
+router.post('/', authenticate, authorizePermission('manage_discounts'), (req, res) => {
     const { product_id, discount_type, discount_value, start_date, end_date } = req.body;
     
     if (!product_id || !discount_value) {
@@ -58,7 +58,7 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
 });
 
 // DELETE /api/discounts/:productId — Remove (deactivate) discount for a product
-router.delete('/:productId', authenticate, authorizeAdmin, (req, res) => {
+router.delete('/:productId', authenticate, authorizePermission('manage_discounts'), (req, res) => {
     try {
         db.prepare('UPDATE product_discounts SET is_active = 0 WHERE product_id = ? AND tenant_id = ?').run(req.params.productId, req.tenantId);
         res.json({ message: 'Discount removed successfully' });

@@ -463,6 +463,7 @@
         <a href="#stock-management" class="nav-link"><i class="fa-solid fa-wrench"></i> Stock Control</a>
         <a href="#bulk-import" class="nav-link"><i class="fa-solid fa-file-import"></i> Bulk Import</a>
         <a href="#tax-logic" class="nav-link"><i class="fa-solid fa-scale-balanced"></i> Tax Logic</a>
+        <a href="#system-config-guide" class="nav-link"><i class="fa-solid fa-server"></i> Backup & Database</a>
     </nav>
 
     <main>
@@ -1303,6 +1304,45 @@
                 <div><strong>Verified Logic:</strong> During billing, if you select "Product Wise", the system
                     calculates the tax contribution of every single item separately, ensuring 100% compliance with
                     complex tax laws.</div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- SYSTEM ADMIN, DB CONFIG & BACKUPS -->
+        <!-- ============================================================= -->
+        <section id="system-config-guide">
+            <span class="badge badge-superadmin">System Control</span>
+            <h2><i class="fa-solid fa-server"></i> Database Config & System Backups</h2>
+            <p>Tracly features an advanced System & Backup configuration panel for deep-level application management, found at <strong>Admin Settings > System & Backup</strong>.</p>
+
+            <div class="card">
+                <h3>Database Engine Configuration</h3>
+                <p>By default, Tracly utilizes a zero-configuration scalable <strong>SQLite</strong> database. As your enterprise scales, you can switch the underlying database engine dynamically through the UI.</p>
+                <div class="instruction-step">Navigate to the <strong>Database Setup</strong> tab.</div>
+                <div class="instruction-step">Select your desired driver: <strong>SQLite (Default), PostgreSQL, or MySQL</strong>.</div>
+                <div class="instruction-step">Provide the corresponding Connection Host, Port, User, Password, and Database Name.</div>
+                <div class="instruction-step">Click away to auto-save.
+                    <div class="warning-text" style="color:#d9534f; font-weight: 500; font-size: 13px; margin-top:5px;">⚠️ Changing the backend Database Driver applies globally to the application and requires a manual Node.js server reboot to take effect.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Automated Backups & Email Delivery</h3>
+                <p>Protect against data loss by scheduling automated chronometer backups.</p>
+                <div class="option-list">
+                    <div class="option-item"><strong>Schedule Interval</strong><span>Choose between <strong>Hourly</strong> and <strong>Daily (Midnight)</strong> execution.</span></div>
+                    <div class="option-item"><strong>Location</strong><span>Backups are written natively to the server block storage, usually in `./data/backups`.</span></div>
+                    <div class="option-item"><strong>Gmail Integration</strong><span>Toggle ON to have the `.db` snapshot emailed directly. You must generate a Google "App Password" to bypass basic authentication limits.</span></div>
+                </div>
+            </div>
+
+            <div class="card danger-zone" style="border-left: 5px solid #d9534f;">
+                <h3 style="color:#d9534f;">📦 Manual Snapshots & Restoration</h3>
+                <p>If you need to move data or rollback from a critical failure, use the <strong>Backup & Restore</strong> tab.</p>
+                <ul style="margin-left:20px; font-size:15px;">
+                    <li><strong>Take Snapshot Now:</strong> Tracly will instantly trigger a safe `.backup()` operation on the live WAL-enabled database and list it below for download.</li>
+                    <li><strong>Restore & Overwrite:</strong> Uploading an existing `.db` file will <strong>permanently overwrite current data</strong>. Upon success, the system will forcefully restart the server to execute the new connection pool seamlessly.</li>
+                </ul>
             </div>
         </section>
 

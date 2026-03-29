@@ -17,35 +17,71 @@ export class LayoutComponent {
     isScrolled = false;
     today = new Date();
 
-    navItems: any[] = [
-        { path: '/dashboard', icon: '📊', label: 'Dashboard' },
-        { path: '/billing', icon: '🧾', label: 'New Bill' },
-        { path: '/invoices', icon: '📋', label: 'Invoices' },
-        { path: '/reports', icon: '📈', label: 'Reports' },
-    ];
+    navItems: any[] = [];
 
     constructor(
         public auth: AuthService,
         public settingsService: SettingsService
     ) {
-        const role = this.auth.getUser()?.role;
-        if (role === 'admin' || role === 'superadmin') {
+        // Base navigation items based on generic permissions
+        if (this.auth.hasPermission('view_dashboard') || this.auth.isAdmin()) {
+            this.navItems.push({ path: '/dashboard', icon: '📊', label: 'Dashboard' });
+        }
+        if (this.auth.hasPermission('access_billing') || this.auth.isAdmin()) {
+            this.navItems.push({ path: '/billing', icon: '🧾', label: 'New Bill' });
+        }
+        if (this.auth.hasPermission('view_invoices') || this.auth.isAdmin()) {
+            this.navItems.push({ path: '/invoices', icon: '📋', label: 'Invoices' });
+        }
+        if (this.auth.hasPermission('view_sales_reports') || this.auth.isAdmin()) {
+            this.navItems.push({ path: '/reports', icon: '📈', label: 'Reports' });
+        }
+
+        const adminChildren: any[] = [];
+        if (this.auth.hasPermission('manage_users') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/users', icon: '👥', label: 'Users' });
+        }
+        if (this.auth.hasPermission('manage_roles') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/roles', icon: '🔐', label: 'Roles & Perms' });
+        }
+        if (this.auth.hasPermission('view_inventory') || this.auth.hasPermission('manage_inventory') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/inventory', icon: '📦', label: 'Inventory' });
+        }
+        if (this.auth.hasPermission('manage_inventory') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/stock-management', icon: '🔄', label: 'Stock Mgmt' });
+        }
+        if (this.auth.hasPermission('manage_branches') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/branches', icon: '🏢', label: 'Branches' });
+        }
+        if (this.auth.hasPermission('transfer_stock') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/transfers', icon: '🚚', label: 'Transfers' });
+        }
+        if (this.auth.hasPermission('manage_meta_fields') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/meta-setup', icon: '📝', label: 'Meta Setup' });
+        }
+        if (this.auth.hasPermission('manage_taxes') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/taxes', icon: '💰', label: 'Tax Settings' });
+        }
+        if (this.auth.hasPermission('manage_discounts') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/discounts', icon: '🏷️', label: 'Discounts' });
+        }
+        if (this.auth.hasPermission('manage_shop_config') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/shop-config', icon: '🏪', label: 'Shop Config' });
+        }
+        if (this.auth.hasPermission('manage_print_config') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/print-config', icon: '🖨️', label: 'Print Config' });
+        }
+        if (this.auth.hasPermission('manage_settings') || this.auth.isAdmin()) {
+            adminChildren.push({ path: '/admin/system-config', icon: '⚙️', label: 'System & Backup' });
+            adminChildren.push({ path: '/admin/test-results', icon: '🧪', label: 'Test Results' });
+        }
+
+        if (adminChildren.length > 0) {
             this.navItems.push({
                 path: '/admin',
                 icon: '⚙️',
                 label: 'Admin Settings',
-                children: [
-                    { path: '/inventory', icon: '📦', label: 'Inventory' },
-                    { path: '/admin/stock-management', icon: '🔄', label: 'Stock Mgmt' },
-                    { path: '/admin/branches', icon: '🏢', label: 'Branches' },
-                    { path: '/admin/transfers', icon: '🚚', label: 'Transfers' },
-                    { path: '/admin/meta-setup', icon: '📝', label: 'Meta Setup' },
-                    { path: '/admin/taxes', icon: '💰', label: 'Tax Settings' },
-                    { path: '/admin/discounts', icon: '🏷️', label: 'Discounts' },
-                    { path: '/admin/shop-config', icon: '🏪', label: 'Shop Config' },
-                    { path: '/admin/print-config', icon: '🖨️', label: 'Print Config' },
-                    { path: '/admin/test-results', icon: '🧪', label: 'Test Results' }
-                ]
+                children: adminChildren
             });
         }
 

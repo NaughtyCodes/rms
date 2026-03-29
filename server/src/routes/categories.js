@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // POST /api/categories
-router.post('/', authenticate, (req, res) => {
+router.post('/', authenticate, authorizePermission('manage_categories'), (req, res) => {
     try {
         const { name, description, tax_rate } = req.body;
         if (!name) return res.status(400).json({ error: 'Category name is required.' });
@@ -32,7 +32,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 // PUT /api/categories/:id
-router.put('/:id', authenticate, (req, res) => {
+router.put('/:id', authenticate, authorizePermission('manage_categories'), (req, res) => {
     try {
         const { name, description, tax_rate } = req.body;
         const existing = db.prepare('SELECT * FROM categories WHERE id = ? AND tenant_id = ?').get(req.params.id, req.tenantId);
@@ -48,7 +48,7 @@ router.put('/:id', authenticate, (req, res) => {
 });
 
 // DELETE /api/categories/:id
-router.delete('/:id', authenticate, (req, res) => {
+router.delete('/:id', authenticate, authorizePermission('manage_categories'), (req, res) => {
     try {
         const result = db.prepare('DELETE FROM categories WHERE id = ? AND tenant_id = ?').run(req.params.id, req.tenantId);
         if (result.changes === 0) return res.status(404).json({ error: 'Category not found.' });

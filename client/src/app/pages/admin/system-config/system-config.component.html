@@ -1,0 +1,157 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">⚙️ System & Backup Configuration</h1>
+        <p class="page-subtitle">Configure Database Engine, Automated Backups, and Manual Restore Actions.</p>
+    </div>
+</div>
+
+<div class="config-tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'database'" (click)="activeTab = 'database'">🗄️ Database Setup</button>
+    <button class="tab-btn" [class.active]="activeTab === 'backup'" (click)="activeTab = 'backup'">🔄 Auto Backup</button>
+    <button class="tab-btn" [class.active]="activeTab === 'restore'" (click)="activeTab = 'restore'">📦 Backup & Restore</button>
+</div>
+
+<div class="card mt-16" *ngIf="activeTab === 'database'">
+    <div class="card-header">
+        <h2 class="card-title">Database Engine Selection</h2>
+    </div>
+    <div class="form-group mb-12 mt-16">
+        <label class="form-label">Database Client</label>
+        <select class="form-select" [(ngModel)]="config.db_client" (blur)="saveConfig()">
+            <option value="sqlite3">SQLite (Default & active)</option>
+            <option value="pg">PostgreSQL</option>
+            <option value="mysql2">MySQL</option>
+        </select>
+        <div class="help-text text-warning mt-4 flex items-center gap-4">
+            <span>⚠️</span>
+            <small>Changing this from SQLite will require a full server restart and extensive schema initialization.</small>
+        </div>
+    </div>
+    
+    <div class="grid-2 my-12" *ngIf="config.db_client !== 'sqlite3'">
+        <div class="form-group">
+            <label class="form-label">DB Host</label>
+            <input type="text" class="form-input" [(ngModel)]="config.db_host" (blur)="saveConfig()" placeholder="localhost">
+        </div>
+        <div class="form-group">
+            <label class="form-label">DB Port</label>
+            <input type="text" class="form-input" [(ngModel)]="config.db_port" (blur)="saveConfig()" placeholder="e.g. 5432 or 3306">
+        </div>
+        <div class="form-group">
+            <label class="form-label">DB User</label>
+            <input type="text" class="form-input" [(ngModel)]="config.db_user" (blur)="saveConfig()">
+        </div>
+        <div class="form-group">
+            <label class="form-label">DB Password</label>
+            <input type="password" class="form-input" [(ngModel)]="config.db_password" (blur)="saveConfig()">
+        </div>
+        <div class="form-group" style="grid-column: span 2">
+            <label class="form-label">DB Name</label>
+            <input type="text" class="form-input" [(ngModel)]="config.db_name" (blur)="saveConfig()">
+        </div>
+    </div>
+</div>
+
+<div class="card mt-16" *ngIf="activeTab === 'backup'">
+    <div class="card-header">
+        <h2 class="card-title">Schedule Database Backups</h2>
+    </div>
+    
+    <div class="grid-2 mt-16">
+        <div class="form-group">
+            <label class="form-label">Backup Frequency</label>
+            <select class="form-select" [(ngModel)]="config.backup_schedule" (blur)="saveConfig()">
+                <option value="None">Disabled</option>
+                <option value="Hourly">Hourly</option>
+                <option value="Daily">Daily (Midnight)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Local Save Location</label>
+            <input type="text" class="form-input" [(ngModel)]="config.backup_location" (blur)="saveConfig()" placeholder="./data/backups">
+        </div>
+    </div>
+
+    <hr class="divider">
+    
+    <div class="section-title">Email Notifications (Optional)</div>
+    <div class="form-group mt-12 mb-12">
+        <label class="form-label">Enable Gmail Backup Delivery</label>
+        <select class="form-select" [(ngModel)]="config.backup_email_enabled" (blur)="saveConfig()">
+            <option value="false">Disable / Save locally only</option>
+            <option value="true">Enable / Email me</option>
+        </select>
+        <div class="help-text text-info mt-4">
+            <small>If enabled, Tracly will use your Gmail SMTP App Password to email you a direct database snapshot.</small>
+        </div>
+    </div>
+
+    <div class="grid-2 my-12" [ngStyle]="{'opacity': config.backup_email_enabled === 'true' ? '1' : '0.5', 'pointer-events': config.backup_email_enabled === 'true' ? 'auto' : 'none'}">
+        <div class="form-group">
+            <label class="form-label">Sender Email (Gmail)</label>
+            <input type="text" class="form-input" [(ngModel)]="config.backup_email_from" (blur)="saveConfig()" placeholder="yourshop@gmail.com">
+        </div>
+        <div class="form-group">
+            <label class="form-label">App Password</label>
+            <input type="password" class="form-input" [(ngModel)]="config.backup_email_pass" (blur)="saveConfig()" placeholder="16-character App Password">
+        </div>
+        <div class="form-group" style="grid-column: span 2">
+            <label class="form-label">Recipient Email</label>
+            <input type="text" class="form-input" [(ngModel)]="config.backup_email_to" (blur)="saveConfig()" placeholder="admin@domain.com">
+        </div>
+    </div>
+</div>
+
+
+<div class="grid-2 mt-16" *ngIf="activeTab === 'restore'">
+    <!-- Left: Manual Backup & List -->
+    <div class="card flex-col">
+        <div class="card-header">
+            <h2 class="card-title">Database Snapshots</h2>
+        </div>
+        
+        <div class="flex items-center space-between my-12">
+            <p class="text-secondary text-sm">Download or view recent backups</p>
+            <button class="btn btn-primary" (click)="triggerBackup()" [disabled]="isBackingUp">
+                {{ isBackingUp ? 'Backing Up...' : 'Take Snapshot Now' }}
+            </button>
+        </div>
+
+        <div class="backup-list flex-1">
+            <div class="no-data text-center p-24 text-secondary" *ngIf="backups.length === 0">
+                No local backups found.
+            </div>
+            <div class="backup-item flex items-center space-between" *ngFor="let file of backups">
+                <div>
+                    <div class="fw-500">{{ file.name }}</div>
+                    <div class="text-sm text-secondary">{{ file.date | date:'short' }} · {{ file.size / 1024 | number:'1.0-0' }} KB</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" (click)="downloadBackup(file.name)">⬇️ Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Restore Engine -->
+    <div class="card danger-zone flex-col">
+        <div class="card-header">
+            <h2 class="card-title text-danger">Database Restore</h2>
+        </div>
+        
+        <div class="p-16 flex-1 text-center flex-col center items-center justify-center">
+            <div class="icon-lg text-danger mb-16">⚠️</div>
+            <h2 class="fw-600 mb-8">Danger Zone</h2>
+            <p class="text-secondary mb-24">
+                Uploading a `.db` snapshot will overwrite the entire application database permanently and instantly cause a server reboot. This operation cannot be undone unless you keep a separate backup.
+            </p>
+
+            <input type="file" #restoreFile accept=".db" hidden (change)="onRestoreFileSelected($event)">
+            <button class="btn btn-danger" (click)="restoreFile.click()" [disabled]="isRestoring">
+                {{ isRestoring ? 'Restoring...' : 'Upload & Restore Snapshot' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="floating-save-toast" *ngIf="message">
+    {{ message }}
+</div>

@@ -15,6 +15,11 @@ import discountRoutes from './routes/discounts.js';
 import branchRoutes from './routes/branches.js';
 import transferRoutes from './routes/transfers.js';
 import tenantRoutes from './routes/tenants.js';
+import roleRoutes from './routes/roles.js';
+import permissionRoutes from './routes/permissions.js';
+import userMgmtRoutes from './routes/user-management.js';
+import systemConfigRoutes from './routes/system-config.js';
+import backupRestoreRoutes from './routes/backup-restore.js';
 import { seedDefaultAdmin } from './db/seed.js';
 import path from 'path';
 import fs from 'fs';
@@ -41,6 +46,9 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 initializeDatabase();
 seedDefaultAdmin();
 
+import { startBackupScheduler } from './services/backupScheduler.js';
+startBackupScheduler();
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -55,6 +63,11 @@ app.use('/api/discounts', discountRoutes);
 app.use('/api/branches', branchRoutes);
 app.use('/api/transfers', transferRoutes);
 app.use('/api/tenants', tenantRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/permissions', permissionRoutes);
+app.use('/api/user-management', userMgmtRoutes);
+app.use('/api/system-config', systemConfigRoutes);
+app.use('/api/backup-restore', backupRestoreRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));

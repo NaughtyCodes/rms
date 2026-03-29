@@ -25,6 +25,14 @@ router.post('/login', (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password.' });
         }
 
+        const permissions = db.prepare(`
+            SELECT DISTINCT p.name 
+            FROM permissions p
+            JOIN role_permissions rp ON p.id = rp.permission_id
+            JOIN user_roles ur ON rp.role_id = ur.role_id
+            WHERE ur.user_id = ?
+        `).all(user.id).map(p => p.name);
+
         const token = jwt.sign(
             { 
                 id: user.id, 
@@ -32,7 +40,8 @@ router.post('/login', (req, res) => {
                 role: user.role, 
                 fullName: user.full_name, 
                 branchId: user.branch_id,
-                tenantId: user.tenant_id // Will be null for superadmins
+                tenantId: user.tenant_id,
+                permissions
             },
             JWT_SECRET,
             { expiresIn: '12h' }
@@ -46,7 +55,8 @@ router.post('/login', (req, res) => {
                 role: user.role, 
                 fullName: user.full_name, 
                 branchId: user.branch_id,
-                tenantId: user.tenant_id
+                tenantId: user.tenant_id,
+                permissions
             }
         });
     } catch (err) {

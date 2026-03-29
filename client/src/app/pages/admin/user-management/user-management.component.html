@@ -1,0 +1,114 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">User Management</h1>
+        <p class="page-subtitle">Add, edit, and manage system users and their roles.</p>
+    </div>
+    <div class="flex gap-12">
+        <button class="btn btn-secondary" *ngIf="selectedUserCount > 0" (click)="openBulkRole()">
+            Assign Roles to ({{ selectedUserCount }})
+        </button>
+        <button class="btn btn-primary" (click)="openAddModal()">Add New User</button>
+    </div>
+</div>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width: 40px;">
+                    <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()">
+                </th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Branch</th>
+                <th>Roles</th>
+                <th class="text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td><input type="checkbox" [(ngModel)]="user.selected"></td>
+                <td class="fw-600">{{ user.username }}</td>
+                <td>{{ user.fullName }}</td>
+                <td>{{ user.branch_id ? 'Branch #' + user.branch_id : 'All' }}</td>
+                <td>
+                    <span class="badge" *ngFor="let role of user.roles">{{ role.name }}</span>
+                    <span *ngIf="user.roles.length === 0" class="text-muted" style="font-size: 11px;">No roles</span>
+                </td>
+                <td class="text-right">
+                    <button class="btn-icon" (click)="editUser(user)" title="Edit">✏️</button>
+                    <button class="btn-icon" (click)="deleteUser(user.id)" title="Delete">🗑️</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal card">
+        <div class="card-header">
+            <h3 class="card-title">{{ editingUser ? 'Edit User' : 'Add New User' }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group mb-12">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-input" [(ngModel)]="userForm.username">
+            </div>
+            <div class="form-group mb-12">
+                <label class="form-label">Password {{ editingUser ? '(Leave blank to keep same)' : '' }}</label>
+                <input type="password" class="form-input" [(ngModel)]="userForm.password">
+            </div>
+            <div class="form-group mb-12">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" [(ngModel)]="userForm.fullName">
+            </div>
+            <div class="form-group mb-12">
+                <label class="form-label">Branch</label>
+                <select class="form-input" [(ngModel)]="userForm.branchId">
+                    <option [ngValue]="null">Head Office / All</option>
+                    <option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+                </select>
+            </div>
+            <div class="form-group mb-12">
+                <label class="form-label">Assign Roles</label>
+                <div class="flex flex-wrap gap-8 mt-4">
+                    <div *ngFor="let role of roles" 
+                         class="role-chip" 
+                         [class.active]="isRoleSelected(role.id)"
+                         (click)="toggleRoleSelection(role.id)">
+                        {{ role.name }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer justify-end">
+            <button class="btn btn-secondary mr-8" (click)="showModal = false">Cancel</button>
+            <button class="btn btn-primary" (click)="saveUser()">Save User</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Role Modal -->
+<div class="modal-backdrop" *ngIf="showBulkRoleModal">
+    <div class="modal card">
+        <div class="card-header">
+            <h3 class="card-title">Bulk Assign Roles</h3>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-16">Assign the following roles to the {{ selectedUserCount }} selected users. This will replace their existing roles.</p>
+            <div class="flex flex-wrap gap-8">
+                <div *ngFor="let role of roles" 
+                     class="role-chip" 
+                     [class.active]="isBulkRoleSelected(role.id)"
+                     (click)="toggleBulkRoleSelection(role.id)">
+                    {{ role.name }}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer justify-end">
+            <button class="btn btn-secondary mr-8" (click)="showBulkRoleModal = false">Cancel</button>
+            <button class="btn btn-primary" (click)="applyBulkRoles()">Apply to Selection</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Roles & Permissions</h1>
+        <p class="page-subtitle">Define roles and map granular permissions to control access levels.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openAddModal()">Add New Role</button>
+</div>
+
+<div class="grid-role">
+    <div class="card" *ngFor="let role of roles">
+        <div class="card-header justify-between">
+            <div>
+                <h3 class="card-title">{{ role.name }}</h3>
+                <span class="badge system" *ngIf="role.is_system_role">System Role</span>
+            </div>
+            <div class="flex">
+                <button class="btn-icon" (click)="editRole(role)" title="Edit">✏️</button>
+                <button class="btn-icon" *ngIf="!role.is_system_role" (click)="deleteRole(role.id)" title="Delete">🗑️</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-description mb-8">{{ role.description }}</p>
+            <div class="permission-summary">
+                <strong>{{ role.permissions.length }} permissions assigned.</strong>
+                <div class="p-list mt-8">
+                    <span class="p-tag" *ngFor="let p of role.permissions.slice(0, 8)">{{ p }}</span>
+                    <span *ngIf="role.permissions.length > 8" class="text-muted" style="font-size: 11px;">+{{ role.permissions.length - 8 }} more</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal card">
+        <div class="card-header">
+            <h3 class="card-title">{{ editingRole ? 'Edit Role' : 'Add New Role' }}</h3>
+        </div>
+        <div class="card-body permission-modal-body">
+            <div class="form-group mb-12">
+                <label class="form-label">Role Name</label>
+                <input type="text" class="form-input" [(ngModel)]="roleForm.name" [disabled]="!!editingRole?.is_system_role">
+            </div>
+            <div class="form-group mb-12">
+                <label class="form-label">Description</label>
+                <textarea class="form-input" [(ngModel)]="roleForm.description"></textarea>
+            </div>
+            
+            <div class="mt-20">
+                <h4 class="fw-600 mb-12">Permissions</h4>
+                <div *ngFor="let cat of permissionCategories" class="p-category mb-16">
+                    <div class="p-cat-title">{{ cat | uppercase }}</div>
+                    <div class="p-grid mt-8">
+                        <div *ngFor="let p of groupedPermissions[cat]" 
+                             class="p-item" 
+                             [class.active]="isPermissionSelected(p.name)"
+                             (click)="togglePermission(p.name)">
+                            <div class="p-check">
+                                <span *ngIf="isPermissionSelected(p.name)">✅</span>
+                                <span *ngIf="!isPermissionSelected(p.name)">⬜</span>
+                            </div>
+                            <div class="p-info">
+                                <div class="p-name">{{ p.name }}</div>
+                                <div class="p-desc">{{ p.description }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer justify-end">
+            <button class="btn btn-secondary mr-8" (click)="showModal = false">Cancel</button>
+            <button class="btn btn-primary" (click)="saveRole()">Save Role</button>
+        </div>
+    </div>
+</div>

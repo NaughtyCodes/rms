@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -16,7 +16,7 @@ function generateInvoiceNumber(tenantId) {
 }
 
 // POST /api/invoices — create invoice with items (atomic)
-router.post('/', authenticate, (req, res) => {
+router.post('/', authenticate, authorizePermission('access_billing'), (req, res) => {
     try {
         const { items, discount = 0, tax_percent = 0, payment_mode = 'cash', customer_name = '', customer_phone = '' } = req.body;
 
@@ -127,7 +127,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 // GET /api/invoices — list invoices with date filter
-router.get('/', authenticate, (req, res) => {
+router.get('/', authenticate, authorizePermission('view_invoices'), (req, res) => {
     try {
         const { date, from, to, page = 1, limit = 50 } = req.query;
         const offset = (page - 1) * limit;
@@ -162,7 +162,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // GET /api/invoices/:id — single invoice with all items
-router.get('/:id', authenticate, (req, res) => {
+router.get('/:id', authenticate, authorizePermission('view_invoices'), (req, res) => {
     try {
         const invoice = db.prepare(`
             SELECT i.*, u.username as cashier

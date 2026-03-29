@@ -10,6 +10,7 @@ export interface User {
     fullName: string;
     branchId?: number;
     tenantId?: number;
+    permissions?: string[];
 }
 
 export interface LoginResponse {
@@ -61,5 +62,12 @@ export class AuthService {
 
     isSuperAdmin(): boolean {
         return this.currentUser.value?.role === 'superadmin';
+    }
+
+    hasPermission(permission: string): boolean {
+        const user = this.currentUser.value;
+        if (!user) return false;
+        if (user.role === 'superadmin') return true;
+        return !!user.permissions?.includes(permission);
     }
 }

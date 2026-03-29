@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizeAdmin, authorizePermission } from '../middleware/auth.js';
 import multer from 'multer';
 import csvParser from 'csv-parser';
 import stream from 'stream';
@@ -114,7 +114,7 @@ router.get('/:id', authenticate, (req, res) => {
 });
 
 // POST /api/products
-router.post('/', authenticate, (req, res) => {
+router.post('/', authenticate, authorizePermission('manage_products'), (req, res) => {
     try {
         const { name, barcode, category_id, cost_price, selling_price, quantity, low_stock_threshold, unit, tax_rate, meta_values } = req.body;
         if (!name) return res.status(400).json({ error: 'Product name is required.' });
@@ -153,7 +153,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 // PUT /api/products/:id
-router.put('/:id', authenticate, (req, res) => {
+router.put('/:id', authenticate, authorizePermission('manage_products'), (req, res) => {
     try {
         const existing = db.prepare('SELECT * FROM products WHERE id = ? AND tenant_id = ?').get(req.params.id, req.tenantId);
         if (!existing) return res.status(404).json({ error: 'Product not found.' });
@@ -200,7 +200,7 @@ router.put('/:id', authenticate, (req, res) => {
 });
 
 // DELETE /api/products/:id
-router.delete('/:id', authenticate, (req, res) => {
+router.delete('/:id', authenticate, authorizePermission('manage_products'), (req, res) => {
     try {
         const result = db.prepare('DELETE FROM products WHERE id = ? AND tenant_id = ?').run(req.params.id, req.tenantId);
         if (result.changes === 0) return res.status(404).json({ error: 'Product not found.' });
@@ -211,7 +211,7 @@ router.delete('/:id', authenticate, (req, res) => {
 });
 
 // POST /api/products/import
-router.post('/import', authenticate, authorizeAdmin, upload.single('file'), (req, res) => {
+router.post('/import', authenticate, authorizePermission('manage_products'), upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
 
     const results = [];

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -76,7 +76,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // PUT /api/settings
-router.put('/', authenticate, authorizeAdmin, (req, res) => {
+router.put('/', authenticate, authorizePermission('manage_settings'), (req, res) => {
     try {
         const settings = req.body;
 
@@ -117,7 +117,7 @@ const uploadMiddleware = (req, res, next) => {
 };
 
 // POST /api/settings/upload-logo
-router.post('/upload-logo', authenticate, authorizeAdmin, uploadMiddleware, async (req, res) => {
+router.post('/upload-logo', authenticate, authorizePermission('manage_settings'), uploadMiddleware, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });

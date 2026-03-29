@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // POST new branch (Admin only)
-router.post('/', authenticate, authorizeAdmin, (req, res) => {
+router.post('/', authenticate, authorizePermission('manage_branches'), (req, res) => {
     try {
         const { name, address, phone, isWarehouse, isActive } = req.body;
         if (!name) {
@@ -37,7 +37,7 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
 });
 
 // PUT update branch (Admin only)
-router.put('/:id', authenticate, authorizeAdmin, (req, res) => {
+router.put('/:id', authenticate, authorizePermission('manage_branches'), (req, res) => {
     try {
         const { name, address, phone, isWarehouse, isActive } = req.body;
         const stmt = db.prepare(`

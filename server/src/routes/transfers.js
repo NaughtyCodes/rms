@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import db from '../db/connection.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -46,7 +46,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // POST new transfer request
-router.post('/', authenticate, (req, res) => {
+router.post('/', authenticate, authorizePermission('transfer_stock'), (req, res) => {
     try {
         const { from_branch_id, to_branch_id, notes, items } = req.body;
         
@@ -86,7 +86,7 @@ router.post('/', authenticate, (req, res) => {
 });
 
 // PUT update status (ship, receive, cancel)
-router.put('/:id/status', authenticate, (req, res) => {
+router.put('/:id/status', authenticate, authorizePermission('transfer_stock'), (req, res) => {
     try {
         const { status } = req.body; // 'shipped', 'received', 'cancelled'
         if (!['shipped', 'received', 'cancelled'].includes(status)) {

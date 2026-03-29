@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import db from '../db/connection.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'shop-billing-secret';
 
@@ -13,8 +14,19 @@ export function authenticate(req, res, next) {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
         
-        // Ensure tenant isolation: Attach tenantId to req for controllers to use
+        // Ensure tenant isolation
         req.tenantId = decoded.tenantId; 
+        
+        // Fetch current permissions for the user (union of all roles)
+        const permissions = db.prepare(`
+            SELECT DISTINCT p.name 
+            FROM permissions p
+            JOIN role_permissions rp ON p.id = rp.permission_id
+            JOIN user_roles ur ON rp.role_id = ur.role_id
+            WHERE ur.user_id = ?
+        `).all(decoded.id).map(p => p.name);
+
+        req.user.permissions = permissions;
         
         next();
     } catch (err) {
@@ -22,11 +34,24 @@ export function authenticate(req, res, next) {
     }
 }
 
+export function authorizePermission(permission) {
+    return (req, res, next) => {
+        // Superadmin always has all permissions or skip check if they are system-wide
+        if (req.user.role === 'superadmin') return next();
+
+        if (!req.user.permissions.includes(permission)) {
+            return res.status(403).json({ error: `Access denied. Required permission: ${permission}` });
+        }
+        next();
+    };
+}
+
 export function authorizeAdmin(req, res, next) {
-    if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {
-        return res.status(403).json({ error: 'Access denied. Admin permissions required.' });
+    // Legacy support: check for admin role or manage_users permission
+    if (req.user.role === 'admin' || req.user.role === 'superadmin' || req.user.permissions.includes('manage_users')) {
+        return next();
     }
-    next();
+    return res.status(403).json({ error: 'Access denied. Admin permissions required.' });
 }
 
 export function authorizeSuperAdmin(req, res, next) {

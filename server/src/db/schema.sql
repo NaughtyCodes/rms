@@ -15,12 +15,47 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL,
     password_hash TEXT NOT NULL,
     full_name TEXT NOT NULL DEFAULT '',
-    role TEXT NOT NULL DEFAULT 'cashier' CHECK(role IN ('superadmin', 'admin', 'cashier')),
+    role TEXT, -- Kept for legacy compatibility, preferred way is user_roles table
     branch_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL,
     UNIQUE(tenant_id, username)
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tenant_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    is_system_role INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    UNIQUE(tenant_id, name)
+);
+
+CREATE TABLE IF NOT EXISTS permissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE, -- e.g., 'view_dashboard', 'manage_inventory'
+    category TEXT NOT NULL, -- e.g., 'billing', 'inventory', 'admin'
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+    role_id INTEGER NOT NULL,
+    permission_id INTEGER NOT NULL,
+    PRIMARY KEY (role_id, permission_id),
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+    FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_roles (
+    user_id INTEGER NOT NULL,
+    role_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -236,3 +271,7 @@ CREATE INDEX IF NOT EXISTS idx_product_batches_tenant ON product_batches(tenant_
 CREATE INDEX IF NOT EXISTS idx_product_batches_product ON product_batches(product_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_transactions_tenant ON inventory_transactions(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_transactions_product ON inventory_transactions(product_id);
+CREATE INDEX IF NOT EXISTS idx_roles_tenant ON roles(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_user ON user_roles(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_role ON user_roles(role_id);
+CREATE INDEX IF NOT EXISTS idx_role_permissions_role ON role_permissions(role_id);

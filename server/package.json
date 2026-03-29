@@ -14,10 +14,16 @@
         "better-sqlite3": "^11.0.0",
         "cors": "^2.8.5",
         "csv-parser": "^3.2.0",
-        "dotenv": "^16.4.5",
+        "dotenv": "^16.6.1",
         "express": "^4.21.0",
         "jsonwebtoken": "^9.0.2",
+        "knex": "^3.2.7",
         "multer": "^2.0.2",
-        "sharp": "^0.34.5"
+        "mysql2": "^3.20.0",
+        "node-cron": "^4.2.1",
+        "nodemailer": "^8.0.4",
+        "pg": "^8.20.0",
+        "sharp": "^0.34.5",
+        "sqlite3": "^5.1.7"
     }
 }

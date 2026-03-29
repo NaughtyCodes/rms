@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizePermission } from '../middleware/auth.js';
 import db from '../db/connection.js';
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.get('/', authenticate, (req, res) => {
 });
 
 // POST /api/taxes — Create a new tax slab
-router.post('/', authenticate, authorizeAdmin, (req, res) => {
+router.post('/', authenticate, authorizePermission('manage_taxes'), (req, res) => {
     const { name, rate, is_active = true } = req.body;
     
     if (!name || rate === undefined) {
@@ -46,7 +46,7 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
 });
 
 // DELETE /api/taxes/:id — Soft delete a tax slab
-router.delete('/:id', authenticate, authorizeAdmin, (req, res) => {
+router.delete('/:id', authenticate, authorizePermission('manage_taxes'), (req, res) => {
     try {
         db.prepare('UPDATE taxes SET is_active = 0 WHERE id = ? AND tenant_id = ?').run(req.params.id, req.tenantId);
         res.json({ message: 'Tax removed successfully' });
