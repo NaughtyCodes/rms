@@ -1,6 +1,6 @@
-# Tracly | User Guide & Documentation
+# Tractly | User Guide & Documentation
 
-Welcome to the Tracly User Guide. This document provides comprehensive instructions for setting up, managing, and optimizing your shop inventory and billing operations.
+Welcome to the Tractly User Guide. This document provides comprehensive instructions for setting up, managing, and optimizing your shop inventory and billing operations.
 
 ---
 
@@ -17,7 +17,7 @@ Welcome to the Tracly User Guide. This document provides comprehensive instructi
 ---
 
 ## 1. Introduction
-Tracly is a streamlined Inventory and Billing System designed for modern retail businesses. Whether you operate a single boutique or a multi-city enterprise, Tracly provides the tools to maintain control over your stock and sales.
+Tractly is a streamlined Inventory and Billing System designed for modern retail businesses. Whether you operate a single boutique or a multi-city enterprise, Tractly provides the tools to maintain control over your stock and sales.
 
 ## 🖼️ Visual Guide
 
@@ -30,7 +30,7 @@ Your command center for real-time inventory and sales monitoring.
 ![Dashboard](assets/dashboard_desktop.png)
 
 ### Mobile-Ready Interface
-Tracly is fully responsive and works beautifully on any mobile device or tablet.
+Tractly is fully responsive and works beautifully on any mobile device or tablet.
 ![Mobile View](assets/mobile_view.png)
 
 ## 2. Getting Started
@@ -80,7 +80,7 @@ Access real-time data to drive your business decisions:
 - **Stock Alerts**: Get notified when inventory levels across any branch fall below a predefined threshold.
 
 ## 8. Troubleshooting
-- **Database Connection**: Tracly uses SQLite. Ensure the `server/data/` folder is writable.
+- **Database Connection**: Tractly uses SQLite. Ensure the `server/data/` folder is writable.
 - **Image Uploads**: If logos aren't displaying, verify the `server/uploads/` directory permissions.
 - **Server Ports**: Default ports are `3001` (Backend) and `4200` (Frontend).
 

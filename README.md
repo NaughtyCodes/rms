@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.png" alt="Tracly Logo" width="150">
+  <img src="assets/logo.png" alt="Tractly Logo" width="150">
   <h1>Tractly</h1>
   <p><strong>A powerful, minimalist Shop Inventory & Billing System for modern businesses.</strong></p>
   <p><a href="https://naughtycodes.github.io/tractly/"><strong>Visit Product Page →</strong></a></p>
@@ -14,10 +14,10 @@
 
 ## 🚀 Overview
 
-Tracly is a comprehensive solution designed to streamline inventory management and billing for retail shops and multi-branch businesses. Built with a focus on speed, scalability, and ease of use, it provides everything you need to manage your inventory, process sales, and track business performance in one place.
+Tractly is a comprehensive solution designed to streamline inventory management and billing for retail shops and multi-branch businesses. Built with a focus on speed, scalability, and ease of use, it provides everything you need to manage your inventory, process sales, and track business performance in one place.
 
 <div align="center">
-  <img src="assets/dashboard_desktop.png" alt="Tracly Dashboard" width="800">
+  <img src="assets/dashboard_desktop.png" alt="Tractly Dashboard" width="800">
 </div>
 
 ### 📱 UI Reference
@@ -41,7 +41,7 @@ Tracly is a comprehensive solution designed to streamline inventory management a
 
 ## 📐 Architecture Diagram
 
-Tracly follows a client-server architecture with a local database, optimized for high availability and low latency.
+Tractly follows a client-server architecture with a local database, optimized for high availability and low latency.
 
 ```mermaid
 graph TD
@@ -60,7 +60,7 @@ graph TD
 
 ## 🔄 Core Business Workflow
 
-Tracly simplifies the entire lifecycle from stocking to billing.
+Tractly simplifies the entire lifecycle from stocking to billing.
 
 ```mermaid
 sequenceDiagram

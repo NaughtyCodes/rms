@@ -1,7 +1,7 @@
 {
   "config": {
-    "configFile": "D:\\tracly\\client\\playwright.config.ts",
-    "rootDir": "D:/tracly/client/tests",
+    "configFile": "D:\\tractly\\client\\playwright.config.ts",
+    "rootDir": "D:/tractly/client/tests",
     "forbidOnly": false,
     "fullyParallel": true,
     "globalSetup": null,
@@ -16,7 +16,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "D:/tracly/client/test-results",
+        "outputDir": "D:/tractly/client/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -24,7 +24,7 @@
         },
         "id": "chromium",
         "name": "chromium",
-        "testDir": "D:/tracly/client/tests",
+        "testDir": "D:/tractly/client/tests",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"

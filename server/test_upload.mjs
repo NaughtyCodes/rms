@@ -16,7 +16,7 @@ async function testUpload() {
     console.log('Login successful. Token:', loginData.token.substring(0, 10) + '...');
 
     // 2. Upload Logo
-    const filePath = 'd:\\tracly\\admin_features_test_1773038799631.webp';
+    const filePath = 'd:\\tractly\\admin_features_test_1773038799631.webp';
     const fileData = fs.readFileSync(filePath);
     
     // Create multipart/form-data manually or use fetch standard behavior

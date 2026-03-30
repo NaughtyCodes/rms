@@ -53,9 +53,9 @@
     <form (ngSubmit)="saveTenant()" #tForm="ngForm">
       <div class="form-group">
         <label>Shop Name</label>
-        <input type="text" [(ngModel)]="tenantForm.name" name="name" required placeholder="e.g. Tracly Mart">
+        <input type="text" [(ngModel)]="tenantForm.name" name="name" required placeholder="e.g. Tractly Mart">
         <label>URL Slug</label>
-        <input type="text" [(ngModel)]="tenantForm.slug" name="slug" required placeholder="e.g. tracly-mart" [disabled]="!!editingTenant">
+        <input type="text" [(ngModel)]="tenantForm.slug" name="slug" required placeholder="e.g. tractly-mart" [disabled]="!!editingTenant">
         <small>This will be used for tenant identification.</small>
       </div>
       

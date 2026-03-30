@@ -1,5 +1,5 @@
 {
-    "name": "tracly-server",
+    "name": "tractly-server",
     "version": "1.0.0",
     "description": "Backend API for Shop Inventory and Billing",
     "main": "src/app.js",

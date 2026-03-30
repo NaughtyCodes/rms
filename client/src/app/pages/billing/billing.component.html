@@ -152,7 +152,7 @@
         <div class="receipt-header">
             <img *ngIf="settings?.bill_show_logo === 'true' && settings?.shop_logo_url" 
                  [src]="settings?.shop_logo_url" class="bill-logo">
-            <h2>{{ settings?.shop_name || 'Tracly' }}</h2>
+            <h2>{{ settings?.shop_name || 'Tractly' }}</h2>
             <p>{{ settings?.shop_address }}</p>
             <p *ngIf="settings?.shop_phone">📞 {{ settings?.shop_phone }}</p>
             <p *ngIf="settings?.shop_gstin">GSTIN: {{ settings?.shop_gstin }}</p>

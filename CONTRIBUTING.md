@@ -1,6 +1,6 @@
-# Contributing to Tracly
+# Contributing to Tractly
 
-First off, thank you for considering contributing to Tracly! It's people like you that make Tracly such a great tool for the community.
+First off, thank you for considering contributing to Tractly! It's people like you that make Tractly such a great tool for the community.
 
 ## How Can I Contribute?
 

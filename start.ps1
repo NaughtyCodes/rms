@@ -6,7 +6,7 @@ param (
     [string]$Action = "start"
 )
 
-Write-Host "Tracly Service Manager" -ForegroundColor Cyan
+Write-Host "Tractly Service Manager" -ForegroundColor Cyan
 Write-Host "Action: $Action" -ForegroundColor DarkCyan
 
 $backendRunning = Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue
