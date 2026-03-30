@@ -84,7 +84,8 @@
             "proxyConfig": "proxy.conf.json",
             "allowedHosts": [
               "localhost",
-              ".trycloudflare.com"
+              ".trycloudflare.com",
+              "demo.tractly.shop"
             ]
           },
           "configurations": {

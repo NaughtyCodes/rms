@@ -25,8 +25,10 @@ get_pid_by_port() {
 
 backend_pid=$(get_pid_by_port 3001)
 frontend_pid=$(get_pid_by_port 4200)
+cloudflared_pid=$(pgrep -x cloudflared || echo "")
 
 stop_services() {
+    local is_live=$1
     echo -e "\e[33mStopping existing services...\e[0m"
     
     if [ -n "$backend_pid" ]; then
@@ -50,9 +52,23 @@ stop_services() {
     else
         echo -e "\e[90mℹ️ Frontend is not running.\e[0m"
     fi
+
+    if [ "$is_live" == "live" ]; then
+        if [ -n "$cloudflared_pid" ]; then
+            if command -v taskkill >/dev/null 2>&1; then
+                taskkill //IM "cloudflared.exe" //F 2>/dev/null || taskkill /IM "cloudflared.exe" /F 2>/dev/null
+            else
+                kill -9 "$cloudflared_pid" 2>/dev/null
+            fi
+            echo -e "\e[32m✅ Cloudflare Tunnel stopped.\e[0m"
+        else
+            echo -e "\e[90mℹ️ Cloudflare Tunnel is not running.\e[0m"
+        fi
+    fi
 }
 
 start_services() {
+    local is_live=$1
     if [ -n "$backend_pid" ] || [ -n "$frontend_pid" ]; then
         echo -e "\e[33mWARNING: One or more services are already running! Use 'restart' to restart them.\e[0m"
         exit 1
@@ -95,14 +111,38 @@ start_services() {
 
     echo -e "\e[36mBoth services have been launched!\e[0m"
     echo -e "\e[36mThe application will be available at http://localhost:4200\e[0m"
+
+    if [ "$is_live" == "live" ]; then
+        echo -e "\e[36mWaiting for services to initialize before starting Cloudflare Tunnel...\e[0m"
+        sleep 5
+        echo -e "\e[32mStarting Cloudflare Tunnel...\e[0m"
+        if command -v mintty >/dev/null 2>&1; then
+            mintty -t "Cloudflare Tunnel" -h always -e sh -c "cloudflared tunnel run tractly-live; exec bash" &
+        elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]] && command -v start >/dev/null 2>&1; then
+            start bash -c "cloudflared tunnel run tractly-live; exec bash"
+        elif command -v gnome-terminal >/dev/null 2>&1; then
+            gnome-terminal --title="Cloudflare Tunnel" -- bash -c "cloudflared tunnel run tractly-live; exec bash" &
+        elif command -v xterm >/dev/null 2>&1; then
+            xterm -T "Cloudflare Tunnel" -e "cloudflared tunnel run tractly-live; exec bash" &
+        else
+            (cloudflared tunnel run tractly-live > cloudflared.log 2>&1 &)
+            echo -e "\e[90mCloudflare Tunnel started in background (logs in cloudflared.log)\e[0m"
+        fi
+    fi
 }
 
 case "$ACTION" in
     stop)
         stop_services
         ;;
+    stop-live)
+        stop_services "live"
+        ;;
     start)
         start_services
+        ;;
+    start-live)
+        start_services "live"
         ;;
     restart)
         stop_services
@@ -115,9 +155,19 @@ case "$ACTION" in
         
         start_services
         ;;
+    restart-live)
+        stop_services "live"
+        sleep 2
+        
+        backend_pid=$(get_pid_by_port 3001)
+        frontend_pid=$(get_pid_by_port 4200)
+        cloudflared_pid=$(pgrep -x cloudflared || echo "")
+        
+        start_services "live"
+        ;;
     *)
-        echo -e "\e[31mInvalid action specified. Please use 'start', 'stop', or 'restart'.\e[0m"
-        echo -e "\e[33mExample: ./start.sh restart\e[0m"
+        echo -e "\e[31mInvalid action specified. Please use 'start', 'stop', 'restart', 'start-live', 'stop-live', or 'restart-live'.\e[0m"
+        echo -e "\e[33mExample: ./start.sh restart-live\e[0m"
         exit 1
         ;;
 esac
