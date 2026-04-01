@@ -292,6 +292,56 @@
                     <p>Full responsiveness for on-the-go inventory control.</p>
                 </div>
             </div>
+    </section>
+
+    <section id="demo" class="section bg-secondary">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">Live Demo <span class="accent">Credentials</span></h2>
+                <p class="section-subtitle">Experience True Multi-Tenancy by logging into isolated environments.</p>
+            </div>
+            
+            <div class="feature-grid" style="margin-top: 40px;">
+                <div class="card h-reveal" style="border-top: 4px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin: 0;"><i class="fas fa-crown" style="color:var(--primary);"></i> Global SuperAdmin</h3>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Manages the entire scalable platform logic. Creates, deletes, and oversees tenants globally.</p>
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
+                        <p style="margin:0;"><strong>Username:</strong> super</p>
+                        <p style="margin:5px 0 0 0;"><strong>Password:</strong> super123</p>
+                    </div>
+                </div>
+
+                <div class="card h-reveal" style="border-top: 4px solid #10B981;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin: 0;"><i class="fas fa-store" style="color:#10B981;"></i> Tenant 1 Admin</h3>
+                        <span style="font-size: 12px; background:#ECFDF5; color:#10B981; padding:4px 8px; border-radius:4px; font-weight:bold;">TechStore Inc</span>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Isolated Admin for "TechStore Inc". Manages tech products across "Main" and "Downtown" branches.</p>
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
+                        <p style="margin:0;"><strong>Username:</strong> tech_admin</p>
+                        <p style="margin:5px 0 0 0;"><strong>Password:</strong> admin123</p>
+                    </div>
+                </div>
+
+                <div class="card h-reveal" style="border-top: 4px solid #F59E0B;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin: 0;"><i class="fas fa-shopping-basket" style="color:#F59E0B;"></i> Tenant 2 Admin</h3>
+                        <span style="font-size: 12px; background:#FFFBEB; color:#F59E0B; padding:4px 8px; border-radius:4px; font-weight:bold;">SuperMart</span>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Isolated Admin for "SuperMart". Manages grocery inventory completely isolated from TechStore.</p>
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
+                        <p style="margin:0;"><strong>Username:</strong> mart_admin</p>
+                        <p style="margin:5px 0 0 0;"><strong>Password:</strong> admin123</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card text-center h-reveal" style="margin-top: 30px;">
+                <p><strong><i class="fas fa-flask"></i> Testing Data Isolation:</strong></p>
+                <p style="color: var(--text-light);">Log in as <code>tech_admin</code> and verify the tech products and branches. Then log out and log in as <code>mart_admin</code> to see an entirely different set of shops and inventories seamlessly segregated. Check out our <a href="MULTI_TENANT_DEMO_GUIDE.md" style="color: var(--primary); font-weight: bold;">Multi-Tenant Demo Guide</a> for a detailed step-by-step walkthrough!</p>
+            </div>
         </div>
     </section>
 
