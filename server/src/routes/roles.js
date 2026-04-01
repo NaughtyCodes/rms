@@ -38,11 +38,11 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
             const roleId = result.lastInsertRowid;
 
             if (permissions && Array.isArray(permissions)) {
-                const insertRP = db.prepare('INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
+                const insertRP = db.prepare('INSERT INTO role_permissions (tenant_id, role_id, permission_id) VALUES (?, ?, ?)');
                 const findPerm = db.prepare('SELECT id FROM permissions WHERE name = ?');
                 for (const pName of permissions) {
                     const perm = findPerm.get(pName);
-                    if (perm) insertRP.run(roleId, perm.id);
+                    if (perm) insertRP.run(req.tenantId, roleId, perm.id);
                 }
             }
             return roleId;
@@ -70,18 +70,18 @@ router.put('/:id', authenticate, authorizeAdmin, (req, res) => {
         }
 
         db.transaction(() => {
-            db.prepare('UPDATE roles SET name = ?, description = ? WHERE id = ?')
-                .run(name || 'Unnamed', description || '', id);
+            db.prepare('UPDATE roles SET name = ?, description = ? WHERE id = ? AND tenant_id = ?')
+                .run(name || 'Unnamed', description || '', id, req.tenantId);
 
             if (permissions && Array.isArray(permissions)) {
                 // Remove old permissions
-                db.prepare('DELETE FROM role_permissions WHERE role_id = ?').run(id);
+                db.prepare('DELETE FROM role_permissions WHERE role_id = ? AND tenant_id = ?').run(id, req.tenantId);
                 // Add new ones
-                const insertRP = db.prepare('INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
+                const insertRP = db.prepare('INSERT INTO role_permissions (tenant_id, role_id, permission_id) VALUES (?, ?, ?)');
                 const findPerm = db.prepare('SELECT id FROM permissions WHERE name = ?');
                 for (const pName of permissions) {
                     const perm = findPerm.get(pName);
-                    if (perm) insertRP.run(id, perm.id);
+                    if (perm) insertRP.run(req.tenantId, id, perm.id);
                 }
             }
         })();
@@ -100,7 +100,7 @@ router.delete('/:id', authenticate, authorizeAdmin, (req, res) => {
         if (!role) return res.status(404).json({ error: 'Role not found.' });
         if (role.is_system_role) return res.status(403).json({ error: 'System roles cannot be deleted.' });
 
-        db.prepare('DELETE FROM roles WHERE id = ?').run(id);
+        db.prepare('DELETE FROM roles WHERE id = ? AND tenant_id = ?').run(id, req.tenantId);
         res.status(204).end();
     } catch (err) {
         res.status(500).json({ error: err.message });

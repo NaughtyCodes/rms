@@ -49,6 +49,11 @@ The Admin dashboard provides a bird's-eye view of your entire business.
 - **Tenant Configuration**: Configure multi-tenant settings for isolated business data.
 - **Global Settings**: Manage branch lists, categories, and payment methods.
 
+### Managing Tenants (Dynamic Schemas)
+Tractly natively supports isolated data environments driven by a **True Multi-Tenant** architecture. SuperAdmins can dynamically construct entirely new workspaces alongside dedicated administrative credentials via the `Tenant Management` UI. Once created, tenant-specific users can log in and populate their own segregated "schemas", including Custom Product Meta Fields, Categories, Branches, and Roles, which remain completely invisible to other tenants. When a tenant is deleted, all dynamically constructed schemas and boundaries associated with that tenant are permanently purged to maintain strict isolation boundaries.
+
+> **Instructional Video**: [Placeholder: A recording demonstrating Tenant Creation, Schema configuration, and Data Cleanup will be automatically embedded here once capacity allows]
+
 ## 4. Inventory Management
 ### Adding Products
 Navigate to the **Products** section and click **Add New Product**. You can specify:

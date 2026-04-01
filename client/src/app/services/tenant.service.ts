@@ -9,6 +9,8 @@ export interface Tenant {
     plan: string;
     is_active: number;
     created_at?: string;
+    adminUsername?: string;
+    adminPassword?: string;
 }
 
 @Injectable({
@@ -33,5 +35,9 @@ export class TenantService {
 
     updateTenant(id: number, tenant: Partial<Tenant>): Observable<any> {
         return this.http.put(`${this.apiUrl}/${id}`, tenant);
+    }
+
+    deleteTenant(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }

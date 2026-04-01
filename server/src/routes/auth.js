@@ -28,10 +28,10 @@ router.post('/login', (req, res) => {
         const permissions = db.prepare(`
             SELECT DISTINCT p.name 
             FROM permissions p
-            JOIN role_permissions rp ON p.id = rp.permission_id
-            JOIN user_roles ur ON rp.role_id = ur.role_id
+            JOIN role_permissions rp ON p.id = rp.permission_id AND rp.tenant_id = ?
+            JOIN user_roles ur ON rp.role_id = ur.role_id AND ur.tenant_id = ?
             WHERE ur.user_id = ?
-        `).all(user.id).map(p => p.name);
+        `).all(user.tenant_id, user.tenant_id, user.id).map(p => p.name);
 
         const token = jwt.sign(
             { 
@@ -81,9 +81,22 @@ router.post('/register', authenticate, authorizeAdmin, (req, res) => {
         const tenantId = req.user.tenantId; // Inherit tenant from the creator
 
         const hash = bcrypt.hashSync(password, 10);
-        const result = db.prepare(
-            'INSERT INTO users (username, password_hash, full_name, role, branch_id, tenant_id) VALUES (?, ?, ?, ?, ?, ?)'
-        ).run(username, hash, fullName || '', role || 'cashier', branchId || null, tenantId);
+        
+        const result = db.transaction(() => {
+            const insertResult = db.prepare(
+                'INSERT INTO users (username, password_hash, full_name, role, branch_id, tenant_id) VALUES (?, ?, ?, ?, ?, ?)'
+            ).run(username, hash, fullName || '', role || 'cashier', branchId || null, tenantId);
+            
+            const userId = insertResult.lastInsertRowid;
+            const targetRoleName = role || 'cashier';
+            const roleRec = db.prepare('SELECT id FROM roles WHERE name = ? AND tenant_id = ?').get(targetRoleName, tenantId);
+            
+            if (roleRec) {
+                db.prepare('INSERT INTO user_roles (tenant_id, user_id, role_id) VALUES (?, ?, ?)').run(tenantId, userId, roleRec.id);
+            }
+            
+            return insertResult;
+        })();
 
         res.status(201).json({ id: result.lastInsertRowid, username, role: role || 'cashier', branchId, tenantId });
     } catch (err) {

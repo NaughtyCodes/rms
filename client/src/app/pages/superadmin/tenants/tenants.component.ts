@@ -47,7 +47,7 @@ export class TenantsComponent implements OnInit {
 
   openCreateModal(): void {
     this.editingTenant = null;
-    this.tenantForm = { name: '', slug: '', plan: 'basic', is_active: 1 };
+    this.tenantForm = { name: '', slug: '', plan: 'basic', is_active: 1, adminUsername: '', adminPassword: '' };
     this.showModal = true;
   }
 
@@ -86,6 +86,23 @@ export class TenantsComponent implements OnInit {
         },
         error: (err) => {
           this.error = err.error?.error || 'Creation failed';
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+  deleteTenant(id: number | undefined): void {
+    if (!id) return;
+    if (confirm('Are you sure you want to completely delete this tenant and ALL associated data? This cannot be undone.')) {
+      this.loading = true;
+      this.tenantService.deleteTenant(id).subscribe({
+        next: () => {
+          this.success = 'Tenant deleted permanently.';
+          this.loadTenants();
+        },
+        error: (err) => {
+          this.error = err.error?.error || 'Deletion failed.';
           this.loading = false;
         }
       });

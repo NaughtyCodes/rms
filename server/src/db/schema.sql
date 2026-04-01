@@ -43,17 +43,21 @@ CREATE TABLE IF NOT EXISTS permissions (
 );
 
 CREATE TABLE IF NOT EXISTS role_permissions (
+    tenant_id INTEGER NOT NULL,
     role_id INTEGER NOT NULL,
     permission_id INTEGER NOT NULL,
-    PRIMARY KEY (role_id, permission_id),
+    PRIMARY KEY (tenant_id, role_id, permission_id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
     FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_roles (
+    tenant_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     role_id INTEGER NOT NULL,
-    PRIMARY KEY (user_id, role_id),
+    PRIMARY KEY (tenant_id, user_id, role_id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );

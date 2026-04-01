@@ -41,9 +41,9 @@ router.post('/', authenticate, authorizeAdmin, (req, res) => {
             const userId = result.lastInsertRowid;
 
             if (roles && Array.isArray(roles)) {
-                const insertUR = db.prepare('INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)');
+                const insertUR = db.prepare('INSERT INTO user_roles (tenant_id, user_id, role_id) VALUES (?, ?, ?)');
                 for (const roleId of roles) {
-                    insertUR.run(userId, roleId);
+                    insertUR.run(req.tenantId, userId, roleId);
                 }
             }
             return userId;
@@ -68,17 +68,17 @@ router.put('/:id', authenticate, authorizeAdmin, (req, res) => {
         db.transaction(() => {
             if (password) {
                 const hash = bcrypt.hashSync(password, 10);
-                db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, id);
+                db.prepare('UPDATE users SET password_hash = ? WHERE id = ? AND tenant_id = ?').run(hash, id, req.tenantId);
             }
 
-            db.prepare('UPDATE users SET full_name = ?, branch_id = ? WHERE id = ?')
-                .run(fullName || '', branchId || null, id);
+            db.prepare('UPDATE users SET full_name = ?, branch_id = ? WHERE id = ? AND tenant_id = ?')
+                .run(fullName || '', branchId || null, id, req.tenantId);
 
             if (roles && Array.isArray(roles)) {
-                db.prepare('DELETE FROM user_roles WHERE user_id = ?').run(id);
-                const insertUR = db.prepare('INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)');
+                db.prepare('DELETE FROM user_roles WHERE user_id = ? AND tenant_id = ?').run(id, req.tenantId);
+                const insertUR = db.prepare('INSERT INTO user_roles (tenant_id, user_id, role_id) VALUES (?, ?, ?)');
                 for (const roleId of roles) {
-                    insertUR.run(id, roleId);
+                    insertUR.run(req.tenantId, id, roleId);
                 }
             }
         })();
@@ -96,7 +96,7 @@ router.delete('/:id', authenticate, authorizeAdmin, (req, res) => {
         const user = db.prepare('SELECT id FROM users WHERE id = ? AND tenant_id = ?').get(id, req.tenantId);
         if (!user) return res.status(404).json({ error: 'User not found.' });
 
-        db.prepare('DELETE FROM users WHERE id = ?').run(id);
+        db.prepare('DELETE FROM users WHERE id = ? AND tenant_id = ?').run(id, req.tenantId);
         res.status(204).end();
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -118,12 +118,12 @@ router.post('/bulk-role-assign', authenticate, authorizeAdmin, (req, res) => {
                 if (!user) continue;
 
                 if (action === 'set') {
-                    db.prepare('DELETE FROM user_roles WHERE user_id = ?').run(userId);
+                    db.prepare('DELETE FROM user_roles WHERE user_id = ? AND tenant_id = ?').run(userId, req.tenantId);
                 }
                 
-                const insertUR = db.prepare('INSERT OR IGNORE INTO user_roles (user_id, role_id) VALUES (?, ?)');
+                const insertUR = db.prepare('INSERT OR IGNORE INTO user_roles (tenant_id, user_id, role_id) VALUES (?, ?, ?)');
                 for (const roleId of roleIds) {
-                    insertUR.run(userId, roleId);
+                    insertUR.run(req.tenantId, userId, roleId);
                 }
             }
         })();
