@@ -140,6 +140,41 @@
                 </div>
             </div>
 
+            <div class="text-center" style="margin-top: 60px;">
+                <h3 class="section-title">Data <span class="accent">Isolation</span> Model</h3>
+                <p class="section-subtitle">A true multi-tenant hierarchy mapped securely to isolated administrative workflows and branch sub-structures.</p>
+            </div>
+            <div class="diagram-container h-reveal" style="background: #F8FAFC;">
+                <div class="mermaid">
+                    graph TD
+                    SA((SuperAdmin)) --> |Provisions & Manages| Platform[Tractly Global System]
+                    Platform --> T1[Tenant A: Electro Mart]
+                    Platform --> T2[Tenant B: Fresh Grocers]
+                    
+                    subgraph "Hard-Isolated Schema A"
+                    T1 --> TA1(Tenant Admin A)
+                    T1 --> B1_1[Branch 1: Warehouse]
+                    T1 --> B1_2[Branch 2: City Retail]
+                    TA1 -.->|Oversees Stock/Users| B1_1
+                    TA1 -.->|Oversees Stock/Users| B1_2
+                    B1_2 --> C1(Cashier/User)
+                    C1 -.->|Restricted POS Access| B1_2
+                    end
+
+                    subgraph "Hard-Isolated Schema B"
+                    T2 --> TA2(Tenant Admin B)
+                    T2 --> B2_1[Branch 1: Uptown Store]
+                    TA2 -.->|Oversees Stock/Users| B2_1
+                    B2_1 --> C2(Cashier/User)
+                    C2 -.->|Restricted POS Access| B2_1
+                    end
+
+                    style Platform fill:#1E293B,stroke:#94A3B8,stroke-width:2px,color:#FFFFFF
+                    style T1 fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px
+                    style T2 fill:#ECFDF5,stroke:#10B981,stroke-width:2px
+                </div>
+            </div>
+
             <div class="tech-matrix section">
                 <div class="card tech-card h-reveal">
                     <h3>Frontend Stack</h3>
