@@ -463,6 +463,7 @@
         <a href="#stock-management" class="nav-link"><i class="fa-solid fa-wrench"></i> Stock Control</a>
         <a href="#bulk-import" class="nav-link"><i class="fa-solid fa-file-import"></i> Bulk Import</a>
         <a href="#tax-logic" class="nav-link"><i class="fa-solid fa-scale-balanced"></i> Tax Logic</a>
+        <a href="#user-management" class="nav-link"><i class="fa-solid fa-users"></i> User Management</a>
         <a href="#system-config-guide" class="nav-link"><i class="fa-solid fa-server"></i> Backup & Database</a>
     </nav>
 
@@ -645,6 +646,7 @@
                         <li><strong>Shop Name:</strong> The display name (e.g., "Tractly Mart 24/7")</li>
                         <li><strong>URL Slug:</strong> A unique identifier (e.g., "tractly-mart"). Cannot be changed
                             after creation.</li>
+                        <li><strong>Admin Username & Password:</strong> Creates the initial primary administrator dynamically within your new tenant's schema.</li>
                         <li><strong>Subscription Plan:</strong> Basic, Pro, or Enterprise</li>
                         <li><strong>Status:</strong> Active or Inactive</li>
                     </ul>
@@ -690,19 +692,13 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>Create the Tenant</td>
-                            <td>Tenant Mgmt <i class="fa-solid fa-arrow-right"></i> + New Tenant</td>
+                            <td>Create the Tenant & Admin</td>
+                            <td>Tenant Mgmt <i class="fa-solid fa-arrow-right"></i> + New Tenant (Fill Credentials)</td>
                             <td><i class="fa-solid fa-check"></i> Yes</td>
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>Create a Tenant Admin user</td>
-                            <td>Register a user with <code>admin</code> role for the tenant</td>
-                            <td><i class="fa-solid fa-check"></i> Yes</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Create Branches</td>
+                            <td>Create Branches via Admin UI</td>
                             <td>Admin Settings <i class="fa-solid fa-arrow-right"></i> Branches</td>
                             <td><i class="fa-solid fa-check"></i> Yes (at least one)</td>
                         </tr>
@@ -1304,6 +1300,36 @@
                 <div><strong>Verified Logic:</strong> During billing, if you select "Product Wise", the system
                     calculates the tax contribution of every single item separately, ensuring 100% compliance with
                     complex tax laws.</div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- USER MANAGEMENT -->
+        <!-- ============================================================= -->
+        <section id="user-management">
+            <span class="badge badge-warning">Admin Core</span>
+            <h2><i class="fa-solid fa-users"></i> Step-By-Step User Management</h2>
+            <p>Ensure your workforce operates in a restricted environment tailored to your multi-tenant shop. All cashiers and store supervisors only access what belongs directly to your tenant ID schema natively.</p>
+
+            <div class="card">
+                <h3>Creating a Cashier/Store Admin User</h3>
+                <div class="instruction-step">Log in using your Tenant's <strong>Admin Username</strong> (created during Tenant Allocation).</div>
+                <div class="instruction-step">Proceed to the <strong>User Management</strong> tab in the sidebar navigation.</div>
+                <div class="instruction-step">Click the <strong>Add New User</strong> button at the top header of the interface.</div>
+                <div class="instruction-step">Complete the necessary parameters:
+                    <ul style="margin: 10px 40px; font-size: 14px;">
+                        <li><strong>Standard Username & Password:</strong> For their sign in loop.</li>
+                        <li><strong>Full Legal Name:</strong> This populates your audit logs effectively!</li>
+                        <li><strong>Branch Association:</strong> (Crucial) Select an active branch instance—like "South Warehouse". Cashiers bound to an unpopulated branch will not be able to generate POS invoices without errors.</li>
+                        <li><strong>Role Selection:</strong> Define them as a Custom Supervisor or standard "Cashier".</li>
+                    </ul>
+                </div>
+                <div class="instruction-step">Submit by confirming <strong>Save User</strong>. Your employee now possesses exclusive isolated access to your storefront terminal.</div>
+            </div>
+
+            <div class="danger-tip">
+                <i><i class="fa-solid fa-user-shield"></i></i>
+                <div><strong>SuperAdmin Isolation Protocol:</strong> Notice you cannot spawn a "SuperAdmin" role within the tenant scope! Only existing global SuperAdmins possess the architectural key clearance to construct SuperAdmin authorities across platform strata.</div>
             </div>
         </section>
 
