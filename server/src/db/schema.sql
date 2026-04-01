@@ -84,6 +84,8 @@ CREATE TABLE IF NOT EXISTS products (
     low_stock_threshold INTEGER NOT NULL DEFAULT 5,
     unit TEXT NOT NULL DEFAULT 'pcs',
     tax_rate REAL DEFAULT 0,
+    pricing_strategy TEXT DEFAULT 'manual' CHECK(pricing_strategy IN ('manual', 'weighted_average', 'highest_cost', 'latest_cost')),
+    target_margin REAL DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,

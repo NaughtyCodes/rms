@@ -65,6 +65,17 @@ Navigate to the **Products** section and click **Add New Product**. You can spec
 ### Categories
 Organize your inventory by creating logical categories (e.g., "Electronics", "Apparel") for faster searching and better reporting.
 
+### Automated Pricing Strategies
+Tractly provides automated inventory valuation methods you can assign directly to a Product. As you stock-in distinct batches of a product across varying wholesale bills, the system handles the complexities of determining accurate cost parameters for accounting, and your eventual consumer selling price.
+
+Four robust strategies are natively integrated:
+- **`manual` (Default):** Static. Cost and Selling prices are manually defined by the Admin and never automatically overridden during stock-ins.
+- **`weighted_average`:** Real-time smoothing. Automatically calculates the `cost_price` based on the volume and price of *all currently active batches* held across the tenant. Protects against huge seasonal wholesale spikes.
+- **`highest_cost`:** Maximum safeguard. Selects the highest cost from any active batch to ensure you don't sell at a loss on older, cheaper inventory when market prices surge.
+- **`latest_cost` (LIFO):** Automatically aligns your generic `cost_price` to whatever the very latest stock-in bill dictated.
+
+**Target Margin**: For any animated strategy (Average, Highest, Latest), you can configure a standard `target_margin` (e.g., `25` for 25%). When a new wholesale batch arrives, Tractly will instantly compute the new cost strategy, append the 25% margin, and universally update the retail `selling_price` across all POS terminals in real time.
+
 ## 5. Billing & Invoicing
 The **Billing Terminal** is optimized for speed.
 1. **Search & Add**: Quickly find products by name or SKU.

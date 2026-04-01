@@ -4,6 +4,34 @@ import db from '../db/connection.js';
 
 const router = express.Router();
 
+function recalculateProductPricing(product_id, tenant_id) {
+    const prod = db.prepare('SELECT pricing_strategy, target_margin FROM products WHERE id = ? AND tenant_id = ?').get(product_id, tenant_id);
+    if (!prod || prod.pricing_strategy === 'manual') return;
+
+    const batches = db.prepare('SELECT quantity, cost_price, created_at FROM product_batches WHERE product_id = ? AND tenant_id = ? AND quantity > 0 ORDER BY created_at DESC').all(product_id, tenant_id);
+    if (batches.length === 0) return;
+
+    let newCost = 0;
+    if (prod.pricing_strategy === 'weighted_average') {
+        let totalCost = 0;
+        let totalQty = 0;
+        for (const b of batches) {
+            totalCost += (b.cost_price * b.quantity);
+            totalQty += b.quantity;
+        }
+        if (totalQty > 0) newCost = totalCost / totalQty;
+    } else if (prod.pricing_strategy === 'highest_cost') {
+        newCost = Math.max(...batches.map(b => b.cost_price));
+    } else if (prod.pricing_strategy === 'latest_cost') {
+        // Since it's ordered by created_at DESC, the first one is the latest
+        newCost = batches[0].cost_price;
+    }
+
+    const newSelling = newCost * (1 + (prod.target_margin / 100));
+
+    db.prepare('UPDATE products SET cost_price = ?, selling_price = ? WHERE id = ? AND tenant_id = ?').run(newCost, newSelling, product_id, tenant_id);
+}
+
 /**
  * @route   GET /api/inventory/batches/:productId
  * @desc    Get tracking batches for a product
@@ -79,6 +107,9 @@ router.post('/stock-in', authenticate, authorizePermission('manage_inventory'), 
             } else {
                 db.prepare('UPDATE products SET quantity = quantity + ? WHERE id = ? AND tenant_id = ?').run(quantity, product_id, req.tenantId);
             }
+
+            // 4. Recalculate Pricing based on Strategy
+            recalculateProductPricing(product_id, req.tenantId);
 
         })();
         

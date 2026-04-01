@@ -588,10 +588,16 @@
                                 <td>Full platform - all tenants + tenant management</td>
                             </tr>
                             <tr>
-                                <td><strong>Tenant Admin</strong></td>
-                                <td><code>admin</code></td>
+                                <td><strong>Tenant 1 Admin</strong> <br><small>TechStore Inc</small></td>
+                                <td><code>tech_admin</code></td>
                                 <td><code>admin123</code></td>
-                                <td>Default Shop only - inventory, config, billing</td>
+                                <td>Isolated TechStore shop only - inventory, config, billing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tenant 2 Admin</strong> <br><small>SuperMart</small></td>
+                                <td><code>mart_admin</code></td>
+                                <td><code>admin123</code></td>
+                                <td>Isolated SuperMart shop only - grocery inventory, config</td>
                             </tr>
                         </tbody>
                     </table>
@@ -909,6 +915,21 @@
                     </ul>
                 </div>
                 <div class="instruction-step">Click <strong>Save Product</strong>.</div>
+            </div>
+
+            <div class="card">
+                <h3>Automated Pricing Strategies</h3>
+                <p>Tractly provides automated inventory valuation methods you can assign directly to a Product. As you stock-in distinct batches of a product across varying wholesale bills, the system handles the complexities of determining accurate cost parameters for accounting, and your eventual consumer selling price.</p>
+                <div class="option-list">
+                    <div class="option-item"><strong>manual (Default)</strong><span>Static. Cost and Selling prices are manually defined by the Admin and never automatically overridden during stock-ins.</span></div>
+                    <div class="option-item"><strong>weighted_average</strong><span>Real-time smoothing. Automatically calculates the <code>cost_price</code> based on the volume and price of *all currently active batches* held across the tenant. Protects against huge seasonal wholesale spikes.</span></div>
+                    <div class="option-item"><strong>highest_cost</strong><span>Maximum safeguard. Selects the highest cost from any active batch to ensure you don't sell at a loss on older, cheaper inventory when market prices surge.</span></div>
+                    <div class="option-item"><strong>latest_cost (LIFO)</strong><span>Automatically aligns your generic <code>cost_price</code> to whatever the very latest stock-in bill dictated.</span></div>
+                </div>
+                <div class="pro-tip">
+                    <i><i class="fa-solid fa-bullseye"></i></i>
+                    <div><strong>Target Margin:</strong> For any animated strategy (Average, Highest, Latest), you can configure a standard <code>target_margin</code> (e.g., 25 for 25%). When a new wholesale batch arrives, Tractly will instantly compute the new cost strategy, append the margin, and universally update the retail <code>selling_price</code> across all POS terminals in real time.</div>
+                </div>
             </div>
         </section>
 
