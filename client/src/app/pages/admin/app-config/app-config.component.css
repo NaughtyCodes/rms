@@ -1,0 +1,132 @@
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tab-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.super-badge {
+  font-size: 9px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+
+.key-badge {
+  font-family: monospace;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+}
+
+.key-badge.global {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.value-text {
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.type-chip {
+  font-size: 11px;
+  background: var(--bg-hover);
+  padding: 2px 8px;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.bool-true {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.bool-false {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.btn-danger-outline {
+  background: transparent;
+  color: var(--danger);
+  border: 1.5px solid var(--danger);
+}
+
+.btn-danger-outline:hover {
+  background: var(--danger-bg);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .flex {
+    width: 100%;
+  }
+  
+  .search-bar {
+    max-width: none;
+    flex: 1;
+  }
+}

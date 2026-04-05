@@ -20,6 +20,7 @@ import permissionRoutes from './routes/permissions.js';
 import userMgmtRoutes from './routes/user-management.js';
 import systemConfigRoutes from './routes/system-config.js';
 import backupRestoreRoutes from './routes/backup-restore.js';
+import appConfigRoutes from './routes/app-config.js';
 import { seedDefaultAdmin } from './db/seed.js';
 import path from 'path';
 import fs from 'fs';
@@ -68,6 +69,7 @@ app.use('/api/permissions', permissionRoutes);
 app.use('/api/user-management', userMgmtRoutes);
 app.use('/api/system-config', systemConfigRoutes);
 app.use('/api/backup-restore', backupRestoreRoutes);
+app.use('/api/app-config', appConfigRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));

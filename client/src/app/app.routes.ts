@@ -18,6 +18,7 @@ export const routes: Routes = [
             { path: 'reports', loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent) },
             { path: 'admin', loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent) },
             { path: 'admin/meta-setup', loadComponent: () => import('./pages/admin/meta-setup/meta-setup.component').then(m => m.MetaSetupComponent) },
+            { path: 'admin/app-config', loadComponent: () => import('./pages/admin/app-config/app-config.component').then(m => m.AppConfigComponent) },
             { path: 'admin/discounts', loadComponent: () => import('./pages/admin/discounts/discounts.component').then(m => m.DiscountsComponent) },
             { path: 'admin/taxes', loadComponent: () => import('./pages/admin/taxes/taxes.component').then(m => m.TaxesComponent) },
             { path: 'admin/stock-management', loadComponent: () => import('./pages/admin/stock-management/stock-management.component').then(m => m.StockManagementComponent) },

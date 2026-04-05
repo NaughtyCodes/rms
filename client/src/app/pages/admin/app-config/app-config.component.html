@@ -1,0 +1,198 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">⚙️ Configuration Manager</h1>
+    <p class="page-subtitle">Manage tenant-specific settings and global application configuration.</p>
+  </div>
+</div>
+
+<!-- Toast -->
+<div *ngIf="toast.show" class="toast" [class.toast-success]="toast.success" [class.toast-error]="!toast.success">
+  {{ toast.message }}
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <button id="tab-tenant-settings" class="tab-btn" [class.active]="activeTab === 'tenant'" (click)="setTab('tenant')">
+    <span>🏪</span> Tenant Settings
+  </button>
+  <button *ngIf="isSuperAdmin" id="tab-global-config" class="tab-btn" [class.active]="activeTab === 'global'" (click)="setTab('global')">
+    <span>🌐</span> Global App Config
+    <span class="super-badge">SuperAdmin</span>
+  </button>
+</div>
+
+<!-- ══ TENANT SETTINGS TAB ══════════════════════════════════════════════════ -->
+<div *ngIf="activeTab === 'tenant'">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Tenant Configuration</h2>
+      <div class="flex" style="gap:12px">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input id="tenant-search" type="text" placeholder="Search settings..." [(ngModel)]="tenantSearch" (input)="applyTenantFilter()">
+        </div>
+        <button id="btn-add-tenant-setting" class="btn btn-primary btn-sm" (click)="openCreateModal('tenant')">
+          + Add Setting
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="empty-state">
+      <div class="empty-icon">⏳</div>
+      <div class="empty-text">Loading settings...</div>
+    </div>
+
+    <div *ngIf="!isLoading && filteredTenantSettings.length === 0" class="empty-state">
+      <div class="empty-icon">🗂️</div>
+      <div class="empty-text">No tenant settings found.</div>
+    </div>
+
+    <div *ngIf="!isLoading && filteredTenantSettings.length > 0" class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th style="width:160px; text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let setting of filteredTenantSettings; trackBy: trackByKey">
+            <td>
+              <span class="key-badge">{{ setting.key }}</span>
+            </td>
+            <td>
+              <!-- Inline delete confirm -->
+              <ng-container *ngIf="deleteConfirmKey !== setting.key">
+                <span class="value-text">{{ setting.value }}</span>
+              </ng-container>
+              <ng-container *ngIf="deleteConfirmKey === setting.key">
+                <span class="text-danger" style="font-size:13px;">Delete "{{ setting.key }}"?</span>
+              </ng-container>
+            </td>
+            <td style="text-align:right;">
+              <ng-container *ngIf="deleteConfirmKey !== setting.key">
+                <button class="btn btn-sm btn-secondary" (click)="openEditModal('tenant', setting)" style="margin-right:6px;">✏️ Edit</button>
+                <button class="btn btn-sm btn-danger-outline" (click)="confirmDelete(setting.key)">🗑️</button>
+              </ng-container>
+              <ng-container *ngIf="deleteConfirmKey === setting.key">
+                <button class="btn btn-sm btn-danger" (click)="doDelete('tenant', setting.key)" style="margin-right:6px;">Yes, Delete</button>
+                <button class="btn btn-sm btn-secondary" (click)="cancelDelete()">Cancel</button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GLOBAL CONFIG TAB ════════════════════════════════════════════════════ -->
+<div *ngIf="activeTab === 'global' && isSuperAdmin">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Global Application Config</h2>
+        <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Changes here affect the entire Tractly platform.</p>
+      </div>
+      <div class="flex" style="gap:12px">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input id="global-search" type="text" placeholder="Search configs..." [(ngModel)]="globalSearch" (input)="applyGlobalFilter()">
+        </div>
+        <button id="btn-add-global-config" class="btn btn-primary btn-sm" (click)="openCreateModal('global')">
+          + Add Config
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredGlobalConfigs.length === 0" class="empty-state">
+      <div class="empty-icon">🌐</div>
+      <div class="empty-text">No global configs found.</div>
+    </div>
+
+    <div *ngIf="filteredGlobalConfigs.length > 0" class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Updated</th>
+            <th style="width:160px; text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cfg of filteredGlobalConfigs; trackBy: trackByKey">
+            <td><span class="key-badge global">{{ cfg.key }}</span></td>
+            <td>
+              <ng-container *ngIf="deleteConfirmKey !== cfg.key">
+                <span [class.bool-true]="cfg.value === 'true'" [class.bool-false]="cfg.value === 'false'" class="value-text">{{ cfg.value }}</span>
+              </ng-container>
+              <ng-container *ngIf="deleteConfirmKey === cfg.key">
+                <span class="text-danger" style="font-size:13px;">Delete "{{ cfg.key }}"?</span>
+              </ng-container>
+            </td>
+            <td><span class="type-chip">{{ cfg.type }}</span></td>
+            <td style="color:var(--text-secondary); font-size:12px;">{{ cfg.description || '—' }}</td>
+            <td style="color:var(--text-muted); font-size:12px;">{{ cfg.updated_at | date:'shortDate' }}</td>
+            <td style="text-align:right;">
+              <ng-container *ngIf="deleteConfirmKey !== cfg.key">
+                <button class="btn btn-sm btn-secondary" (click)="openEditModal('global', cfg)" style="margin-right:6px;">✏️ Edit</button>
+                <button class="btn btn-sm btn-danger-outline" (click)="confirmDelete(cfg.key)">🗑️</button>
+              </ng-container>
+              <ng-container *ngIf="deleteConfirmKey === cfg.key">
+                <button class="btn btn-sm btn-danger" (click)="doDelete('global', cfg.key)" style="margin-right:6px;">Yes, Delete</button>
+                <button class="btn btn-sm btn-secondary" (click)="cancelDelete()">Cancel</button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ════════════════════════════════════════════════════════════════ -->
+<div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        {{ modalMode === 'create' ? '+ Add' : '✏️ Edit' }}
+        {{ modalScope === 'tenant' ? 'Tenant Setting' : 'Global Config' }}
+      </h3>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Key</label>
+      <input id="config-key-input" class="form-input" type="text" [(ngModel)]="formKey" placeholder="e.g. currency" [disabled]="modalMode === 'edit'">
+    </div>
+
+    <div class="form-group mt-16">
+      <label class="form-label">Value</label>
+      <input id="config-value-input" class="form-input" type="text" [(ngModel)]="formValue" placeholder="e.g. USD">
+    </div>
+
+    <ng-container *ngIf="modalScope === 'global'">
+      <div class="form-group mt-16">
+        <label class="form-label">Type</label>
+        <select id="config-type-select" class="form-select" [(ngModel)]="formType">
+          <option *ngFor="let t of typeOptions" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div class="form-group mt-16">
+        <label class="form-label">Description</label>
+        <input id="config-desc-input" class="form-input" type="text" [(ngModel)]="formDescription" placeholder="What does this config do?">
+      </div>
+    </ng-container>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      <button id="btn-save-config" class="btn btn-primary" (click)="save()" [disabled]="isSaving || !formValue.trim() || (modalMode === 'create' && !formKey.trim())">
+        {{ isSaving ? 'Saving...' : 'Save' }}
+      </button>
+    </div>
+  </div>
+</div>
