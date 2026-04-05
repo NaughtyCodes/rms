@@ -179,6 +179,49 @@
                     style T2 fill:#ECFDF5,stroke:#10B981,stroke-width:2px
                 </div>
             </div>
+            <div class="text-center" style="margin-top: 60px;">
+                <h3 class="section-title">Database <span class="accent">Relational Mapper</span> (ORM)</h3>
+                <p class="section-subtitle">Complete Entity-Relationship blueprint spanning multi-tenant stock, billing, and hierarchical access control.</p>
+            </div>
+            <div class="diagram-container h-reveal" style="background: #FFFFFF;">
+                <div class="mermaid">
+                    erDiagram
+                        TENANTS ||--o{ USERS : "employs"
+                        TENANTS ||--o{ PRODUCTS : "owns"
+                        TENANTS ||--o{ BRANCHES : "operates"
+                        TENANTS ||--o{ INVOICES : "issues"
+                        TENANTS ||--o{ ROLES : "defines"
+                        
+                        USERS }|--o| BRANCHES : "assigned to"
+                        USERS ||--o{ USER_ROLES : "has"
+                        ROLES ||--o{ USER_ROLES : "assigned"
+                        ROLES ||--o{ ROLE_PERMISSIONS : "grants"
+                        PERMISSIONS ||--o{ ROLE_PERMISSIONS : "granted by"
+                        
+                        BRANCHES ||--o{ BRANCH_STOCK : "holds"
+                        PRODUCTS ||--o{ BRANCH_STOCK : "stocked as"
+                        
+                        BRANCHES ||--o{ STOCK_TRANSFERS : "from/to"
+                        STOCK_TRANSFERS ||--|{ STOCK_TRANSFER_ITEMS : "contains"
+                        PRODUCTS ||--o{ STOCK_TRANSFER_ITEMS : "transferred"
+                        
+                        CATEGORIES ||--o{ PRODUCTS : "groups"
+                        
+                        PRODUCTS ||--o{ PRODUCT_BATCHES : "split into"
+                        PRODUCT_BATCHES ||--o{ INVENTORY_TRANSACTIONS : "tracked via"
+                        PRODUCTS ||--o{ INVENTORY_TRANSACTIONS : "logged in"
+                        
+                        PRODUCTS ||--o{ PRODUCT_META_VALUES : "has prop"
+                        PRODUCT_META_FIELDS ||--o{ PRODUCT_META_VALUES : "defines"
+                        
+                        PRODUCTS ||--o{ PRODUCT_DISCOUNTS : "has"
+                        
+                        USERS ||--o{ INVOICES : "creates"
+                        BRANCHES ||--o{ INVOICES : "billed at"
+                        INVOICES ||--|{ INVOICE_ITEMS : "contains"
+                        PRODUCTS ||--o{ INVOICE_ITEMS : "listed as"
+                </div>
+            </div>
 
             <div class="tech-matrix section">
                 <div class="card tech-card h-reveal">
@@ -313,39 +356,67 @@
                     </div>
                     <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Manages the entire scalable platform logic. Creates, deletes, and oversees tenants globally.</p>
                     <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
-                        <p style="margin:0;"><strong>Username:</strong> super</p>
+                        <p style="margin:0;"><strong>Role:</strong> <code>superadmin</code></p>
+                        <p style="margin:5px 0 0 0;"><strong>Username:</strong> super</p>
                         <p style="margin:5px 0 0 0;"><strong>Password:</strong> super123</p>
+                    </div>
+                </div>
+
+                <div class="card h-reveal" style="border-top: 4px solid #4F46E5;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin: 0;"><i class="fas fa-building" style="color:#4F46E5;"></i> Default Shop Admin</h3>
+                        <span style="font-size: 12px; background:#EEF2FF; color:#4F46E5; padding:4px 8px; border-radius:4px; font-weight:bold;">Default Shop</span>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Isolated Admin for the base installation tenant. Full control over the default shop.</p>
+                    <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
+                        <p style="margin:0;"><strong>Role:</strong> <code>admin</code></p>
+                        <p style="margin:5px 0 0 0;"><strong>Username:</strong> admin</p>
+                        <p style="margin:5px 0 0 0;"><strong>Password:</strong> admin123</p>
                     </div>
                 </div>
 
                 <div class="card h-reveal" style="border-top: 4px solid #10B981;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="margin: 0;"><i class="fas fa-store" style="color:#10B981;"></i> Tenant 1 Admin</h3>
+                        <h3 style="margin: 0;"><i class="fas fa-store" style="color:#10B981;"></i> Demo Tenant Admin</h3>
                         <span style="font-size: 12px; background:#ECFDF5; color:#10B981; padding:4px 8px; border-radius:4px; font-weight:bold;">TechStore Inc</span>
                     </div>
                     <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Isolated Admin for "TechStore Inc". Manages tech products across "Main" and "Downtown" branches.</p>
                     <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
-                        <p style="margin:0;"><strong>Username:</strong> tech_admin</p>
+                        <p style="margin:0;"><strong>Role:</strong> <code>admin</code></p>
+                        <p style="margin:5px 0 0 0;"><strong>Username:</strong> tech_admin</p>
                         <p style="margin:5px 0 0 0;"><strong>Password:</strong> admin123</p>
                     </div>
                 </div>
 
                 <div class="card h-reveal" style="border-top: 4px solid #F59E0B;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="margin: 0;"><i class="fas fa-shopping-basket" style="color:#F59E0B;"></i> Tenant 2 Admin</h3>
+                        <h3 style="margin: 0;"><i class="fas fa-shopping-basket" style="color:#F59E0B;"></i> Demo Tenant Admin</h3>
                         <span style="font-size: 12px; background:#FFFBEB; color:#F59E0B; padding:4px 8px; border-radius:4px; font-weight:bold;">SuperMart</span>
                     </div>
                     <p style="margin-top: 10px; font-size: 14px; color: var(--text-light);">Isolated Admin for "SuperMart". Manages grocery inventory completely isolated from TechStore.</p>
                     <div style="background:#f8fafc; padding:15px; border-radius:8px; margin-top:15px; border:1px solid #e2e8f0;">
-                        <p style="margin:0;"><strong>Username:</strong> mart_admin</p>
+                        <p style="margin:0;"><strong>Role:</strong> <code>admin</code></p>
+                        <p style="margin:5px 0 0 0;"><strong>Username:</strong> mart_admin</p>
                         <p style="margin:5px 0 0 0;"><strong>Password:</strong> admin123</p>
                     </div>
                 </div>
             </div>
 
-            <div class="card text-center h-reveal" style="margin-top: 30px;">
-                <p><strong><i class="fas fa-flask"></i> Testing Data Isolation:</strong></p>
-                <p style="color: var(--text-light);">Log in as <code>tech_admin</code> and verify the tech products and branches. Then log out and log in as <code>mart_admin</code> to see an entirely different set of shops and inventories seamlessly segregated. Check out our <a href="MULTI_TENANT_DEMO_GUIDE.md" style="color: var(--primary); font-weight: bold;">Multi-Tenant Demo Guide</a> for a detailed step-by-step walkthrough!</p>
+            <div class="card h-reveal" style="margin-top: 30px;">
+                <h3 class="text-center" style="margin-bottom: 25px;"><i class="fas fa-vial" style="color: var(--primary);"></i> How to Test This Application</h3>
+                <div style="max-width: 800px; margin: 0 auto; color: var(--text-main);">
+                    <ol style="line-height: 1.8; font-size: 15px; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;"><strong>Start the Backend:</strong> Navigate to the <code>server/</code> folder in your terminal, run <code>npm install</code>, and then start the API with <code>npm start</code>. All demo tenants and data are automatically seeded on first launch.</li>
+                        <li style="margin-bottom: 12px;"><strong>Start the Frontend:</strong> Navigate to the <code>client/</code> folder, run <code>npm install</code>, and start the angular app with <code>npm start</code>.</li>
+                        <li style="margin-bottom: 12px;"><strong>Access the App:</strong> Open your browser to <code>http://localhost:4200</code>.</li>
+                        <li style="margin-bottom: 12px;"><strong>Test Multi-Tenancy:</strong> Log in as <code>tech_admin</code> (password: admin123) and navigate through the products and branches. <b>Log out</b>, and log in as <code>mart_admin</code> to see an entirely different grocery inventory. Verify that data is completely segregated.</li>
+                        <li style="margin-bottom: 12px;"><strong>Test Role Permissions (Cashier vs Admin):</strong> As a tenant admin (e.g., <code>tech_admin</code>), go to User Management. Create a new user with the "Cashier" role. Log in as the new cashier and test that admin actions are restricted.</li>
+                        <li style="margin-bottom: 12px;"><strong>Test Global SuperAdmin:</strong> Log in using the <code>super</code> account to access the system administration tools. Here you can create new tenants or manage global configurations.</li>
+                    </ol>
+                    <p class="text-center" style="margin-top: 20px; color: var(--text-light);">
+                        Check out our <a href="MULTI_TENANT_DEMO_GUIDE.md" style="color: var(--primary); font-weight: bold; text-decoration: none;">Multi-Tenant Demo Guide</a> for a detailed walk-through experience!
+                    </p>
+                </div>
             </div>
         </div>
     </section>

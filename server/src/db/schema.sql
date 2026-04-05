@@ -263,6 +263,14 @@ CREATE TABLE IF NOT EXISTS settings (
     UNIQUE(tenant_id, key) -- SQLite treats NULL as distinct, but our code will handle it
 );
 
+CREATE TABLE IF NOT EXISTS app_config (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    description TEXT,
+    type TEXT DEFAULT 'string' CHECK(type IN ('string', 'number', 'boolean', 'json')),
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_users_tenant ON users(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_products_tenant ON products(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);

@@ -77,8 +77,8 @@ function seed() {
                 const roleId = roleResult.lastInsertRowid;
                 // Assign all permissions except manage_tenants to Admin
                 const sysPerms = db.prepare("SELECT id FROM permissions WHERE category != 'superadmin'").all();
-                const insertRolePerm = db.prepare('INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
-                for (const p of sysPerms) insertRolePerm.run(roleId, p.id);
+                const insertRolePerm = db.prepare('INSERT INTO role_permissions (tenant_id, role_id, permission_id) VALUES (?, ?, ?)');
+                for (const p of sysPerms) insertRolePerm.run(tenant_id, roleId, p.id);
             }
 
             // Cashier Role
@@ -90,8 +90,8 @@ function seed() {
                 const cashierPermNames = ['view_dashboard', 'access_billing', 'view_invoices', 'view_inventory'];
                 const cashierPerms = db.prepare(`SELECT id FROM permissions WHERE name IN (${cashierPermNames.map(() => '?').join(',')})`)
                     .all(...cashierPermNames);
-                const insertRolePerm = db.prepare('INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)');
-                for (const p of cashierPerms) insertRolePerm.run(roleId, p.id);
+                const insertRolePerm = db.prepare('INSERT INTO role_permissions (tenant_id, role_id, permission_id) VALUES (?, ?, ?)');
+                for (const p of cashierPerms) insertRolePerm.run(tenant_id, roleId, p.id);
             }
         }
 
@@ -103,7 +103,7 @@ function seed() {
              const roleName = user.role.charAt(0).toUpperCase() + user.role.slice(1); // cashier -> Cashier
              const role = db.prepare('SELECT id FROM roles WHERE tenant_id = ? AND name = ?').get(user.tenant_id, roleName);
              if (role) {
-                 db.prepare('INSERT OR IGNORE INTO user_roles (user_id, role_id) VALUES (?, ?)').run(user.id, role.id);
+                 db.prepare('INSERT OR IGNORE INTO user_roles (tenant_id, user_id, role_id) VALUES (?, ?, ?)').run(user.tenant_id, user.id, role.id);
              }
         }
 
